@@ -1,12 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import type { ProductOffer } from '@/types';
-import { CheckoutScreen } from '../checkout/CheckoutScreen';
-import { PaymentSuccess } from '../checkout/PaymentSuccess';
+
+// Lazy load checkout components (only loads when "Buy Now" clicked)
+const CheckoutScreen = lazy(() =>
+  import('../checkout/CheckoutScreen').then((m) => ({ default: m.CheckoutScreen }))
+);
+const PaymentSuccess = lazy(() =>
+  import('../checkout/PaymentSuccess').then((m) => ({ default: m.PaymentSuccess }))
+);
 
 interface ProductRecommendationProps {
   offer: ProductOffer;
+}
+
+function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
+    </div>
+  );
 }
 
 export function ProductRecommendation({ offer }: ProductRecommendationProps) {
@@ -15,16 +29,22 @@ export function ProductRecommendation({ offer }: ProductRecommendationProps) {
   const price = (offer.priceCents / 100).toFixed(2);
 
   if (showSuccess) {
-    return <PaymentSuccess />;
+    return (
+      <Suspense fallback={<LoadingSpinner />}>
+        <PaymentSuccess />
+      </Suspense>
+    );
   }
 
   if (showCheckout) {
     return (
-      <CheckoutScreen
-        offer={offer}
-        onSuccess={() => setShowSuccess(true)}
-        onCancel={() => setShowCheckout(false)}
-      />
+      <Suspense fallback={<LoadingSpinner />}>
+        <CheckoutScreen
+          offer={offer}
+          onSuccess={() => setShowSuccess(true)}
+          onCancel={() => setShowCheckout(false)}
+        />
+      </Suspense>
     );
   }
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 
 interface QuizProgressProps {
@@ -7,7 +8,7 @@ interface QuizProgressProps {
   total: number;
 }
 
-export function QuizProgress({ current, total }: QuizProgressProps) {
+export const QuizProgress = memo(function QuizProgress({ current, total }: QuizProgressProps) {
   const percentage = (current / total) * 100;
 
   return (
@@ -31,4 +32,4 @@ export function QuizProgress({ current, total }: QuizProgressProps) {
       </div>
     </div>
   );
-}
+});

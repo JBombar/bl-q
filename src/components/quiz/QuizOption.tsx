@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import type { QuizOption as QuizOptionType } from '@/types';
 
@@ -9,7 +10,7 @@ interface QuizOptionProps {
   onSelect: () => void;
 }
 
-export function QuizOption({ option, isSelected, onSelect }: QuizOptionProps) {
+export const QuizOption = memo(function QuizOption({ option, isSelected, onSelect }: QuizOptionProps) {
   return (
     <motion.button
       whileHover={{ scale: 1.02 }}
@@ -43,4 +44,4 @@ export function QuizOption({ option, isSelected, onSelect }: QuizOptionProps) {
       </div>
     </motion.button>
   );
-}
+});

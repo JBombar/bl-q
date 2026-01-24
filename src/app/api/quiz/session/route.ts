@@ -3,6 +3,9 @@ import { getSessionFromCookie } from '@/lib/services/session.service';
 import { getSessionAnswers } from '@/lib/services/quiz.service';
 import { supabase } from '@/lib/supabase/client';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSessionFromCookie();
