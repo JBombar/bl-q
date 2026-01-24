@@ -1,13 +1,32 @@
 'use client';
 
+import { useState } from 'react';
 import type { ProductOffer } from '@/types';
+import { CheckoutScreen } from '../checkout/CheckoutScreen';
+import { PaymentSuccess } from '../checkout/PaymentSuccess';
 
 interface ProductRecommendationProps {
   offer: ProductOffer;
 }
 
 export function ProductRecommendation({ offer }: ProductRecommendationProps) {
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const price = (offer.priceCents / 100).toFixed(2);
+
+  if (showSuccess) {
+    return <PaymentSuccess />;
+  }
+
+  if (showCheckout) {
+    return (
+      <CheckoutScreen
+        offer={offer}
+        onSuccess={() => setShowSuccess(true)}
+        onCancel={() => setShowCheckout(false)}
+      />
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -41,7 +60,10 @@ export function ProductRecommendation({ offer }: ProductRecommendationProps) {
           </p>
         </div>
 
-        <button className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl">
+        <button
+          onClick={() => setShowCheckout(true)}
+          className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
+        >
           Buy Now →
         </button>
       </div>
