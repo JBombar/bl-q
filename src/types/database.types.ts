@@ -61,7 +61,7 @@ export interface QuizQuestion {
   id: string;
   quiz_id: string;
   order_index: number;
-  question_type: 'single_choice' | 'multiple_choice' | 'scale';
+  question_type: 'single_choice' | 'multiple_choice' | 'scale' | 'likert_1_4' | 'age_select' | 'info_trust' | 'education_insert' | 'validation_info';
   question_text: string;
   question_subtext: string | null;
   branching_logic: Record<string, unknown> | null;
@@ -70,13 +70,19 @@ export interface QuizQuestion {
   required: boolean;
   created_at: string;
   updated_at: string;
+  // BetterLady quiz extensions
+  question_key: string | null;
+  section_label: string | null;
+  scale_left_label: string | null;
+  scale_right_label: string | null;
+  helper_text: string | null;
 }
 
 export interface QuizQuestionInsert {
   id?: string;
   quiz_id: string;
   order_index: number;
-  question_type: 'single_choice' | 'multiple_choice' | 'scale';
+  question_type: 'single_choice' | 'multiple_choice' | 'scale' | 'likert_1_4' | 'age_select' | 'info_trust' | 'education_insert' | 'validation_info';
   question_text: string;
   question_subtext?: string | null;
   branching_logic?: Record<string, unknown> | null;
@@ -85,12 +91,17 @@ export interface QuizQuestionInsert {
   required?: boolean;
   created_at?: string;
   updated_at?: string;
+  question_key?: string | null;
+  section_label?: string | null;
+  scale_left_label?: string | null;
+  scale_right_label?: string | null;
+  helper_text?: string | null;
 }
 
 export interface QuizQuestionUpdate {
   quiz_id?: string;
   order_index?: number;
-  question_type?: 'single_choice' | 'multiple_choice' | 'scale';
+  question_type?: 'single_choice' | 'multiple_choice' | 'scale' | 'likert_1_4' | 'age_select' | 'info_trust' | 'education_insert' | 'validation_info';
   question_text?: string;
   question_subtext?: string | null;
   branching_logic?: Record<string, unknown> | null;
@@ -98,6 +109,11 @@ export interface QuizQuestionUpdate {
   image_url?: string | null;
   required?: boolean;
   updated_at?: string;
+  question_key?: string | null;
+  section_label?: string | null;
+  scale_left_label?: string | null;
+  scale_right_label?: string | null;
+  helper_text?: string | null;
 }
 
 // ============================================================================

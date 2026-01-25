@@ -97,6 +97,28 @@ export const useQuizState = create<QuizState>((set, get) => ({
   completeQuiz: async () => {
     set({ isLoading: true });
     try {
+      // PHASE 5: Flush all answers before completion to prevent missing data
+      const { answers } = get();
+
+      // Retry failed answer submissions
+      for (const answer of answers) {
+        try {
+          await fetch('/api/quiz/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              questionId: answer.questionId,
+              selectedOptionIds: answer.selectedOptionIds,
+              timeSpentSeconds: answer.timeSpent || 0,
+            }),
+          });
+        } catch (err) {
+          console.error('Failed to flush answer:', err);
+          // Continue anyway - server may have already received it
+        }
+      }
+
+      // Now safe to complete quiz
       const response = await fetch('/api/quiz/complete', {
         method: 'POST',
       });

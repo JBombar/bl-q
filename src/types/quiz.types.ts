@@ -114,3 +114,25 @@ export interface QuizEventData {
   data: Record<string, unknown>;
   timestamp: string;
 }
+
+// ============================================================================
+// PHASE 6: TIMELINE & PROJECTION (FUTURE)
+// ============================================================================
+
+export interface TimelinePoint {
+  date: string; // ISO date
+  score: number; // Projected score 0-60
+  label: string; // e.g., "Week 1", "Week 4"
+}
+
+export interface ResultWithTimeline {
+  // Current result data
+  display_score_0_60?: number; // Score on 0-60 scale
+  timeline_target_date?: string; // ISO date for goal
+  timeline_series_points?: TimelinePoint[]; // Projection data for graph
+
+  // Future: subscore breakdown
+  subscore_physiological?: number;
+  subscore_behavioral?: number;
+  subscore_emotional?: number;
+}
