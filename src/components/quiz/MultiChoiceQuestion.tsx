@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
+import { QuizStageLayout } from './QuizStageLayout';
 import type { QuizQuestionWithOptions } from '@/types';
 
 interface MultiChoiceQuestionProps {
@@ -12,7 +13,7 @@ interface MultiChoiceQuestionProps {
 }
 
 export function MultiChoiceQuestion({ question, questionIndex, onComplete }: MultiChoiceQuestionProps) {
-  const { selectAnswer, nextQuestion, answers } = useQuizState();
+  const { selectAnswer, nextQuestion, answers, quiz } = useQuizState();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [startTime] = useState(Date.now());
 
@@ -38,92 +39,94 @@ export function MultiChoiceQuestion({ question, questionIndex, onComplete }: Mul
     if (selectedIds.length === 0) return; // Require at least one selection
 
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-    await selectAnswer(question.id, selectedIds, timeSpent);
+    selectAnswer(question.id, selectedIds, timeSpent); // Non-blocking
 
     setTimeout(() => {
-      if (onComplete && questionIndex === useQuizState.getState().quiz!.questions.length - 1) {
+      if (onComplete && questionIndex === quiz!.questions.length - 1) {
         onComplete();
       } else {
         nextQuestion();
       }
-    }, 150);
+    }, 100);
   };
 
+  // Calculate progress
+  const totalQuestions = quiz?.questions.length || 1;
+  const progressPercent = ((questionIndex + 1) / totalQuestions) * 100;
+
   return (
-    <motion.div
-      key={question.id}
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.15 }}
-      className="bg-white rounded-2xl shadow-lg p-8 mb-6"
+    <QuizStageLayout
+      showProgress
+      progressPercent={progressPercent}
+      sectionLabel={question.section_label || undefined}
+      showCTA
+      ctaLabel="Pokračovat"
+      ctaDisabled={selectedIds.length === 0}
+      onCtaClick={handleContinue}
+      overlayImage={question.image_url ? {
+        src: question.image_url,
+        alt: '',
+        anchor: 'bottom-right',
+        maxHeightDesktop: '70vh',
+        maxHeightMobile: '50vh',
+      } : undefined}
+      variant="question"
     >
-      {question.section_label && (
-        <div className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">
-          {question.section_label}
-        </div>
-      )}
-
-      <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Figtree', lineHeight: '110%' }}>
-        {question.question_text}
-      </h2>
-
-      {question.helper_text && (
-        <p className="text-gray-600 mb-6 italic">{question.helper_text}</p>
-      )}
-
-      <div className="space-y-3 mb-6">
-        {question.options.map((option) => {
-          const isSelected = selectedIds.includes(option.id);
-
-          return (
-            <motion.button
-              key={option.id}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={() => toggleOption(option.id)}
-              className={`
-                w-full p-4 rounded-xl text-left transition-all border-2
-                ${isSelected
-                  ? 'bg-white border-[#F9A201] shadow-md'
-                  : 'bg-gray-100 border-transparent hover:bg-gray-200'
-                }
-              `}
-            >
-              <div className="flex items-center">
-                <div className={`
-                  w-5 h-5 rounded mr-3 flex-shrink-0 border-2 flex items-center justify-center
-                  ${isSelected
-                    ? 'bg-[#F9A201] border-[#F9A201]'
-                    : 'border-gray-300 bg-white'
-                  }
-                `}>
-                  {isSelected && (
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </div>
-                <span className="font-medium text-gray-900">{option.option_text}</span>
-              </div>
-            </motion.button>
-          );
-        })}
-      </div>
-
-      <button
-        onClick={handleContinue}
-        disabled={selectedIds.length === 0}
-        className={`
-          w-full py-4 rounded-xl font-semibold text-white text-lg transition-all
-          ${selectedIds.length > 0
-            ? 'bg-[#F9A201] hover:bg-[#e09201] shadow-lg'
-            : 'bg-gray-300 cursor-not-allowed'
-          }
-        `}
+      <motion.div
+        key={question.id}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.08 }}
+        className="w-full text-center"
       >
-        Pokračovat
-      </button>
-    </motion.div>
+        <h2 className="text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: 'Figtree', lineHeight: '110%' }}>
+          {question.question_text}
+        </h2>
+
+        {question.helper_text && (
+          <p className="text-gray-600 mb-2 md:mb-3 italic text-xs md:text-sm">{question.helper_text}</p>
+        )}
+
+        <div className="space-y-1.5 md:space-y-2 max-w-xl mx-auto">
+          {question.options.map((option) => {
+            const isSelected = selectedIds.includes(option.id);
+
+            return (
+              <motion.button
+                key={option.id}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                onClick={() => toggleOption(option.id)}
+                className={`
+                  w-full p-2.5 md:p-3 rounded-lg md:rounded-xl text-left transition-all border-2
+                  ${isSelected
+                    ? 'bg-white border-[#F9A201] shadow-md'
+                    : 'bg-gray-100 border-transparent hover:bg-gray-200'
+                  }
+                `}
+              >
+                <div className="flex items-center">
+                  <div className={`
+                    w-4 h-4 md:w-5 md:h-5 rounded mr-2 md:mr-3 flex-shrink-0 border-2 flex items-center justify-center
+                    ${isSelected
+                      ? 'bg-[#F9A201] border-[#F9A201]'
+                      : 'border-gray-300 bg-white'
+                    }
+                  `}>
+                    {isSelected && (
+                      <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="font-medium text-gray-900 text-xs md:text-sm">{option.option_text}</span>
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+      </motion.div>
+    </QuizStageLayout>
   );
 }

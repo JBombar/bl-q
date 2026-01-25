@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
 import { QuizOption } from './QuizOption';
+import { QuizStageLayout } from './QuizStageLayout';
 import { MultiChoiceQuestion } from './MultiChoiceQuestion';
 import { LikertScaleQuestion } from './LikertScaleQuestion';
 import { AgeGateScreen } from './AgeGateScreen';
 import { TrustScreen } from './TrustScreen';
 import { InsertScreen } from './InsertScreen';
 import type { QuizQuestionWithOptions } from '@/types';
-import Image from 'next/image';
 
 interface QuizQuestionProps {
   question: QuizQuestionWithOptions;
@@ -31,11 +31,11 @@ export function QuizQuestion({ question, questionIndex, onComplete }: QuizQuesti
       return <AgeGateScreen question={question} onComplete={onComplete} />;
 
     case 'info_trust':
-      return <TrustScreen question={question} />;
+      return <TrustScreen question={question} onComplete={onComplete} />;
 
     case 'education_insert':
     case 'validation_info':
-      return <InsertScreen question={question} />;
+      return <InsertScreen question={question} onComplete={onComplete} />;
 
     case 'single_choice':
     default:
@@ -45,7 +45,7 @@ export function QuizQuestion({ question, questionIndex, onComplete }: QuizQuesti
 
 // Default single choice component (original logic)
 function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuestionProps) {
-  const { selectAnswer, nextQuestion, answers } = useQuizState();
+  const { selectAnswer, nextQuestion, answers, quiz } = useQuizState();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [startTime] = useState(Date.now());
 
@@ -64,64 +64,64 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
     const newSelection = [optionId];
 
     setSelectedIds(newSelection);
-    await selectAnswer(question.id, newSelection, timeSpent);
+    selectAnswer(question.id, newSelection, timeSpent); // Non-blocking
 
     setTimeout(() => {
-      if (onComplete && questionIndex === useQuizState.getState().quiz!.questions.length - 1) {
+      if (onComplete && questionIndex === quiz!.questions.length - 1) {
         onComplete();
       } else {
         nextQuestion();
       }
-    }, 300);
+    }, 100);
   };
 
+  // Calculate progress
+  const totalQuestions = quiz?.questions.length || 1;
+  const progressPercent = ((questionIndex + 1) / totalQuestions) * 100;
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={question.id}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.15 }}
-        className="bg-white rounded-2xl shadow-lg p-8 mb-6"
-      >
-        {question.section_label && (
-          <div className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">
-            {question.section_label}
+    <QuizStageLayout
+      showProgress
+      progressPercent={progressPercent}
+      sectionLabel={question.section_label || undefined}
+      overlayImage={question.image_url ? {
+        src: question.image_url,
+        alt: '',
+        anchor: 'bottom-right',
+        maxHeightDesktop: '70vh',
+        maxHeightMobile: '50vh',
+      } : undefined}
+      variant="question"
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={question.id}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.08 }}
+          className="w-full text-center"
+        >
+          <h2 className="text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: 'Figtree', lineHeight: '110%' }}>
+            {question.question_text}
+          </h2>
+
+          {question.question_subtext && (
+            <p className="text-gray-600 mb-2 md:mb-3 text-xs md:text-sm">{question.question_subtext}</p>
+          )}
+
+          <div className="space-y-1.5 md:space-y-2 max-w-xl mx-auto">
+            {question.options.map((option) => (
+              <QuizOption
+                key={option.id}
+                option={option}
+                isSelected={selectedIds.includes(option.id)}
+                onSelect={() => handleSelect(option.id)}
+              />
+            ))}
           </div>
-        )}
-
-        <h2 className="text-2xl font-bold text-gray-900 mb-6" style={{ fontFamily: 'Figtree', lineHeight: '110%' }}>
-          {question.question_text}
-        </h2>
-
-        {question.question_subtext && (
-          <p className="text-gray-600 mb-6">{question.question_subtext}</p>
-        )}
-
-        {question.image_url && (
-          <div className="mb-6 relative w-full aspect-video rounded-xl overflow-hidden">
-            <Image
-              src={question.image_url}
-              alt={question.question_text}
-              fill
-              sizes="(max-width: 768px) 100vw, 66vw"
-              className="object-cover"
-            />
-          </div>
-        )}
-
-        <div className="space-y-3">
-          {question.options.map((option) => (
-            <QuizOption
-              key={option.id}
-              option={option}
-              isSelected={selectedIds.includes(option.id)}
-              onSelect={() => handleSelect(option.id)}
-            />
-          ))}
-        </div>
-      </motion.div>
-    </AnimatePresence>
+        </motion.div>
+      </AnimatePresence>
+    </QuizStageLayout>
   );
 }

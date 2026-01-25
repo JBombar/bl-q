@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
+import { QuizStageLayout } from './QuizStageLayout';
 import type { QuizQuestionWithOptions } from '@/types';
-import Image from 'next/image';
 
 interface LikertScaleQuestionProps {
   question: QuizQuestionWithOptions;
@@ -13,7 +13,7 @@ interface LikertScaleQuestionProps {
 }
 
 export function LikertScaleQuestion({ question, questionIndex, onComplete }: LikertScaleQuestionProps) {
-  const { selectAnswer, nextQuestion, answers } = useQuizState();
+  const { selectAnswer, nextQuestion, answers, quiz } = useQuizState();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [startTime] = useState(Date.now());
 
@@ -21,7 +21,7 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
   useEffect(() => {
     const existingAnswer = answers.find(a => a.questionId === question.id);
     if (existingAnswer && existingAnswer.selectedOptionIds.length > 0) {
-      setSelectedId(existingAnswer.selectedOptionIds[0]);
+      setSelectedId(existingAnswer.selectedOptionIds[0] || null);
     } else {
       setSelectedId(null);
     }
@@ -31,82 +31,82 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
     setSelectedId(optionId);
 
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-    await selectAnswer(question.id, [optionId], timeSpent);
+    selectAnswer(question.id, [optionId], timeSpent); // Non-blocking
 
     // Auto-advance after selection
     setTimeout(() => {
-      if (onComplete && questionIndex === useQuizState.getState().quiz!.questions.length - 1) {
+      if (onComplete && questionIndex === quiz!.questions.length - 1) {
         onComplete();
       } else {
         nextQuestion();
       }
-    }, 300);
+    }, 100);
   };
 
+  // Calculate progress
+  const totalQuestions = quiz?.questions.length || 1;
+  const progressPercent = ((questionIndex + 1) / totalQuestions) * 100;
+
   return (
-    <motion.div
-      key={question.id}
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.15 }}
-      className="bg-white rounded-2xl shadow-lg p-8 mb-6"
+    <QuizStageLayout
+      showProgress
+      progressPercent={progressPercent}
+      sectionLabel={question.section_label || undefined}
+      overlayImage={question.image_url ? {
+        src: question.image_url,
+        alt: '',
+        anchor: 'bottom-right',
+        maxHeightDesktop: '70vh',
+        maxHeightMobile: '50vh',
+      } : undefined}
+      variant="question"
     >
-      {question.section_label && (
-        <div className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">
-          {question.section_label}
+      <motion.div
+        key={question.id}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.08 }}
+        className="w-full text-center"
+      >
+        <h2 className="text-sm md:text-base lg:text-lg font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: 'Figtree', lineHeight: '110%' }}>
+          {question.question_text}
+        </h2>
+
+        {question.question_subtext && (
+          <p className="text-gray-700 mb-3 md:mb-4 text-xs md:text-sm lg:text-base italic">{question.question_subtext}</p>
+        )}
+
+        <div className="grid grid-cols-4 gap-2 md:gap-2.5 mb-3 md:mb-4 max-w-md mx-auto">
+          {question.options.map((option, index) => {
+            const isSelected = selectedId === option.id;
+            const scaleNumber = index + 1;
+
+            return (
+              <motion.button
+                key={option.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleSelect(option.id)}
+                className={`
+                  aspect-square rounded-lg md:rounded-xl flex items-center justify-center text-xl md:text-2xl lg:text-3xl font-bold transition-all
+                  ${isSelected
+                    ? 'bg-[#F9A201] text-white shadow-lg scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }
+                `}
+              >
+                {scaleNumber}
+              </motion.button>
+            );
+          })}
         </div>
-      )}
 
-      <h2 className="text-xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Figtree', fontSize: '18px', fontWeight: 700, lineHeight: '110%' }}>
-        {question.question_text}
-      </h2>
-
-      {question.question_subtext && (
-        <p className="text-gray-700 mb-6 text-lg italic">{question.question_subtext}</p>
-      )}
-
-      {question.image_url && (
-        <div className="mb-6 relative w-full aspect-video rounded-xl overflow-hidden">
-          <Image
-            src={question.image_url}
-            alt={question.question_text}
-            fill
-            sizes="(max-width: 768px) 100vw, 66vw"
-            className="object-cover"
-          />
+        <div className="flex justify-between text-[10px] md:text-xs text-gray-600 max-w-md mx-auto">
+          <span>{question.scale_left_label || ''}</span>
+          <span>{question.scale_right_label || ''}</span>
         </div>
-      )}
-
-      <div className="grid grid-cols-4 gap-3 mb-6">
-        {question.options.map((option, index) => {
-          const isSelected = selectedId === option.id;
-          const scaleNumber = index + 1;
-
-          return (
-            <motion.button
-              key={option.id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleSelect(option.id)}
-              className={`
-                aspect-square rounded-xl flex items-center justify-center text-3xl font-bold transition-all
-                ${isSelected
-                  ? 'bg-[#F9A201] text-white shadow-lg scale-105'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }
-              `}
-            >
-              {scaleNumber}
-            </motion.button>
-          );
-        })}
-      </div>
-
-      <div className="flex justify-between text-sm text-gray-600">
-        <span>{question.scale_left_label || ''}</span>
-        <span>{question.scale_right_label || ''}</span>
-      </div>
-    </motion.div>
+      </motion.div>
+    </QuizStageLayout>
   );
 }

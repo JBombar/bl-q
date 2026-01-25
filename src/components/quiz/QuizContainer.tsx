@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useQuizState } from '@/hooks/useQuizState';
 import { QuizQuestion } from './QuizQuestion';
-import { QuizProgress } from './QuizProgress';
-import { QuizNavigation } from './QuizNavigation';
 import { ResultScreen } from '../results/ResultScreen';
 
 interface QuizContainerProps {
@@ -22,10 +20,10 @@ export function QuizContainer({ slug }: QuizContainerProps) {
 
   if (isLoading && !quiz) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600 mx-auto" />
-          <p className="text-gray-600">Loading quiz...</p>
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-[#F9A201] mx-auto" />
+          <p className="text-gray-600">Načítání...</p>
         </div>
       </div>
     );
@@ -33,9 +31,9 @@ export function QuizContainer({ slug }: QuizContainerProps) {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-gray-50">
         <div className="text-center text-red-600">
-          <p className="text-xl font-semibold">Error</p>
+          <p className="text-xl font-semibold">Chyba</p>
           <p>{error}</p>
         </div>
       </div>
@@ -53,30 +51,16 @@ export function QuizContainer({ slug }: QuizContainerProps) {
   if (!currentQuestion) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-      <div className="mx-auto max-w-3xl">
-        <QuizProgress
-          current={currentQuestionIndex + 1}
-          total={quiz.questions.length}
-        />
-
-        <QuizQuestion
-          question={currentQuestion}
-          questionIndex={currentQuestionIndex}
-          onComplete={async () => {
-            if (currentQuestionIndex === quiz.questions.length - 1) {
-              const data = await useQuizState.getState().completeQuiz();
-              setResultData(data);
-              setShowResult(true);
-            }
-          }}
-        />
-
-        <QuizNavigation
-          currentIndex={currentQuestionIndex}
-          totalQuestions={quiz.questions.length}
-        />
-      </div>
-    </div>
+    <QuizQuestion
+      question={currentQuestion}
+      questionIndex={currentQuestionIndex}
+      onComplete={async () => {
+        if (currentQuestionIndex === quiz.questions.length - 1) {
+          const data = await useQuizState.getState().completeQuiz();
+          setResultData(data);
+          setShowResult(true);
+        }
+      }}
+    />
   );
 }
