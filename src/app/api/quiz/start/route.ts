@@ -23,7 +23,11 @@ export async function POST(request: NextRequest) {
     // Check for existing session or create new one
     let session = await getSessionFromCookie();
 
-    if (!session || session.quiz_id !== quiz.id) {
+    // Create new session if:
+    // 1. No session exists, OR
+    // 2. Session is for different quiz, OR
+    // 3. Session is already completed (retake scenario)
+    if (!session || session.quiz_id !== quiz.id || session.completed_at) {
       session = await createSession(quiz.id, quiz.version);
       await setSessionCookie(session.session_token);
     }

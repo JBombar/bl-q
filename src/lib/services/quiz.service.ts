@@ -56,7 +56,9 @@ export async function saveAnswer(sessionId: string, questionId: string, selected
       selected_option_ids: selectedOptionIds,
       answer_score: answerScore,
       time_spent_seconds: timeSpent,
-    } as any);
+    } as any, {
+      onConflict: 'session_id,question_id'
+    });
 
   if (error) throw new Error(`Failed to save answer: ${error.message}`);
 }

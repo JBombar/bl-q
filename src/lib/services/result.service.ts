@@ -63,7 +63,9 @@ export async function calculateResult(params: CalculateResultParams): Promise<Qu
 
   const { data, error } = await supabase
     .from('quiz_results')
-    .insert(resultData as any)
+    .upsert(resultData as any, {
+      onConflict: 'session_id'
+    })
     .select()
     .single();
 
