@@ -52,7 +52,7 @@ const VARIANT_CONFIGS = {
     contentAlignment: 'flex flex-col items-center justify-start',
     contentMaxWidth: 'max-w-2xl',
     bgClass: 'bg-gray-50',
-    contentPadding: 'px-4 pt-6 pb-2 md:px-6 md:pt-18 md:pb-3',
+    contentPadding: 'px-4 pt-6 pb-4 md:px-6 md:pt-18 md:pb-6',
     hasSafePadding: true, // Add right padding when overlay present
   },
   insert: {
@@ -66,9 +66,9 @@ const VARIANT_CONFIGS = {
   gate: {
     showProgress: false,
     contentAlignment: 'items-center justify-center',
-    contentMaxWidth: 'max-w-md',
+    contentMaxWidth: 'max-w-7xl',
     bgClass: 'bg-white',
-    contentPadding: 'px-4 py-4 md:px-6 md:py-6',
+    contentPadding: 'px-6 py-4 md:px-8 md:py-6',
     hasSafePadding: false,
   },
 };
@@ -156,13 +156,13 @@ export function QuizStageLayout({
 
       {/* CTA ZONE - Fixed at bottom */}
       {showCTA && (
-        <footer className="flex-shrink-0 bg-white border-t border-gray-200 p-3 md:p-4 shadow-lg">
+        <footer className="flex-shrink-0 bg-white border-t border-gray-200 p-4 md:p-4 shadow-2xl sticky bottom-0 z-10">
           <button
             onClick={onCtaClick}
             disabled={ctaDisabled}
             className={cn(
               'w-full max-w-md mx-auto block',
-              'px-6 py-2.5 md:py-3',
+              'px-6 py-3 md:py-3',
               'text-white font-bold text-base md:text-lg',
               'rounded-lg',
               'transition-all duration-200',

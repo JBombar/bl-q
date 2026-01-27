@@ -34,16 +34,16 @@ export function AgeGateScreen({ question, onComplete }: AgeGateScreenProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2 }}
-        className="text-center max-w-4xl mx-auto"
+        className="text-center w-full mx-auto"
       >
-        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: 'Figtree' }}>
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 md:mb-4" style={{ fontFamily: 'Figtree' }}>
           {question.question_text}
         </h1>
         {question.question_subtext && (
-          <p className="text-sm md:text-base lg:text-lg text-gray-700 mb-4 md:mb-6">{question.question_subtext}</p>
+          <p className="text-sm md:text-base lg:text-lg text-gray-700 mb-6 md:mb-8">{question.question_subtext}</p>
         )}
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8 mb-6 md:mb-8">
           {question.options.map((option, index) => (
             <motion.button
               key={option.id}
@@ -53,10 +53,10 @@ export function AgeGateScreen({ question, onComplete }: AgeGateScreenProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleAgeSelect(option.id)}
-              className="bg-white rounded-lg md:rounded-xl shadow-lg hover:shadow-xl transition-all p-3 md:p-4 flex flex-col items-center"
+              className="bg-white rounded-xl md:rounded-2xl shadow-xl hover:shadow-2xl transition-all p-4 md:p-5 flex flex-col items-center"
             >
               {option.image_url && (
-                <div className="relative w-full aspect-square mb-2 md:mb-3 rounded-md md:rounded-lg overflow-hidden">
+                <div className="relative w-full aspect-[3/4] rounded-lg md:rounded-xl overflow-hidden">
                   <Image
                     src={option.image_url}
                     alt={option.option_text}
@@ -66,7 +66,6 @@ export function AgeGateScreen({ question, onComplete }: AgeGateScreenProps) {
                   />
                 </div>
               )}
-              <span className="text-xs md:text-sm lg:text-base font-semibold text-gray-900">{option.option_text}</span>
             </motion.button>
           ))}
         </div>
