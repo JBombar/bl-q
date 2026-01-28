@@ -140,10 +140,11 @@ q04_opts AS (
 
 -- Screen 6: E01 (educational insert)
 e01 AS (
-  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext)
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext, image_url)
   SELECT id, 6, 'education_insert', 'e01',
     'Cesta k vnitřnímu klidu začíná pochopením, že tvé tělo pracuje pro tebe',
-    'Většina žen si myslí, že jejich stres je způsoben nedostatkem peněz na účtu nebo nedostatkem disciplíny v plánování. Pravdou je, že tvůj mozek funguje v režimu přežití. Stres je v našem životě pořád — nemůžeš zastavit déšť, aby tvé napadalo, ale můžeš si vzít „deštník", abys nezmokla. V tomto stavu tvé tělo neustále hledá hrozbu, i když jsi v bezpečí doma. Není to tvá chyba. Je to biologická reakce, kterou nelze „přemýšlet". Musím ji „přeprogramovat" pomocí nástrojů, které mluví přímo k tvému nervovému systému.'
+    'Většina žen si myslí, že jejich stres je způsoben nedostatkem peněz na účtu nebo nedostatkem disciplíny v plánování. Pravdou je, že tvůj mozek funguje v režimu přežití. Stres je v našem životě pořád — nemůžeš zastavit déšť, aby tvé napadalo, ale můžeš si vzít „deštník", abys nezmokla. V tomto stavu tvé tělo neustále hledá hrozbu, i když jsi v bezpečí doma. Není to tvá chyba. Je to biologická reakce, kterou nelze „přemýšlet". Musím ji „přeprogramovat" pomocí nástrojů, které mluví přímo k tvému nervovému systému.',
+    '/images/educational-inserts/e1.png'
   FROM quiz_insert
   RETURNING id
 ),
@@ -238,10 +239,11 @@ q09_opts AS (
 
 -- Screen 12: E02 (educational insert)
 e02 AS (
-  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext)
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext, image_url)
   SELECT id, 12, 'education_insert', 'e02',
     'Tvé tělo si pamatuje víc — ale ty ho můžeš naučit cítit větší lehkost',
-    'Období, která jsi označila jako nejtěžší, nezmizelo jen tak v čase. Tvůj nervový systém si z nich vytvořil „mapu" přežití. Je to biologický bezpečnostní protokol tvého těla, který tě chrání před dalším přetížením. Tato „stará zátěž" v tobě zanechala hluboký otisk, který tě drží v trvalé pohotovosti i když už nebezpečí pominulo. Skutečné řešení není v neustálém rozebírání minulosti, ale v uvolnění tohoto napětí přímo z tvé fyziologie.'
+    'Období, která jsi označila jako nejtěžší, nezmizelo jen tak v čase. Tvůj nervový systém si z nich vytvořil „mapu" přežití. Je to biologický bezpečnostní protokol tvého těla, který tě chrání před dalším přetížením. Tato „stará zátěž" v tobě zanechala hluboký otisk, který tě drží v trvalé pohotovosti i když už nebezpečí pominulo. Skutečné řešení není v neustálém rozebírání minulosti, ale v uvolnění tohoto napětí přímo z tvé fyziologie.',
+    '/images/educational-inserts/e2.png'
   FROM quiz_insert
   RETURNING id
 ),
@@ -315,10 +317,11 @@ q13_opts AS (
 
 -- Screen 17: E03 (educational insert)
 e03 AS (
-  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext)
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext, image_url)
   SELECT id, 17, 'education_insert', 'e03',
     'Tvá únava nebo prokrastinace mají svůj důvod — A není to lenost',
-    'Ať už se snažíš vyčerpaná, nebo jsi často bojuješ s motivací, tvůj nervový systém se ti snaží něco říct. To, co často vnímáme jako únavu, není vždy jen nedostatek spánku — často je to hlas tvého těla, který se unaví chránit tvé zbylývající zdroje před vnitřním napětím. Pokud se v těchto chvílích nutíš k větší produktivitě silou vůle, jen tím zvyšuješ tlak na svůj systém. Více je jako svíčka — po čase se unaví a prostě přestane fungovat. Skutečná únava nemusí znamenat slabou disciplínu, ale stresu vytvářený pocit vnitřního bezpečí a zklidnění tvého nervového systému.'
+    'Ať už se snažíš vyčerpaná, nebo jsi často bojuješ s motivací, tvůj nervový systém se ti snaží něco říct. To, co často vnímáme jako únavu, není vždy jen nedostatek spánku — často je to hlas tvého těla, který se unaví chránit tvé zbylývající zdroje před vnitřním napětím. Pokud se v těchto chvílích nutíš k větší produktivitě silou vůle, jen tím zvyšuješ tlak na svůj systém. Více je jako svíčka — po čase se unaví a prostě přestane fungovat. Skutečná únava nemusí znamenat slabou disciplínu, ale stresu vytvářený pocit vnitřního bezpečí a zklidnění tvého nervového systému.',
+    '/images/educational-inserts/e3.png'
   FROM quiz_insert
   RETURNING id
 ),
@@ -393,10 +396,11 @@ q17_opts AS (
 
 -- Screen 22: E04 (educational insert)
 e04 AS (
-  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext)
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext, image_url)
   SELECT id, 22, 'education_insert', 'e04',
     'Proč tvůj systém volí „bezpečí" místo tvého růstu a ambicí',
-    'Pokud je tvůj vnitřní systém přetížený chronickým stresem, automaticky vypíná „podnikatelské" funkce jako je kreativita, odvaha riskovat, nebo schopnost dělat rychlá rozhodnutí. Naučit se, jak vědomě zklidnit svůj nervový systém a převzít kontrolu nad stresem, je tím prvním a nejdůležitějším krokem k tomu, aby získala zpět svou jasnou mysl, nevyčerpatelnou energii a schopnost jít si nekompromisně za svými sny.'
+    'Pokud je tvůj vnitřní systém přetížený chronickým stresem, automaticky vypíná „podnikatelské" funkce jako je kreativita, odvaha riskovat, nebo schopnost dělat rychlá rozhodnutí. Naučit se, jak vědomě zklidnit svůj nervový systém a převzít kontrolu nad stresem, je tím prvním a nejdůležitějším krokem k tomu, aby získala zpět svou jasnou mysl, nevyčerpatelnou energii a schopnost jít si nekompromisně za svými sny.',
+    '/images/educational-inserts/e4.png'
   FROM quiz_insert
   RETURNING id
 ),
@@ -450,10 +454,11 @@ q20_opts AS (
 
 -- Screen 26: E05 (educational insert - first occurrence)
 e05 AS (
-  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext)
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext, image_url)
   SELECT id, 26, 'education_insert', 'e05',
     'Skutečné vysvobození z vězení stresu',
-    'Většina běžných metod se snaží jen umíčat symptomy. Užívání pilulek je jako vypnout požární alarm, zatímco dům stále hoří. Terapie mluví k tvé mysli, ale stres je fyzicky zapsaný hluboko v tvém nervovém systému. Pokud nezaashneš přímo tam, vnitřní napětí se bude neustále vracet. Skutečná úleva přichází ve chvíli, kdy využiješ metodu vnitřního klidu. Ta nemaskuje problémy, ale přirozeně přepne tvůj biologický systém z neustálého napětí do klidu, síly a kontroly.'
+    'Většina běžných metod se snaží jen umíčat symptomy. Užívání pilulek je jako vypnout požární alarm, zatímco dům stále hoří. Terapie mluví k tvé mysli, ale stres je fyzicky zapsaný hluboko v tvém nervovém systému. Pokud nezaashneš přímo tam, vnitřní napětí se bude neustále vracet. Skutečná úleva přichází ve chvíli, kdy využiješ metodu vnitřního klidu. Ta nemaskuje problémy, ale přirozeně přepne tvůj biologický systém z neustálého napětí do klidu, síly a kontroly.',
+    '/images/educational-inserts/e5.png'
   FROM quiz_insert
   RETURNING id
 ),
@@ -612,7 +617,78 @@ e05_science AS (
   SELECT id, 35, 'validation_info', 'e05_science',
     'Projekt Better Lady byl vyvinut na základě vědeckých postupů',
     'Tvá cesta k lepšímu já se opírá o desítky let vědeckého výzkumu',
-    '/quiz-assets/inserts/e5_logos.webp'
+    '/images/logos.png'
+  FROM quiz_insert
+  RETURNING id
+),
+
+-- ============================================================================
+-- NEW EXTENSION SLIDES (36-40)
+-- ============================================================================
+
+-- Screen 36: Q29 - Experience with the Method
+q29 AS (
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text)
+  SELECT id, 36, 'single_choice', 'q29', 'Máš už nějaké zkušenosti s Metodou vnitřního klidu?'
+  FROM quiz_insert
+  RETURNING id
+),
+q29_opts AS (
+  INSERT INTO quiz_options (question_id, order_index, option_text, option_value, score_value)
+  SELECT id, 0, 'Vůbec ji neznám', 'dont_know', 0 FROM q29
+  UNION ALL SELECT id, 1, 'Něco málo už vím', 'know_little', 0 FROM q29
+  UNION ALL SELECT id, 2, 'Znám ji velmi dobře', 'know_well', 0 FROM q29
+  RETURNING id
+),
+
+-- Screen 37: E06 (educational insert - scientific explanation)
+e06 AS (
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext, image_url)
+  SELECT id, 37, 'education_insert', 'e06',
+    'Krátké vědecké okénko: Co je vlastně Metoda vnitřního klidu?',
+    'Metoda vnitřního klidu je vědecky podložený systém, který cílí přímo na kořen tvého napětí – tvůj nervový systém. Nejedná se o pouhou relaxaci, ale o přesný postup, který během několika minut přepne tvůj organismus z chronického stresu do stavu hlubokého klidu a regenerace.
+
+Celý proces probíhá bez polykání pilulek, bez doplňků stravy a bez potřeby drastických změn tvého denního rozvrhu.',
+    '/images/educational-inserts/e6.png'
+  FROM quiz_insert
+  RETURNING id
+),
+
+-- Screen 38: Q30 - Doctor/therapist recommendation
+q30 AS (
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text)
+  SELECT id, 38, 'single_choice', 'q30', 'Doporučil ti Better Lady lékař nebo terapeut?'
+  FROM quiz_insert
+  RETURNING id
+),
+q30_opts AS (
+  INSERT INTO quiz_options (question_id, order_index, option_text, option_value, score_value)
+  SELECT id, 0, 'Ano', 'yes', 0 FROM q30
+  UNION ALL SELECT id, 1, 'Ne', 'no', 0 FROM q30
+  RETURNING id
+),
+
+-- Screen 39: E07 (educational insert - expert review)
+e07 AS (
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext, image_url)
+  SELECT id, 39, 'education_insert', 'e07',
+    'Tvůj plán osobně zkontroluje náš odborný tým',
+    '„Oceňuji, že Better Lady staví na vědeckých základech. Díky tomu každá žena dostane přesně tu podporu a tipy, které v danou chvíli potřebuje, aby se cítila psychicky v pohodě."
+
+Obsah kontrolovaný odborníkem
+Miroslav Macháček
+Expert na stres a mentální zdraví',
+    '/images/educational-inserts/e7.png'
+  FROM quiz_insert
+  RETURNING id
+),
+
+-- Screen 40: Trust screen - Join 8500 women (no image yet)
+trust_join AS (
+  INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext)
+  SELECT id, 40, 'info_trust', 'trust_join',
+    'Přidej se k více než 8500 ženám',
+    'Staň se součástí rostoucí komunity a dosáhni svých cílů společně s námi!'
   FROM quiz_insert
   RETURNING id
 )

@@ -58,9 +58,9 @@ const VARIANT_CONFIGS = {
   insert: {
     showProgress: false,
     contentAlignment: 'items-center justify-center',
-    contentMaxWidth: 'max-w-lg',
-    bgClass: 'bg-gradient-to-br from-blue-50 to-purple-50',
-    contentPadding: 'px-4 py-4 md:px-6 md:py-6',
+    contentMaxWidth: 'max-w-2xl',
+    bgClass: 'bg-white',
+    contentPadding: 'px-0 py-0',
     hasSafePadding: false,
   },
   gate: {
