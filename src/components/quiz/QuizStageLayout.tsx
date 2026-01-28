@@ -58,6 +58,7 @@ const VARIANT_CONFIGS = {
     bgClass: 'bg-gray-50',
     contentPadding: 'px-4 pt-6 pb-4 md:px-6 md:pt-18 md:pb-6',
     hasSafePadding: true, // Add right padding when overlay present
+    allowScroll: true,
   },
   insert: {
     showProgress: false,
@@ -66,6 +67,7 @@ const VARIANT_CONFIGS = {
     bgClass: 'bg-white',
     contentPadding: 'px-0 py-0',
     hasSafePadding: false,
+    allowScroll: false, // NO SCROLLING for insert screens
   },
   gate: {
     showProgress: false,
@@ -74,6 +76,7 @@ const VARIANT_CONFIGS = {
     bgClass: 'bg-white',
     contentPadding: 'px-6 py-4 md:px-8 md:py-6',
     hasSafePadding: false,
+    allowScroll: false, // NO SCROLLING for gate screens
   },
 };
 
@@ -137,12 +140,12 @@ export function QuizStageLayout({
         </header>
       )}
 
-      {/* CONTENT ZONE - Scrollable if needed (min-h-0 critical for CSS Grid scrolling) */}
+      {/* CONTENT ZONE - Scrollable only for question variant */}
       <main
         className={cn(
           'relative',
           'min-h-0', // Critical: allows overflow scrolling in grid children
-          'overflow-y-auto', // Allow scrolling if content exceeds available space
+          config.allowScroll ? 'overflow-y-auto' : 'overflow-hidden', // Insert/gate variants: NO scroll
           config.contentAlignment
         )}
       >
