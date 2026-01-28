@@ -39,6 +39,10 @@ interface QuizStageLayoutProps {
   ctaDisabled?: boolean;
   onCtaClick?: () => void;
 
+  // Back button configuration
+  showBackButton?: boolean;
+  onBackClick?: () => void;
+
   // Overlay configuration
   overlayImage?: OverlayImageConfig;
 
@@ -82,6 +86,8 @@ export function QuizStageLayout({
   ctaLabel = 'Pokračovat',
   ctaDisabled = false,
   onCtaClick,
+  showBackButton = false,
+  onBackClick,
   overlayImage,
   variant = 'question',
 }: QuizStageLayoutProps) {
@@ -101,6 +107,17 @@ export function QuizStageLayout({
         config.bgClass
       )}
     >
+      {/* BACK BUTTON - Absolute positioned at top left */}
+      {showBackButton && onBackClick && (
+        <button
+          onClick={onBackClick}
+          className="absolute top-4 left-4 z-30 text-2xl md:text-3xl text-gray-700 hover:text-gray-900 transition-colors"
+          aria-label="Zpět"
+        >
+          &lt;
+        </button>
+      )}
+
       {/* HEADER ZONE - Fixed at top */}
       {(shouldShowProgress || sectionLabel) && (
         <header className="flex-shrink-0 bg-white border-b border-gray-200">

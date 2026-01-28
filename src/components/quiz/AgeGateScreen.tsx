@@ -13,7 +13,7 @@ interface AgeGateScreenProps {
 }
 
 export function AgeGateScreen({ question, onComplete }: AgeGateScreenProps) {
-  const { selectAnswer, nextQuestion } = useQuizState();
+  const { selectAnswer, nextQuestion, previousQuestion, currentQuestionIndex } = useQuizState();
   const [startTime] = useState(Date.now());
 
   const handleAgeSelect = async (optionId: string) => {
@@ -25,9 +25,17 @@ export function AgeGateScreen({ question, onComplete }: AgeGateScreenProps) {
     }, 100);
   };
 
+  const handleBack = () => {
+    previousQuestion();
+  };
+
+  const canGoBack = currentQuestionIndex > 0;
+
   return (
     <QuizStageLayout
       showProgress={false}
+      showBackButton={canGoBack}
+      onBackClick={handleBack}
       variant="gate"
     >
       <motion.div

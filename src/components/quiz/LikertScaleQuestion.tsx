@@ -13,9 +13,13 @@ interface LikertScaleQuestionProps {
 }
 
 export function LikertScaleQuestion({ question, questionIndex, onComplete }: LikertScaleQuestionProps) {
-  const { selectAnswer, nextQuestion, answers, quiz } = useQuizState();
+  const { selectAnswer, nextQuestion, previousQuestion, answers, quiz, currentQuestionIndex } = useQuizState();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [startTime] = useState(Date.now());
+
+  const handleBack = () => {
+    previousQuestion();
+  };
 
   // Load existing answer if resuming
   useEffect(() => {
@@ -46,12 +50,15 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
   // Calculate progress
   const totalQuestions = quiz?.questions.length || 1;
   const progressPercent = ((questionIndex + 1) / totalQuestions) * 100;
+  const canGoBack = currentQuestionIndex > 0;
 
   return (
     <QuizStageLayout
       showProgress
       progressPercent={progressPercent}
       sectionLabel={question.section_label || undefined}
+      showBackButton={canGoBack}
+      onBackClick={handleBack}
       overlayImage={question.image_url ? {
         src: question.image_url,
         alt: '',

@@ -12,14 +12,19 @@ interface InsertScreenProps {
 }
 
 export function InsertScreen({ question, onComplete }: InsertScreenProps) {
-  const { nextQuestion } = useQuizState();
+  const { nextQuestion, previousQuestion, currentQuestionIndex } = useQuizState();
 
   const handleContinue = () => {
     nextQuestion();
   };
 
+  const handleBack = () => {
+    previousQuestion();
+  };
+
   const isValidationScreen = question.question_type === 'validation_info';
   const isEducationalInsert = question.question_type === 'education_insert';
+  const canGoBack = currentQuestionIndex > 0;
 
   // Map question_key to image paths for educational inserts
   const getInsertImageUrl = (questionKey: string): string => {
@@ -47,8 +52,11 @@ export function InsertScreen({ question, onComplete }: InsertScreenProps) {
         showCTA
         ctaLabel="Pokračovat"
         onCtaClick={handleContinue}
+        showBackButton={canGoBack}
+        onBackClick={handleBack}
         variant="gate"
       >
+
         {/* Logo at top center */}
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
           <Image
@@ -64,10 +72,10 @@ export function InsertScreen({ question, onComplete }: InsertScreenProps) {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="flex flex-col items-center justify-start h-full text-center px-4 py-8 pt-16"
+          className="flex flex-col items-center justify-start h-full text-center px-4 pt-14 pb-4 md:pt-16 md:pb-6"
         >
           {/* Title - highlighting "vědeckých postupů" in green */}
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4 max-w-md px-2" style={{ fontFamily: 'Figtree', lineHeight: '120%' }}>
+          <h1 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3 max-w-md px-2" style={{ fontFamily: 'Figtree', lineHeight: '120%' }}>
             {question.question_text.split('vědeckých postupů').map((part, idx, arr) => (
               idx < arr.length - 1 ? (
                 <span key={idx}>
@@ -79,13 +87,13 @@ export function InsertScreen({ question, onComplete }: InsertScreenProps) {
 
           {/* Subtitle */}
           {question.question_subtext && (
-            <p className="text-sm md:text-base text-gray-600 mb-6 md:mb-8 max-w-sm px-2" style={{ fontFamily: 'Figtree' }}>
+            <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-5 max-w-sm px-2" style={{ fontFamily: 'Figtree' }}>
               {question.question_subtext}
             </p>
           )}
 
           {/* Logos image */}
-          <div className="w-full max-w-xs mb-4">
+          <div className="w-full max-w-xs mb-2">
             <Image
               src="/images/logos.png"
               alt="Vědecké instituce"
@@ -107,8 +115,11 @@ export function InsertScreen({ question, onComplete }: InsertScreenProps) {
       showCTA
       ctaLabel="Pokračovat"
       onCtaClick={handleContinue}
+      showBackButton={canGoBack}
+      onBackClick={handleBack}
       variant="insert"
     >
+
       {/* Logo at top */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
         <Image
@@ -124,17 +135,17 @@ export function InsertScreen({ question, onComplete }: InsertScreenProps) {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col items-center justify-center h-full text-center px-4 py-8"
+        className="flex flex-col items-center justify-center h-full text-center px-4 pt-14 pb-4 md:pt-16 md:pb-6"
       >
         {/* Main illustration - large and prominent */}
         {insertImageUrl && (
-          <div className="relative w-full max-w-sm mb-6 md:mb-8">
+          <div className="relative w-full max-w-xs md:max-w-sm mb-4 md:mb-5">
             <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
               <Image
                 src={insertImageUrl}
                 alt={question.question_text}
                 fill
-                sizes="(max-width: 768px) 90vw, 400px"
+                sizes="(max-width: 768px) 80vw, 400px"
                 className="object-contain"
                 priority
               />
@@ -144,7 +155,7 @@ export function InsertScreen({ question, onComplete }: InsertScreenProps) {
 
         {/* Headline - green color matching Figma */}
         <h2
-          className="text-base md:text-lg lg:text-xl font-bold mb-4 md:mb-5 max-w-lg px-2"
+          className="text-sm md:text-base lg:text-lg font-bold mb-3 md:mb-4 max-w-lg px-2"
           style={{
             fontFamily: 'Figtree',
             lineHeight: '120%',
@@ -157,14 +168,14 @@ export function InsertScreen({ question, onComplete }: InsertScreenProps) {
         {/* Body text - gray, readable */}
         {question.question_subtext && (
           <div
-            className="text-gray-700 leading-relaxed text-sm md:text-base max-w-lg px-2"
+            className="text-gray-700 leading-relaxed text-xs md:text-sm max-w-lg px-2"
             style={{
               fontFamily: 'Figtree',
-              lineHeight: '150%'
+              lineHeight: '140%'
             }}
           >
             {question.question_subtext.split('\n\n').map((paragraph, idx) => (
-              <p key={idx} className={idx > 0 ? 'mt-4' : ''}>
+              <p key={idx} className={idx > 0 ? 'mt-3' : ''}>
                 {paragraph}
               </p>
             ))}

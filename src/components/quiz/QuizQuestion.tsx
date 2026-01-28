@@ -45,9 +45,13 @@ export function QuizQuestion({ question, questionIndex, onComplete }: QuizQuesti
 
 // Default single choice component (original logic)
 function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuestionProps) {
-  const { selectAnswer, nextQuestion, answers, quiz } = useQuizState();
+  const { selectAnswer, nextQuestion, previousQuestion, answers, quiz, currentQuestionIndex } = useQuizState();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [startTime] = useState(Date.now());
+
+  const handleBack = () => {
+    previousQuestion();
+  };
 
   // Load existing answer if resuming
   useEffect(() => {
@@ -78,12 +82,15 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
   // Calculate progress
   const totalQuestions = quiz?.questions.length || 1;
   const progressPercent = ((questionIndex + 1) / totalQuestions) * 100;
+  const canGoBack = currentQuestionIndex > 0;
 
   return (
     <QuizStageLayout
       showProgress
       progressPercent={progressPercent}
       sectionLabel={question.section_label || undefined}
+      showBackButton={canGoBack}
+      onBackClick={handleBack}
       overlayImage={question.image_url ? {
         src: question.image_url,
         alt: '',

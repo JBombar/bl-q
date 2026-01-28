@@ -13,9 +13,13 @@ interface MultiChoiceQuestionProps {
 }
 
 export function MultiChoiceQuestion({ question, questionIndex, onComplete }: MultiChoiceQuestionProps) {
-  const { selectAnswer, nextQuestion, answers, quiz } = useQuizState();
+  const { selectAnswer, nextQuestion, previousQuestion, answers, quiz, currentQuestionIndex } = useQuizState();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [startTime] = useState(Date.now());
+
+  const handleBack = () => {
+    previousQuestion();
+  };
 
   // Load existing answer if resuming
   useEffect(() => {
@@ -53,6 +57,7 @@ export function MultiChoiceQuestion({ question, questionIndex, onComplete }: Mul
   // Calculate progress
   const totalQuestions = quiz?.questions.length || 1;
   const progressPercent = ((questionIndex + 1) / totalQuestions) * 100;
+  const canGoBack = currentQuestionIndex > 0;
 
   return (
     <QuizStageLayout
@@ -63,6 +68,8 @@ export function MultiChoiceQuestion({ question, questionIndex, onComplete }: Mul
       ctaLabel="Pokračovat"
       ctaDisabled={selectedIds.length === 0}
       onCtaClick={handleContinue}
+      showBackButton={canGoBack}
+      onBackClick={handleBack}
       overlayImage={question.image_url ? {
         src: question.image_url,
         alt: '',
