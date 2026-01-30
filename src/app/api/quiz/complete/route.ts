@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionFromCookie, updateSession } from '@/lib/services/session.service';
-import { calculateResult } from '@/lib/services/result.service';
+import { calculateResult, getExistingResult } from '@/lib/services/result.service';
 import { trackEvent, EVENT_TYPES } from '@/lib/services/analytics.service';
 import { supabase } from '@/lib/supabase/client';
 
@@ -27,6 +27,20 @@ export async function POST(request: NextRequest) {
 
     const quizData = quiz as any;
 
+    // Idempotency: if session already completed, return existing result
+    if (session.completed_at) {
+      const existingResult = await getExistingResult(session.id);
+      if (existingResult) {
+        const offer = quizData.offer_mapping[existingResult.result_value] ||
+          Object.values(quizData.offer_mapping)[0];
+        return NextResponse.json({
+          result: existingResult,
+          offer,
+          cached: true,
+        });
+      }
+    }
+
     // Calculate result
     const result = await calculateResult({
       sessionId: session.id,
@@ -43,7 +57,11 @@ export async function POST(request: NextRequest) {
     await trackEvent(EVENT_TYPES.QUIZ_COMPLETED, {
       sessionId: session.id,
       quizId: session.quiz_id,
-      eventData: { resultValue: result.result_value, resultScore: result.result_score },
+      eventData: {
+        resultValue: result.result_value,
+        resultScore: result.result_score,
+        calculationDetails: result.calculation_details,
+      },
     });
 
     // Get offer from mapping
