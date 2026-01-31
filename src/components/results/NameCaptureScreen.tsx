@@ -49,7 +49,7 @@ export function NameCaptureScreen({ onSubmit, isSaving }: NameCaptureScreenProps
   return (
     <StageLayout
       variant="result"
-      bgClass="bg-gradient-to-b from-green-50 to-white"
+      bgClass="bg-linear-to-b from-green-50 to-white"
       showCTA
       ctaLabel={isSaving ? 'Ukladam...' : 'Pokracovat'}
       ctaDisabled={isSaving || !firstName.trim()}

@@ -42,9 +42,9 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
   return (
     <StageLayout
       showProgress={false}
+      variant="gate"
       showBackButton={canGoBack}
       onBackClick={handleBack}
-      variant="gate"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}

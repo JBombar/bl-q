@@ -34,6 +34,11 @@ export function StressStateScreen({ insights, onContinue }: StressStateScreenPro
   // Get segment label (Nizka, Mirna, Stredni, Vysoka)
   const segmentLabel = STRESS_STAGE_CONFIG.segmentLabels[stressStage];
 
+  const handleBack = () => {
+    // TODO: Implement back navigation if needed
+    console.log('Back button clicked');
+  };
+
   return (
     <StageLayout
       variant="result"
@@ -41,11 +46,8 @@ export function StressStateScreen({ insights, onContinue }: StressStateScreenPro
       showCTA
       ctaLabel="Pokračovat"
       onCtaClick={onContinue}
-      showBackButton
-      onBackClick={() => {
-        // TODO: Implement back navigation if needed
-        console.log('Back button clicked');
-      }}
+      showBackButton={true}
+      onBackClick={handleBack}
     >
       {/* Header with Better Lady logo and title */}
       <ResultHeader

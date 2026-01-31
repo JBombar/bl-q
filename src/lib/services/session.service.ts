@@ -40,7 +40,7 @@ export async function getSession(sessionToken: string): Promise<QuizSession | nu
   const session = data as QuizSession;
 
   // Check if expired
-  if (new Date(session.expires_at) < new Date()) {
+  if (session.expires_at && new Date(session.expires_at) < new Date()) {
     return null;
   }
 

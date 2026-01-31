@@ -23,14 +23,15 @@ export async function POST(request: NextRequest) {
     await saveAnswer(session.id, questionId, selectedOptionIds, timeSpentSeconds);
 
     // Update session progress
-    const newIndex = session.current_question_index + 1;
+    const currentIndex = session.current_question_index ?? 0;
+    const newIndex = currentIndex + 1;
     await updateSession(session.id, { current_question_index: newIndex });
 
     // Track event
     await trackEvent(EVENT_TYPES.ANSWER_SAVED, {
       sessionId: session.id,
       quizId: session.quiz_id,
-      eventData: { questionId, questionIndex: session.current_question_index },
+      eventData: { questionId, questionIndex: currentIndex },
     });
 
     return NextResponse.json({

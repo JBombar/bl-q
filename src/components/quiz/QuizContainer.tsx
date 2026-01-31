@@ -49,7 +49,7 @@ export function QuizContainer({ slug }: QuizContainerProps) {
     // TODO: Implement actual offer/sales page
     // For now, show a placeholder that can be replaced with the real offer page
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-linear-to-b from-purple-50 to-white flex flex-col items-center justify-center p-4">
         <div className="text-center max-w-md">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             Tvuj plan je pripraven!

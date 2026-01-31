@@ -42,7 +42,11 @@ export async function POST(request: NextRequest) {
         const insights = await getQuizInsights(session.id, session.quiz_id, normalizedScore);
 
         // Extract funnel state for resume functionality
-        const funnelState = extractFunnelState(session.user_metadata);
+        const funnelState = extractFunnelState(
+          session.user_metadata && typeof session.user_metadata === 'object' && !Array.isArray(session.user_metadata)
+            ? session.user_metadata as Record<string, unknown>
+            : null
+        );
 
         return NextResponse.json({
           result: existingResult,
@@ -87,7 +91,11 @@ export async function POST(request: NextRequest) {
     const insights = await getQuizInsights(session.id, session.quiz_id, normalizedScore);
 
     // Extract funnel state (will be null for first completion)
-    const funnelState = extractFunnelState(session.user_metadata);
+    const funnelState = extractFunnelState(
+      session.user_metadata && typeof session.user_metadata === 'object' && !Array.isArray(session.user_metadata)
+        ? session.user_metadata as Record<string, unknown>
+        : null
+    );
 
     return NextResponse.json({
       result,

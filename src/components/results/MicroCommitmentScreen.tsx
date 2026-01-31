@@ -36,7 +36,7 @@ export function MicroCommitmentScreen({ screenId, onAnswer, isSaving }: MicroCom
   return (
     <StageLayout
       variant="result"
-      bgClass="bg-gradient-to-b from-blue-50 to-white"
+      bgClass="bg-linear-to-b from-blue-50 to-white"
     >
       {/* Progress ring */}
       <div className="flex flex-col items-center justify-center pt-12 md:pt-16 lg:pt-20">

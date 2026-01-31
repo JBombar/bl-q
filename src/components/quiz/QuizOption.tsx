@@ -25,7 +25,7 @@ export const QuizOption = memo(function QuizOption({ option, isSelected, onSelec
     >
       <div className="flex items-center">
         <div className={`
-          w-4 h-4 md:w-5 md:h-5 rounded-full mr-2 md:mr-3 flex-shrink-0 border-2 flex items-center justify-center
+          w-4 h-4 md:w-5 md:h-5 rounded-full mr-2 md:mr-3 shrink-0 border-2 flex items-center justify-center
           ${isSelected
             ? 'bg-[#F9A201] border-[#F9A201]'
             : 'border-gray-300 bg-white'

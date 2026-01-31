@@ -60,20 +60,23 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
         showCTA
         ctaLabel="Pokračovat"
         onCtaClick={handleContinue}
+        variant="gate"
         showBackButton={canGoBack}
         onBackClick={handleBack}
-        variant="gate"
       >
 
-        {/* Logo at top center */}
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-          <Image
-            src="/images/betterlady-logo.svg"
-            alt="Better Lady"
-            width={140}
-            height={32}
-            className="h-7 md:h-8 w-auto"
-          />
+        {/* Header with logo */}
+        <div className="absolute top-2 md:top-4 left-0 right-0 z-10">
+          <div className="flex items-center justify-center">
+            {/* Logo - centered */}
+            <Image
+              src="/images/betterlady-logo.svg"
+              alt="Better Lady"
+              width={140}
+              height={32}
+              className="h-7 md:h-8 w-auto"
+            />
+          </div>
         </div>
 
         <motion.div
@@ -123,20 +126,23 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
       showCTA
       ctaLabel="Pokračovat"
       onCtaClick={handleContinue}
+      variant="insert"
       showBackButton={canGoBack}
       onBackClick={handleBack}
-      variant="insert"
     >
 
-      {/* Logo at top */}
-      <div className="absolute top-2 md:top-2 left-1/2 transform -translate-x-1/2 z-10">
-        <Image
-          src="/images/betterlady-logo.svg"
-          alt="Better Lady"
-          width={140}
-          height={32}
-          className="h-5 md:h-6 w-auto"
-        />
+      {/* Header with logo */}
+      <div className="absolute top-2 md:top-4 left-0 right-0 z-10">
+        <div className="flex items-center justify-center">
+          {/* Logo - centered */}
+          <Image
+            src="/images/betterlady-logo.svg"
+            alt="Better Lady"
+            width={140}
+            height={32}
+            className="h-5 md:h-6 w-auto"
+          />
+        </div>
       </div>
 
       <motion.div

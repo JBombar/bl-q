@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import type { QuizResult, QuizResultInsert } from '@/types';
+import type { QuizResult, QuizResultInsert, Json } from '@/types';
 
 // Question types that contribute to scoring
 const SCORING_QUESTION_TYPES = [
@@ -169,7 +169,7 @@ export async function calculateResult(params: CalculateResultParams): Promise<Qu
     recommended_product_name: offer?.productName,
     recommended_price_cents: offer?.priceCents,
     calculation_method: 'weighted_sum',
-    calculation_details: calculationDetails as unknown as Record<string, unknown>,
+    calculation_details: calculationDetails as unknown as Json,
   };
 
   const { data, error } = await supabase

@@ -46,7 +46,7 @@ export function ProjectionScreen({
   return (
     <StageLayout
       variant="result"
-      bgClass="bg-gradient-to-b from-indigo-50 to-white"
+      bgClass="bg-linear-to-b from-indigo-50 to-white"
       showCTA
       ctaLabel="Pokracovat"
       onCtaClick={onContinue}

@@ -16,6 +16,7 @@
  */
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { OverlayImage } from '../quiz/OverlayImage';
 
@@ -109,6 +110,7 @@ export function StageLayout({
   variant = 'question',
   bgClass, // NEW: Custom background class
 }: StageLayoutProps) {
+  const router = useRouter();
   const config = VARIANT_CONFIGS[variant];
 
   // Override showProgress if variant has default
@@ -116,6 +118,15 @@ export function StageLayout({
 
   // Use custom bgClass if provided, otherwise use variant default
   const backgroundClass = bgClass || config.bgClass;
+
+  // Universal back button handler with router fallback
+  const handleBackClick = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      router.back();
+    }
+  };
 
   return (
     <div
@@ -128,33 +139,43 @@ export function StageLayout({
         backgroundClass
       )}
     >
-      {/* BACK BUTTON - Absolute positioned at top left */}
-      {showBackButton && onBackClick && (
-        <button
-          onClick={onBackClick}
-          className="absolute top-4 left-4 z-30 text-2xl md:text-3xl text-gray-700 hover:text-gray-900 transition-colors"
-          aria-label="Zpět"
-        >
-          &lt;
-        </button>
-      )}
-
       {/* HEADER ZONE - Fixed at top */}
-      {(shouldShowProgress || sectionLabel) && (
-        <header className="flex-shrink-0 bg-white border-b border-gray-200">
+      {(shouldShowProgress || sectionLabel || showBackButton) && (
+        <header className="shrink-0 bg-white border-b border-gray-200 relative">
+          {/* Progress bar */}
           {shouldShowProgress && (
-            <div className="relative h-1 md:h-1.5 bg-gray-200">
+            <div className="absolute top-0 left-0 right-0 h-1 md:h-1.5 bg-gray-200">
               <div
                 className="absolute inset-y-0 left-0 bg-[#F9A201] transition-all duration-150"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
           )}
-          {sectionLabel && (
-            <div className="py-2 px-4 text-center">
-              <p className="text-xs md:text-sm font-medium text-gray-600">{sectionLabel}</p>
+
+          <div className="px-4 py-2 flex items-center min-h-[44px]">
+            {/* Left: Back Button */}
+            <div className="w-10 shrink-0 flex items-center justify-start">
+              {showBackButton && (
+                <button
+                  onClick={handleBackClick}
+                  className="text-2xl text-gray-600 hover:text-gray-900 transition-colors p-1 -ml-1"
+                  aria-label="Zpět"
+                >
+                  &lt;
+                </button>
+              )}
             </div>
-          )}
+
+            {/* Center: Section Label */}
+            <div className="flex-1 text-center">
+              {sectionLabel && (
+                <p className="text-xs md:text-sm font-medium text-gray-600">{sectionLabel}</p>
+              )}
+            </div>
+
+            {/* Right: Spacer for centering */}
+            <div className="w-10 shrink-0" />
+          </div>
         </header>
       )}
 
@@ -194,7 +215,7 @@ export function StageLayout({
 
       {/* CTA ZONE - Fixed at bottom */}
       {showCTA && (
-        <footer className="flex-shrink-0 bg-white border-t border-gray-200 p-4 md:p-4 shadow-2xl sticky bottom-0 z-10">
+        <footer className="shrink-0 bg-white border-t border-gray-200 p-4 md:p-4 shadow-2xl sticky bottom-0 z-10">
           <button
             onClick={onCtaClick}
             disabled={ctaDisabled}

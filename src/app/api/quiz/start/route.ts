@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     // 2. Session is for different quiz, OR
     // 3. Session is already completed (retake scenario)
     if (!session || session.quiz_id !== quiz.id || session.completed_at) {
-      session = await createSession(quiz.id, quiz.version);
+      session = await createSession(quiz.id, quiz.version ?? 1);
       await setSessionCookie(session.session_token);
     }
 

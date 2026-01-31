@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import type { QuizEventInsert } from '@/types';
+import type { QuizEventInsert, Json } from '@/types';
 
 export const EVENT_TYPES = {
   SESSION_STARTED: 'session_started',
@@ -29,7 +29,7 @@ export async function trackEvent(
     session_id: data.sessionId,
     quiz_id: data.quizId,
     event_type: eventType,
-    event_data: data.eventData || {},
+    event_data: (data.eventData || {}) as Json,
     user_agent: data.userAgent,
     ip_address: data.ipAddress,
   };

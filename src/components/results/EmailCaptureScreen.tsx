@@ -41,7 +41,7 @@ export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenPro
   return (
     <StageLayout
       variant="result"
-      bgClass="bg-gradient-to-b from-pink-50 to-white"
+      bgClass="bg-linear-to-b from-pink-50 to-white"
       showCTA
       ctaLabel={isSaving ? 'Ukladam...' : 'Zobrazit me vysledky'}
       ctaDisabled={isSaving || !email.trim()}
