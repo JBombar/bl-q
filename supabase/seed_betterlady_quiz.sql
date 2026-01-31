@@ -53,17 +53,17 @@ screen_age AS (
 ),
 age_options AS (
   INSERT INTO quiz_options (question_id, order_index, option_text, option_value, score_value, image_url)
-  SELECT id, 0, 'Věk: 18–29', 'age_18_29', 0, '/quiz-assets/age/age1.webp' FROM screen_age
-  UNION ALL SELECT id, 1, 'Věk: 30–39', 'age_30_39', 0, '/quiz-assets/age/age2.webp' FROM screen_age
-  UNION ALL SELECT id, 2, 'Věk: 40–49', 'age_40_49', 0, '/quiz-assets/age/age3.webp' FROM screen_age
-  UNION ALL SELECT id, 3, 'Věk: 50+', 'age_50_plus', 0, '/quiz-assets/age/age4.webp' FROM screen_age
+  SELECT id, 0, 'Věk: 18–29', 'age_18_29', 0, '/quiz-assets/age/age1.png' FROM screen_age
+  UNION ALL SELECT id, 1, 'Věk: 30–39', 'age_30_39', 0, '/quiz-assets/age/age2.png' FROM screen_age
+  UNION ALL SELECT id, 2, 'Věk: 40–49', 'age_40_49', 0, '/quiz-assets/age/age3.png' FROM screen_age
+  UNION ALL SELECT id, 3, 'Věk: 50+', 'age_50_plus', 0, '/quiz-assets/age/age4.png' FROM screen_age
   RETURNING id
 ),
 
 -- Screen 1: Trust
 screen_trust AS (
   INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, question_text, question_subtext, image_url)
-  SELECT id, 1, 'info_trust', 'trust', 'Více než 8500 žen', 'důvěřuje Better Lady', '/quiz-assets/trust/trust_image.webp'
+  SELECT id, 1, 'info_trust', 'trust', 'Více než 8500 žen', 'důvěřuje Better Lady', '/quiz-assets/trust/trust_image.png'
   FROM quiz_insert
   RETURNING id
 ),

@@ -32,23 +32,25 @@ export function ProjectionGraph({ currentScore, targetScore, targetDate }: Proje
   const months = getMonthLabels(new Date(), targetDate);
   const xScale = (index: number) => padding.left + (index / (months.length - 1)) * graphWidth;
 
-  // Calculate curve control point for smooth decay
+  // Calculate curve control points for smooth decay
   const startX = xScale(0);
   const startY = yScale(currentScore);
   const endX = xScale(months.length - 1);
   const endY = yScale(targetScore);
 
-  // Bezier curve for natural decay
-  const midX = startX + graphWidth * 0.4;
-  const midY = startY + (endY - startY) * 0.3;
+  // Cubic Bezier curve for smooth, natural decay with pronounced curve
+  const controlPoint1X = startX + graphWidth * 0.3;
+  const controlPoint1Y = startY - (startY - endY) * 0.1; // Slight dip at start
+  const controlPoint2X = startX + graphWidth * 0.7;
+  const controlPoint2Y = endY - (startY - endY) * 0.1; // Smooth approach to end
 
-  const curvePath = `M ${startX} ${startY} Q ${midX} ${midY} ${endX} ${endY}`;
+  const curvePath = `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
 
   // Area under curve
   const areaPath = `${curvePath} L ${endX} ${yScale(0)} L ${startX} ${yScale(0)} Z`;
 
   return (
-    <div className="w-full max-w-sm mx-auto">
+    <div className="w-full mx-auto bg-white rounded-xl p-4 shadow-sm border border-gray-100">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
         {/* Grid lines */}
         {[0, 20, 40, 60].map((value) => (

@@ -42,60 +42,56 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
       onCtaClick={handleContinue}
       showBackButton={canGoBack}
       onBackClick={handleBack}
-      variant={isJoinScreen ? 'insert' : 'gate'}
+      variant="insert"
+      bgClass="bg-white"
     >
-
-      {/* Logo at top for join screen */}
-      {isJoinScreen && (
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
-          <Image
-            src="/images/betterlady-logo.svg"
-            alt="Better Lady"
-            width={140}
-            height={32}
-            className="h-5 md:h-6 w-auto"
-          />
-        </div>
-      )}
+      {/* Logo at top */}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+        <Image
+          src="/images/betterlady-logo.svg"
+          alt="Better Lady"
+          width={140}
+          height={32}
+          className="h-6 md:h-7 w-auto"
+        />
+      </div>
 
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className={isJoinScreen ? 'flex flex-col items-center justify-start h-full text-center px-4 pt-7 pb-2 md:pt-10 md:pb-3' : 'text-center max-w-2xl mx-auto'}
+        className="flex flex-col items-center justify-center h-full text-center px-6 pt-18"
       >
-        {/* Map image for join screen */}
-        {isJoinScreen && question.image_url && (
-          <div className="relative w-full max-w-[260px] md:max-w-[380px] mb-1 md:mb-2">
-            <div className="relative w-full" style={{ aspectRatio: '2/1' }}>
+        {/* Title */}
+        <h1
+          className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 text-[#2D5F4C]"
+          style={{ fontFamily: 'Figtree', lineHeight: '110%' }}
+        >
+          {question.question_text}
+        </h1>
+        
+        {/* Subtitle */}
+        {question.question_subtext && (
+          <p className="text-base md:text-lg text-gray-700 mb-8">
+            {question.question_subtext}
+          </p>
+        )}
+
+        {/* Image */}
+        {question.image_url && (
+          <div className="relative w-full max-w-[280px] md:max-w-[340px]">
+            <div className="relative w-full aspect-3/4">
               <Image
                 src={question.image_url}
                 alt={question.question_text}
                 fill
-                sizes="(max-width: 768px) 260px, 380px"
+                sizes="(max-width: 768px) 280px, 340px"
                 className="object-contain"
+                quality={95}
                 priority
               />
             </div>
           </div>
-        )}
-
-        <h1
-          className={isJoinScreen
-            ? 'text-xs md:text-sm lg:text-base font-bold mb-1 md:mb-2 max-w-lg px-2'
-            : 'text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 md:mb-3'
-          }
-          style={isJoinScreen ? { fontFamily: 'Figtree', lineHeight: '115%', color: '#2D5F4C' } : { fontFamily: 'Figtree' }}
-        >
-          {question.question_text}
-        </h1>
-        {question.question_subtext && (
-          <p className={isJoinScreen
-            ? 'text-gray-700 leading-relaxed text-[11px] md:text-xs max-w-lg px-2'
-            : 'text-base md:text-lg lg:text-xl text-gray-700 mb-4 md:mb-6'
-          }>
-            {question.question_subtext}
-          </p>
         )}
       </motion.div>
     </StageLayout>

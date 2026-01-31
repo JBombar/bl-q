@@ -52,9 +52,9 @@ export function ProjectionScreen({
       onCtaClick={onContinue}
     >
       {/* Header */}
-      <div className="text-center mb-4">
+      <div className="text-center mb-6">
         <motion.h1
-          className="text-2xl font-bold text-gray-800 mb-2"
+          className="text-2xl font-bold text-gray-800 mb-3"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >

@@ -72,13 +72,15 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
               className="bg-white rounded-xl md:rounded-2xl shadow-xl hover:shadow-2xl transition-all p-4 md:p-5 flex flex-col items-center"
             >
               {option.image_url && (
-                <div className="relative w-full aspect-[3/4] rounded-lg md:rounded-xl overflow-hidden">
+                <div className="relative w-full aspect-3/4 rounded-lg md:rounded-xl overflow-hidden">
                   <Image
                     src={option.image_url}
                     alt={option.option_text}
                     fill
                     sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover"
+                    quality={95}
+                    priority
                   />
                 </div>
               )}
