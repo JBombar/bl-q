@@ -44,15 +44,15 @@ interface InsightCardProps {
 export function InsightCard({ card, index }: InsightCardProps) {
   return (
     <motion.div
-      className="bg-white rounded-xl p-3 shadow-sm border-2 border-blue-200"
+      className="bg-white rounded-xl p-2.5 shadow-sm border-2 border-blue-200"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 * index + 0.6 }}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         {/* Icon + Label */}
         <div className="flex items-center gap-2">
-          <div className="shrink-0 text-xl">
+          <div className="shrink-0 text-lg">
             {icons[card.icon] || icons.target}
           </div>
           <p className="text-xs text-gray-600 font-medium">
@@ -60,12 +60,11 @@ export function InsightCard({ card, index }: InsightCardProps) {
           </p>
         </div>
 
-        {/* Value + (DYNAMIC) */}
+        {/* Value */}
         <div>
           <p className="text-sm font-semibold text-gray-800">
             {card.value}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5">(DYNAMIC)</p>
         </div>
       </div>
     </motion.div>

@@ -28,6 +28,8 @@ export async function getAnchorQuestionAnswers(
   // Get anchor question IDs by their keys
   const anchorKeys = INSIGHT_CARD_CONFIG.cards.map(c => c.questionKey);
 
+  console.log('[Insights] Looking for anchor questions:', anchorKeys);
+
   const { data: questions, error: questionsError } = await supabase
     .from('quiz_questions')
     .select('id, question_key')
@@ -35,9 +37,12 @@ export async function getAnchorQuestionAnswers(
     .in('question_key', anchorKeys);
 
   if (questionsError || !questions?.length) {
-    console.error('Failed to fetch anchor questions:', questionsError);
+    console.error('[Insights] Failed to fetch anchor questions:', questionsError);
+    console.error('[Insights] Expected keys:', anchorKeys);
     return [];
   }
+
+  console.log('[Insights] Found anchor questions:', questions);
 
   // Cast to expected type
   const questionsData = questions as Array<{ id: string; question_key: string | null }>;
@@ -60,9 +65,13 @@ export async function getAnchorQuestionAnswers(
     .in('question_id', questionIds);
 
   if (answersError || !answers?.length) {
-    console.error('Failed to fetch anchor answers:', answersError);
+    console.error('[Insights] Failed to fetch anchor answers:', answersError);
+    console.error('[Insights] Session ID:', sessionId);
+    console.error('[Insights] Question IDs:', questionIds);
     return [];
   }
+
+  console.log('[Insights] Found answers:', answers);
 
   // Cast to expected type
   const answersData = answers as Array<{ question_id: string; selected_option_ids: string[] }>;
@@ -80,9 +89,12 @@ export async function getAnchorQuestionAnswers(
     .in('id', allOptionIds);
 
   if (optionsError || !options?.length) {
-    console.error('Failed to fetch option texts:', optionsError);
+    console.error('[Insights] Failed to fetch option texts:', optionsError);
+    console.error('[Insights] Option IDs:', allOptionIds);
     return [];
   }
+
+  console.log('[Insights] Found options:', options);
 
   // Cast to expected type
   const optionsData = options as Array<{ id: string; option_text: string }>;
@@ -114,6 +126,7 @@ export async function getAnchorQuestionAnswers(
     });
   }
 
+  console.log('[Insights] Final anchor answers:', result);
   return result;
 }
 

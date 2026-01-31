@@ -88,7 +88,7 @@ const VARIANT_CONFIGS = {
     contentAlignment: 'flex flex-col items-center justify-start',
     contentMaxWidth: 'max-w-2xl',
     bgClass: 'bg-white', // Default (can be overridden by bgClass prop)
-    contentPadding: 'px-4 pt-6 pb-4 md:px-6',
+    contentPadding: 'px-4 pt-3 pb-2 md:px-6',
     hasSafePadding: false,
     allowScroll: true, // Results screens may need scrolling
   },

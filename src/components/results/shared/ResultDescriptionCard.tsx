@@ -24,8 +24,8 @@ export function ResultDescriptionCard({
   return (
     <motion.div
       className={cn(
-        'rounded-xl shadow-sm border mb-6 mx-4',
-        variant === 'compact' ? 'p-3' : 'p-4',
+        'rounded-xl shadow-sm border mb-3 mx-4',
+        variant === 'compact' ? 'p-2.5' : 'p-3',
         stressStage === 1 && 'bg-green-50 border-green-200',
         stressStage === 2 && 'bg-yellow-50 border-yellow-200',
         stressStage === 3 && 'bg-orange-50 border-orange-200',
@@ -35,11 +35,11 @@ export function ResultDescriptionCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2.5">
         {/* Warning Icon */}
         <div
           className={cn(
-            'shrink-0 w-8 h-8 rounded-full flex items-center justify-center',
+            'shrink-0 w-7 h-7 rounded-full flex items-center justify-center',
             stressStage === 1 && 'bg-green-500',
             stressStage === 2 && 'bg-yellow-500',
             stressStage === 3 && 'bg-orange-500',
@@ -65,7 +65,7 @@ export function ResultDescriptionCard({
         <div className="flex-1 min-w-0">
           <h3
             className={cn(
-              'font-bold mb-1',
+              'text-sm font-bold mb-0.5',
               stressStage === 1 && 'text-green-900',
               stressStage === 2 && 'text-yellow-900',
               stressStage === 3 && 'text-orange-900',
@@ -74,7 +74,7 @@ export function ResultDescriptionCard({
           >
             {title}
           </h3>
-          <p className="text-sm text-gray-700 leading-relaxed">{description}</p>
+          <p className="text-xs text-gray-700 leading-relaxed">{description}</p>
         </div>
       </div>
     </motion.div>

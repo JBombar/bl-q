@@ -22,16 +22,16 @@ export function ResultHeader({
   showLogo = true,
 }: ResultHeaderProps) {
   return (
-    <div className={cn('mb-6', variant === 'centered' ? 'text-center' : 'text-left')}>
+    <div className={cn('mb-3', variant === 'centered' ? 'text-center' : 'text-left')}>
       {/* Better Lady Logo */}
       {showLogo && (
         <motion.div
-          className="flex justify-center mb-4"
+          className="flex justify-center mb-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <Image
-            src="/images/logo/betterlady-logo.svg"
+            src="/images/betterlady-logo.svg"
             alt="Better Lady"
             width={120}
             height={30}
@@ -42,7 +42,7 @@ export function ResultHeader({
 
       {/* Title */}
       <motion.h1
-        className="text-xl md:text-2xl font-bold text-gray-900 mb-2 px-4"
+        className="text-lg md:text-xl font-bold text-gray-900 px-4"
         style={{ fontFamily: 'Figtree', lineHeight: '1.2' }}
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}

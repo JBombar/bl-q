@@ -16,13 +16,13 @@ interface InsightCardsSectionProps {
 export function InsightCardsSection({ title, cards }: InsightCardsSectionProps) {
   return (
     <motion.div
-      className="mb-6 px-4"
+      className="mb-3 px-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.6 }}
     >
       {title && (
-        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
+        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
           {title}
         </h3>
       )}

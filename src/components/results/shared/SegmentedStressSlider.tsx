@@ -21,34 +21,23 @@ export function SegmentedStressSlider({
 }: SegmentedStressSliderProps) {
   const clampedScore = Math.max(0, Math.min(100, normalizedScore));
 
-  // Segment colors
-  const segmentColors = [
-    'bg-green-400', // Nízká (0-25)
-    'bg-yellow-400', // V normě (25-50)
-    'bg-orange-400', // Střední (50-75)
-    'bg-red-500', // Vysoká (75-100)
-  ];
-
   // Segment labels
   const segmentLabels = ['Nízká', 'V normě', 'Střední', 'Vysoká'];
 
   return (
     <motion.div
-      className="w-full px-4 py-4 mb-4"
+      className="w-full px-4 py-2 mb-2"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.3 }}
     >
-      {/* Segmented track */}
-      <div className="relative h-8 rounded-full overflow-hidden flex shadow-sm">
-        {/* 4 segments */}
-        {segmentColors.map((color, index) => (
-          <div
-            key={index}
-            className={cn('flex-1', color)}
-            style={{ width: '25%' }}
-          />
-        ))}
+      {/* Gradient track with smooth color transitions */}
+      <div
+        className="relative h-8 rounded-full overflow-hidden shadow-sm"
+        style={{
+          background: 'linear-gradient(to right, #4ade80 0%, #facc15 33%, #fb923c 66%, #ef4444 100%)'
+        }}
+      >
 
         {/* Animated indicator ball */}
         <motion.div
@@ -68,7 +57,7 @@ export function SegmentedStressSlider({
 
       {/* Segment labels */}
       {showLabels && (
-        <div className="flex justify-between mt-2">
+        <div className="flex justify-between mt-1">
           {segmentLabels.map((label, index) => (
             <motion.span
               key={index}
