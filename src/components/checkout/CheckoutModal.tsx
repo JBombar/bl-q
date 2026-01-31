@@ -26,35 +26,40 @@ export function CheckoutModal({ plan, onSuccess, onCancel }: CheckoutModalProps)
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Create PaymentIntent on mount
-    async function createPaymentIntent() {
-      try {
-        setIsLoading(true);
-        setError(null);
+    // TEMPORARILY DISABLED: Payment integration will be added later
+    // This prevents 500 errors while we focus on UI development
 
-        const response = await fetch('/api/payments/create-intent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ planId: plan.id }),
-        });
+    // async function createPaymentIntent() {
+    //   try {
+    //     setIsLoading(true);
+    //     setError(null);
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || 'Failed to create payment intent');
-        }
+    //     const response = await fetch('/api/payments/create-intent', {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify({ planId: plan.id }),
+    //     });
 
-        const data = await response.json();
-        setClientSecret(data.clientSecret);
-        setOrderId(data.orderId);
-        setIsLoading(false);
-      } catch (err: any) {
-        console.error('Payment intent creation error:', err);
-        setError(err.message || 'Failed to initialize payment. Please try again.');
-        setIsLoading(false);
-      }
-    }
+    //     if (!response.ok) {
+    //       const errorData = await response.json().catch(() => ({}));
+    //       throw new Error(errorData.error || 'Failed to create payment intent');
+    //     }
 
-    createPaymentIntent();
+    //     const data = await response.json();
+    //     setClientSecret(data.clientSecret);
+    //     setOrderId(data.orderId);
+    //     setIsLoading(false);
+    //   } catch (err: any) {
+    //     console.error('Payment intent creation error:', err);
+    //     setError(err.message || 'Failed to initialize payment. Please try again.');
+    //     setIsLoading(false);
+    //   }
+    // }
+
+    // createPaymentIntent();
+
+    // Immediately set loading to false to show placeholder
+    setIsLoading(false);
   }, [plan.id]);
 
   // Close modal on ESC key
@@ -161,82 +166,40 @@ export function CheckoutModal({ plan, onSuccess, onCancel }: CheckoutModalProps)
             </div>
           </div>
 
-          {/* Loading State */}
-          {isLoading && (
-            <div className="py-12 text-center">
-              <div className="inline-block w-12 h-12 border-4 border-gray-200 border-t-[#F9A201] rounded-full animate-spin mb-4" />
-              <p className="text-gray-600">Připravujeme platbu...</p>
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && !isLoading && (
-            <div className="py-8">
-              <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-red-900 mb-1">
-                      Chyba při inicializaci platby
-                    </h3>
-                    <p className="text-sm text-red-700">
-                      {error}
-                    </p>
-                  </div>
-                </div>
+          {/* PLACEHOLDER STATE - Payment integration disabled for UI development */}
+          <div className="py-12">
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-dashed border-purple-200 rounded-xl p-8 text-center">
+              <div className="inline-block w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                <svg className="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  onClick={() => window.location.reload()}
-                  className="flex-1 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  Zkusit znovu
-                </button>
-                <button
-                  onClick={onCancel}
-                  className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                >
-                  Zrušit
-                </button>
-              </div>
-            </div>
-          )}
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Platební brána se připravuje
+              </h3>
 
-          {/* Payment Form */}
-          {!isLoading && !error && clientSecret && orderId && (
-            <div>
-              <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <StripeCheckoutForm
-                  orderId={orderId}
-                  onSuccess={onSuccess}
-                  onCancel={onCancel}
-                />
-              </Elements>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                Integrace platební brány bude dokončena v další fázi. Nyní se zaměřujeme na finální podobu stránky a její design.
+              </p>
 
-              {/* Trust Badges */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <span>🔒</span>
-                    <span>Zabezpečené šifrování</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span>✓</span>
-                    <span>30denní záruka vrácení peněz</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span>💳</span>
-                    <span>Powered by Stripe</span>
-                  </div>
-                </div>
+              <div className="bg-white rounded-lg p-4 mb-6 border border-purple-100">
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>Vybraný plán:</strong> {plan.name}
+                </p>
+                <p className="text-sm text-gray-700">
+                  <strong>Cena:</strong> {formatPrice(plan.priceCents)} Kč / {plan.billingPeriod}
+                </p>
               </div>
+
+              <button
+                onClick={onCancel}
+                className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                Zavřít
+              </button>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
