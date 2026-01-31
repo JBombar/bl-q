@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { StageLayout } from '@/components/layout';
 import { ProgressRing } from './ProgressRing';
 import { MICRO_COMMITMENT_CONFIG } from '@/config/result-screens.config';
 import type { MicroCommitmentKey } from '@/types/funnel.types';
@@ -33,9 +34,12 @@ export function MicroCommitmentScreen({ screenId, onAnswer, isSaving }: MicroCom
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-blue-50 to-white flex flex-col">
+    <StageLayout
+      variant="result"
+      bgClass="bg-gradient-to-b from-blue-50 to-white"
+    >
       {/* Progress ring */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4">
+      <div className="flex flex-col items-center justify-center">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -46,7 +50,7 @@ export function MicroCommitmentScreen({ screenId, onAnswer, isSaving }: MicroCom
 
         {/* Question */}
         <motion.h1
-          className="text-xl font-bold text-gray-800 text-center mt-8 mb-6 px-4 max-w-md"
+          className="text-xl font-bold text-gray-800 text-center mt-8 mb-6 max-w-md"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -79,7 +83,7 @@ export function MicroCommitmentScreen({ screenId, onAnswer, isSaving }: MicroCom
 
         {/* Testimonial */}
         <motion.p
-          className="text-sm text-gray-500 text-center mt-8 px-8 max-w-md italic"
+          className="text-sm text-gray-500 text-center mt-8 max-w-md italic"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
@@ -90,12 +94,12 @@ export function MicroCommitmentScreen({ screenId, onAnswer, isSaving }: MicroCom
 
       {/* Loading indicator */}
       {isSaving && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-4 shadow-lg">
             <div className="w-8 h-8 border-2 border-[#F9A201] border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         </div>
       )}
-    </div>
+    </StageLayout>
   );
 }

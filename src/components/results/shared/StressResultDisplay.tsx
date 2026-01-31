@@ -23,7 +23,7 @@ export function StressResultDisplay({
   stressStage,
 }: StressResultDisplayProps) {
   return (
-    <div className="w-full max-w-sm mx-auto mb-3">
+    <div className="w-full max-w-[280px] mx-auto mb-3">
       {/* Stress Level Label + Badge */}
       <motion.div
         className="flex items-center justify-between px-4 mb-2"
@@ -47,7 +47,7 @@ export function StressResultDisplay({
 
       {/* Woman Image with "Tvoje úroveň" Badge */}
       <motion.div
-        className="relative w-full aspect-3/4 max-h-72 rounded-2xl overflow-hidden"
+        className="relative w-full rounded-2xl overflow-hidden"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2, type: 'spring', stiffness: 100 }}
@@ -55,8 +55,9 @@ export function StressResultDisplay({
         <Image
           src={stageImagePath}
           alt={stageTitle}
-          fill
-          className="object-cover"
+          width={400}
+          height={600}
+          className="object-contain w-full h-auto"
           priority
         />
 

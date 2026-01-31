@@ -33,8 +33,8 @@ export function ResultHeader({
           <Image
             src="/images/betterlady-logo.svg"
             alt="Better Lady"
-            width={120}
-            height={30}
+            width={280}
+            height={70}
             priority
           />
         </motion.div>

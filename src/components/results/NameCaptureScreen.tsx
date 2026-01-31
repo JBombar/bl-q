@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { StageLayout } from '@/components/layout';
 
 interface NameCaptureScreenProps {
   onSubmit: (firstName: string) => Promise<void>;
@@ -46,9 +47,16 @@ export function NameCaptureScreen({ onSubmit, isSaving }: NameCaptureScreenProps
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-green-50 to-white flex flex-col">
+    <StageLayout
+      variant="result"
+      bgClass="bg-gradient-to-b from-green-50 to-white"
+      showCTA
+      ctaLabel={isSaving ? 'Ukladam...' : 'Pokracovat'}
+      ctaDisabled={isSaving || !firstName.trim()}
+      onCtaClick={handleSubmit}
+    >
       {/* Header */}
-      <div className="px-4 pt-8 pb-6 text-center">
+      <div className="text-center mb-6">
         <motion.h1
           className="text-2xl font-bold text-gray-800 mb-3"
           initial={{ opacity: 0, y: -20 }}
@@ -67,59 +75,40 @@ export function NameCaptureScreen({ onSubmit, isSaving }: NameCaptureScreenProps
       </div>
 
       {/* Form */}
-      <div className="flex-1 px-4">
-        <motion.div
-          className="max-w-md mx-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          {/* Name input */}
-          <div className="mb-6">
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                setError(null);
-              }}
-              placeholder="Jmeno"
-              disabled={isSaving}
-              className={`w-full px-4 py-4 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F9A201] focus:border-[#F9A201] transition-colors ${
-                error ? 'border-red-300 bg-red-50' : 'border-gray-200'
-              } ${isSaving ? 'opacity-50' : ''}`}
-              autoComplete="given-name"
-              autoCapitalize="words"
-            />
-            {error && (
-              <motion.p
-                className="text-red-500 text-sm mt-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                {error}
-              </motion.p>
-            )}
-          </div>
-
-          {/* Submit button */}
-          <motion.button
-            onClick={handleSubmit}
+      <motion.div
+        className="max-w-md mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        {/* Name input */}
+        <div>
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => {
+              setFirstName(e.target.value);
+              setError(null);
+            }}
+            placeholder="Jmeno"
             disabled={isSaving}
-            className="w-full py-4 bg-[#F9A201] hover:bg-[#e89400] text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
-            whileTap={{ scale: 0.98 }}
-          >
-            {isSaving ? (
-              <span className="flex items-center justify-center gap-2">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Ukladam...
-              </span>
-            ) : (
-              'Pokracovat'
-            )}
-          </motion.button>
-        </motion.div>
-      </div>
-    </div>
+            className={`w-full px-4 py-4 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F9A201] focus:border-[#F9A201] transition-colors ${
+              error ? 'border-red-300 bg-red-50' : 'border-gray-200'
+            } ${isSaving ? 'opacity-50' : ''}`}
+            autoComplete="given-name"
+            autoCapitalize="words"
+          />
+          {error && (
+            <motion.p
+              className="text-red-500 text-sm mt-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {error}
+            </motion.p>
+          )}
+        </div>
+      </motion.div>
+    </StageLayout>
   );
 }

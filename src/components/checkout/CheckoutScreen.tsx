@@ -50,7 +50,7 @@ export function CheckoutScreen({ offer, onSuccess, onCancel }: CheckoutScreenPro
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600 mx-auto mb-4" />
           <p className="text-gray-600">Setting up checkout...</p>
@@ -61,7 +61,7 @@ export function CheckoutScreen({ offer, onSuccess, onCancel }: CheckoutScreenPro
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center">
           <div className="text-red-600 text-5xl mb-4">⚠️</div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Setup Error</h2>
@@ -92,7 +92,7 @@ export function CheckoutScreen({ offer, onSuccess, onCancel }: CheckoutScreenPro
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 py-12 px-4">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 text-center">
           <button

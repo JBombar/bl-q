@@ -7,7 +7,7 @@ interface PaymentFailureProps {
 
 export function PaymentFailure({ errorMessage, onRetry }: PaymentFailureProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-br from-red-50 to-pink-100 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-xl p-12 max-w-md text-center">
         <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <span className="text-red-600 text-5xl">✕</span>
