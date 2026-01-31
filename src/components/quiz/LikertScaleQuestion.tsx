@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
-import { QuizStageLayout } from './QuizStageLayout';
+import { StageLayout } from '@/components/layout';
 import type { QuizQuestionWithOptions } from '@/types';
 
 interface LikertScaleQuestionProps {
@@ -53,7 +53,7 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
   const canGoBack = currentQuestionIndex > 0;
 
   return (
-    <QuizStageLayout
+    <StageLayout
       showProgress
       progressPercent={progressPercent}
       sectionLabel={question.section_label || undefined}
@@ -114,6 +114,6 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
           <span>{question.scale_right_label || ''}</span>
         </div>
       </motion.div>
-    </QuizStageLayout>
+    </StageLayout>
   );
 }

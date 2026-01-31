@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
-import { QuizStageLayout } from './QuizStageLayout';
+import { StageLayout } from '@/components/layout';
 import type { QuizQuestionWithOptions } from '@/types';
 import Image from 'next/image';
 
@@ -40,7 +40,7 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
   const canGoBack = currentQuestionIndex > 0;
 
   return (
-    <QuizStageLayout
+    <StageLayout
       showProgress={false}
       showBackButton={canGoBack}
       onBackClick={handleBack}
@@ -90,6 +90,6 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
           Výběrem věku a pokračováním souhlasíš s našimi Obchodními podmínkami | Ochrannou osobních údajů.
         </p>
       </motion.div>
-    </QuizStageLayout>
+    </StageLayout>
   );
 }

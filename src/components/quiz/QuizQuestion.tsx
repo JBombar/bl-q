@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
 import { QuizOption } from './QuizOption';
-import { QuizStageLayout } from './QuizStageLayout';
+import { StageLayout } from '@/components/layout';
 import { MultiChoiceQuestion } from './MultiChoiceQuestion';
 import { LikertScaleQuestion } from './LikertScaleQuestion';
 import { AgeGateScreen } from './AgeGateScreen';
@@ -85,7 +85,7 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
   const canGoBack = currentQuestionIndex > 0;
 
   return (
-    <QuizStageLayout
+    <StageLayout
       showProgress
       progressPercent={progressPercent}
       sectionLabel={question.section_label || undefined}
@@ -129,6 +129,6 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
           </div>
         </motion.div>
       </AnimatePresence>
-    </QuizStageLayout>
+    </StageLayout>
   );
 }

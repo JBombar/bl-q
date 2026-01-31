@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
-import { QuizStageLayout } from './QuizStageLayout';
+import { StageLayout } from '@/components/layout';
 import type { QuizQuestionWithOptions } from '@/types';
 import Image from 'next/image';
 
@@ -35,7 +35,7 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
   const canGoBack = currentQuestionIndex > 0;
 
   return (
-    <QuizStageLayout
+    <StageLayout
       showProgress={false}
       showCTA={true}
       ctaLabel="Pokračovat"
@@ -98,6 +98,6 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
           </p>
         )}
       </motion.div>
-    </QuizStageLayout>
+    </StageLayout>
   );
 }

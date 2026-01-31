@@ -16,7 +16,7 @@ export function ResultScreen({ result, offer }: ResultScreenProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 py-12 px-4"
+      className="min-h-screen bg-linear-to-br from-purple-50 to-pink-100 py-12 px-4"
     >
       <div className="mx-auto max-w-3xl">
         <motion.div

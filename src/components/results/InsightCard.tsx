@@ -39,29 +39,33 @@ interface InsightCardProps {
 
 /**
  * Single insight card showing user's answer to an anchor question
+ * Updated to match Better Lady design with blue borders
  */
 export function InsightCard({ card, index }: InsightCardProps) {
   return (
     <motion.div
-      className="bg-white rounded-xl p-4 shadow-sm border border-gray-100"
+      className="bg-white rounded-xl p-3 shadow-sm border-2 border-blue-200"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 * index + 0.4 }}
+      transition={{ delay: 0.1 * index + 0.6 }}
     >
-      <div className="flex items-start gap-3">
-        {/* Icon */}
-        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
-          {icons[card.icon] || icons.target}
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <p className="text-xs text-gray-500 uppercase tracking-wide mb-0.5">
+      <div className="flex flex-col gap-2">
+        {/* Icon + Label */}
+        <div className="flex items-center gap-2">
+          <div className="shrink-0 text-xl">
+            {icons[card.icon] || icons.target}
+          </div>
+          <p className="text-xs text-gray-600 font-medium">
             {card.label}
           </p>
-          <p className="text-sm font-medium text-gray-800 line-clamp-2">
+        </div>
+
+        {/* Value + (DYNAMIC) */}
+        <div>
+          <p className="text-sm font-semibold text-gray-800">
             {card.value}
           </p>
+          <p className="text-xs text-gray-500 mt-0.5">(DYNAMIC)</p>
         </div>
       </div>
     </motion.div>

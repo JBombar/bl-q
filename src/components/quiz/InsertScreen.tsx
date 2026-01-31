@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
-import { QuizStageLayout } from './QuizStageLayout';
+import { StageLayout } from '@/components/layout';
 import type { QuizQuestionWithOptions } from '@/types';
 import Image from 'next/image';
 
@@ -55,7 +55,7 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
   // Special rendering for validation screen
   if (isValidationScreen) {
     return (
-      <QuizStageLayout
+      <StageLayout
         showProgress={false}
         showCTA
         ctaLabel="Pokračovat"
@@ -112,13 +112,13 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
             />
           </div>
         </motion.div>
-      </QuizStageLayout>
+      </StageLayout>
     );
   }
 
   // Default rendering for educational inserts
   return (
-    <QuizStageLayout
+    <StageLayout
       showProgress={false}
       showCTA
       ctaLabel="Pokračovat"
@@ -190,6 +190,6 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
           </div>
         )}
       </motion.div>
-    </QuizStageLayout>
+    </StageLayout>
   );
 }

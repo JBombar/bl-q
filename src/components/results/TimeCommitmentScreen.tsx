@@ -23,7 +23,7 @@ export function TimeCommitmentScreen({ onSelect, isSaving }: TimeCommitmentScree
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-b from-purple-50 to-white flex flex-col">
       {/* Header */}
       <div className="px-4 pt-8 pb-6 text-center">
         <motion.h1

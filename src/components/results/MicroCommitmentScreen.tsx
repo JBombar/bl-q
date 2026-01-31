@@ -33,7 +33,7 @@ export function MicroCommitmentScreen({ screenId, onAnswer, isSaving }: MicroCom
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-b from-blue-50 to-white flex flex-col">
       {/* Progress ring */}
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         <motion.div

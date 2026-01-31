@@ -43,7 +43,7 @@ export function ProjectionScreen({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-b from-indigo-50 to-white flex flex-col">
       {/* Header */}
       <div className="px-4 pt-8 pb-4 text-center">
         <motion.h1
@@ -143,7 +143,7 @@ export function ProjectionScreen({
       </div>
 
       {/* Fixed CTA button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-linear-to-t from-white via-white to-transparent">
         <motion.button
           onClick={onContinue}
           className="w-full py-4 bg-[#F9A201] hover:bg-[#e89400] text-white font-semibold rounded-xl transition-colors"

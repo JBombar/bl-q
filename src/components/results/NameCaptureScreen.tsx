@@ -46,7 +46,7 @@ export function NameCaptureScreen({ onSubmit, isSaving }: NameCaptureScreenProps
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-b from-green-50 to-white flex flex-col">
       {/* Header */}
       <div className="px-4 pt-8 pb-6 text-center">
         <motion.h1

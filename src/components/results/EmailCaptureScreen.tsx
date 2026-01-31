@@ -38,7 +38,7 @@ export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenPro
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-b from-pink-50 to-white flex flex-col">
       {/* Header */}
       <div className="px-4 pt-8 pb-6 text-center">
         <motion.h1
@@ -65,7 +65,7 @@ export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenPro
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-white"
+                  className="w-8 h-8 rounded-full bg-linear-to-br from-purple-400 to-pink-400 border-2 border-white"
                 />
               ))}
             </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
-import { QuizStageLayout } from './QuizStageLayout';
+import { StageLayout } from '@/components/layout';
 import type { QuizQuestionWithOptions } from '@/types';
 
 interface MultiChoiceQuestionProps {
@@ -60,7 +60,7 @@ export function MultiChoiceQuestion({ question, questionIndex, onComplete }: Mul
   const canGoBack = currentQuestionIndex > 0;
 
   return (
-    <QuizStageLayout
+    <StageLayout
       showProgress
       progressPercent={progressPercent}
       sectionLabel={question.section_label || undefined}
@@ -134,6 +134,6 @@ export function MultiChoiceQuestion({ question, questionIndex, onComplete }: Mul
           })}
         </div>
       </motion.div>
-    </QuizStageLayout>
+    </StageLayout>
   );
 }
