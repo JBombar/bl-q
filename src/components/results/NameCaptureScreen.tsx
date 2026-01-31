@@ -56,7 +56,7 @@ export function NameCaptureScreen({ onSubmit, isSaving }: NameCaptureScreenProps
       onCtaClick={handleSubmit}
     >
       {/* Header */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-6 pt-12 md:pt-16 lg:pt-20">
         <motion.h1
           className="text-2xl font-bold text-gray-800 mb-3"
           initial={{ opacity: 0, y: -20 }}

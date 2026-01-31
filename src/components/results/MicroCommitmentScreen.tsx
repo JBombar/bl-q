@@ -39,7 +39,7 @@ export function MicroCommitmentScreen({ screenId, onAnswer, isSaving }: MicroCom
       bgClass="bg-gradient-to-b from-blue-50 to-white"
     >
       {/* Progress ring */}
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center pt-12 md:pt-16 lg:pt-20">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

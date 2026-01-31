@@ -25,81 +25,63 @@ export function TimeCommitmentScreen({ onSelect, isSaving }: TimeCommitmentScree
 
   return (
     <StageLayout
-      variant="result"
-      bgClass="bg-gradient-to-b from-purple-50 to-white"
+      variant="question"
     >
-      {/* Header */}
-      <div className="text-center mb-6">
-        <motion.h1
-          className="text-2xl font-bold text-gray-800 mb-3"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          Kolik casu denne muzes venovat sobe?
-        </motion.h1>
-        <motion.p
-          className="text-gray-600"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          Vyber si, kolik minut denne se chces venovat cvicenim pro snizeni stresu
-        </motion.p>
-      </div>
-
-      {/* Options */}
-      <div className="space-y-3 max-w-md mx-auto mb-8">
-        {TIME_COMMITMENT_OPTIONS.map((option, index) => (
-          <motion.button
-            key={option.value}
-            onClick={() => handleSelect(option.value)}
-            disabled={isSaving}
-            className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
-              selected === option.value
-                ? 'border-[#F9A201] bg-orange-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
-            } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 * index + 0.3 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className="flex items-center gap-3">
-              {/* Time icon */}
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                selected === option.value ? 'bg-[#F9A201] text-white' : 'bg-gray-100 text-gray-600'
-              }`}>
-                <span className="text-lg font-bold">{option.value}</span>
-              </div>
-              <span className="text-lg font-medium text-gray-800">
-                {option.label}
-              </span>
-            </div>
-
-            {/* Radio indicator */}
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-              selected === option.value ? 'border-[#F9A201] bg-[#F9A201]' : 'border-gray-300'
-            }`}>
-              {selected === option.value && (
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </div>
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Motivational text */}
       <motion.div
-        className="text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.08 }}
+        className="w-full text-center"
       >
-        <p className="text-sm text-gray-500">
-          I par minut denne muze vyrazne zlepsit tvuj vnitrni klid
+        <h2 className="text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: 'Figtree', lineHeight: '110%' }}>
+          Kolik casu denne muzes venovat sobe?
+        </h2>
+
+        <p className="text-gray-600 mb-2 md:mb-3 italic text-xs md:text-sm">
+          Vyber si, kolik minut denne se chces venovat cvicenim pro snizeni stresu
         </p>
+
+        <div className="space-y-1.5 md:space-y-2 max-w-xl mx-auto">
+          {TIME_COMMITMENT_OPTIONS.map((option) => {
+            const isSelected = selected === option.value;
+
+            return (
+              <motion.button
+                key={option.value}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                onClick={() => handleSelect(option.value)}
+                disabled={isSaving}
+                className={`
+                  w-full p-2.5 md:p-3 rounded-lg md:rounded-xl text-left transition-all border-2
+                  ${isSelected
+                    ? 'bg-white border-[#F9A201] shadow-md'
+                    : 'bg-gray-100 border-transparent hover:bg-gray-200'
+                  }
+                  ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}
+                `}
+              >
+                <div className="flex items-center">
+                  <div className={`
+                    w-4 h-4 md:w-5 md:h-5 rounded mr-2 md:mr-3 shrink-0 border-2 flex items-center justify-center
+                    ${isSelected
+                      ? 'bg-[#F9A201] border-[#F9A201]'
+                      : 'border-gray-300 bg-white'
+                    }
+                  `}>
+                    {isSelected && (
+                      <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="font-medium text-gray-900 text-xs md:text-sm">{option.label}</span>
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
       </motion.div>
 
       {/* Loading indicator */}
