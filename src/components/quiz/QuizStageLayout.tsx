@@ -123,7 +123,7 @@ export function QuizStageLayout({
 
       {/* HEADER ZONE - Fixed at top */}
       {(shouldShowProgress || sectionLabel) && (
-        <header className="flex-shrink-0 bg-white border-b border-gray-200">
+        <header className="shrink-0 bg-white border-b border-gray-200">
           {shouldShowProgress && (
             <div className="relative h-1 md:h-1.5 bg-gray-200">
               <div
@@ -176,7 +176,7 @@ export function QuizStageLayout({
 
       {/* CTA ZONE - Fixed at bottom */}
       {showCTA && (
-        <footer className="flex-shrink-0 bg-white border-t border-gray-200 p-4 md:p-4 shadow-2xl sticky bottom-0 z-10">
+        <footer className="shrink-0 bg-white border-t border-gray-200 p-4 md:p-4 shadow-2xl sticky bottom-0 z-10">
           <button
             onClick={onCtaClick}
             disabled={ctaDisabled}

@@ -39,15 +39,15 @@ export default function Home() {
           </h3>
           <ul className="text-left space-y-3 md:space-y-4 text-gray-700 max-w-xl mx-auto">
             <li className="flex items-start">
-              <span className="text-[#F9A201] mr-3 text-xl flex-shrink-0">✓</span>
+              <span className="text-[#F9A201] mr-3 text-xl shrink-0">✓</span>
               <span className="text-sm md:text-base">Personalizované vyhodnocení úrovně tvého stresu</span>
             </li>
             <li className="flex items-start">
-              <span className="text-[#F9A201] mr-3 text-xl flex-shrink-0">✓</span>
+              <span className="text-[#F9A201] mr-3 text-xl shrink-0">✓</span>
               <span className="text-sm md:text-base">Doporučení na míru tvému nervovému systému</span>
             </li>
             <li className="flex items-start">
-              <span className="text-[#F9A201] mr-3 text-xl flex-shrink-0">✓</span>
+              <span className="text-[#F9A201] mr-3 text-xl shrink-0">✓</span>
               <span className="text-sm md:text-base">Odborné zdroje pro zvládání stresu a zlepšení pohody</span>
             </li>
           </ul>
