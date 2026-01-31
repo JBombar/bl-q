@@ -21,7 +21,9 @@ import {
   PRICING_PLANS,
   PLAN_HIGHLIGHTS,
   getRecommendedPlan,
+  getPlanById,
 } from '@/config/sales-page.config';
+import { CheckoutModal } from '../checkout/CheckoutModal';
 
 /**
  * Main Sales/Offer Page Component
@@ -73,9 +75,19 @@ export function SalesPage() {
   // Handle plan selection
   const handlePlanSelect = (planId: string) => {
     setSelectedPlanId(planId);
-    // TODO Phase 3: Open checkout modal
-    console.log('Selected plan:', planId);
-    // setShowCheckoutModal(true);
+    setShowCheckoutModal(true);
+  };
+
+  // Handle successful payment
+  const handlePaymentSuccess = () => {
+    setShowCheckoutModal(false);
+    router.push('/payment-success');
+  };
+
+  // Handle modal cancel
+  const handleModalCancel = () => {
+    setShowCheckoutModal(false);
+    setSelectedPlanId(null);
   };
 
   // Scroll to pricing section
@@ -160,16 +172,14 @@ export function SalesPage() {
       {/* Footer */}
       <SalesPageFooter />
 
-      {/* TODO Phase 3: Checkout Modal */}
-      {/* {showCheckoutModal && selectedPlanId && (
+      {/* Checkout Modal */}
+      {showCheckoutModal && selectedPlanId && (
         <CheckoutModal
           plan={getPlanById(selectedPlanId)!}
-          onSuccess={() => {
-            // Navigate to success page
-          }}
-          onCancel={() => setShowCheckoutModal(false)}
+          onSuccess={handlePaymentSuccess}
+          onCancel={handleModalCancel}
         />
-      )} */}
+      )}
     </div>
   );
 }

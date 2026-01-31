@@ -4,6 +4,7 @@ import { createPaymentIntent } from '@/lib/stripe/payment.service';
 import { createOrder } from '@/lib/stripe/order.service';
 import { trackEvent, EVENT_TYPES } from '@/lib/services/analytics.service';
 import { supabase } from '@/lib/supabase/client';
+import { getPlanById } from '@/config/sales-page.config';
 import type { QuizResult } from '@/types';
 
 export const runtime = 'nodejs';
@@ -31,22 +32,30 @@ export async function POST(request: NextRequest) {
     // Type assertion for strongly typed result
     const quizResult = result as QuizResult;
 
-    // Validate price
-    if (!quizResult.recommended_price_cents || quizResult.recommended_price_cents <= 0) {
-      return NextResponse.json({ error: 'Invalid product price' }, { status: 400 });
+    // Get request body (planId required)
+    const body = await request.json().catch(() => ({}));
+    const { planId } = body;
+
+    if (!planId) {
+      return NextResponse.json({ error: 'planId is required' }, { status: 400 });
     }
 
-    // Optional: Get email from request body
-    const body = await request.json().catch(() => ({}));
-    const customerEmail = body.email;
+    // Look up plan from config
+    const plan = getPlanById(planId);
+    if (!plan) {
+      return NextResponse.json({ error: 'Invalid plan ID' }, { status: 400 });
+    }
 
-    // Create Stripe PaymentIntent
+    // Get customer email from request body
+    const customerEmail = body.email as string | undefined;
+
+    // Create Stripe PaymentIntent with plan pricing
     const paymentIntent = await createPaymentIntent({
       sessionId: session.id,
       resultId: quizResult.id,
-      amount: quizResult.recommended_price_cents,
-      productId: quizResult.recommended_product_id || 'unknown',
-      productName: quizResult.recommended_product_name || 'Unknown Product',
+      amount: plan.priceCents,
+      productId: plan.id,
+      productName: plan.name,
       customerEmail,
     });
 
@@ -54,9 +63,9 @@ export async function POST(request: NextRequest) {
     const order = await createOrder({
       sessionId: session.id,
       resultId: quizResult.id,
-      productId: quizResult.recommended_product_id || 'unknown',
-      productName: quizResult.recommended_product_name || 'Unknown Product',
-      amountCents: quizResult.recommended_price_cents,
+      productId: plan.id,
+      productName: plan.name,
+      amountCents: plan.priceCents,
       stripePaymentIntentId: paymentIntent.paymentIntentId,
       customerEmail,
     });
@@ -67,8 +76,9 @@ export async function POST(request: NextRequest) {
       quizId: session.quiz_id,
       eventData: {
         orderId: order.id,
-        amount: quizResult.recommended_price_cents,
-        productId: quizResult.recommended_product_id,
+        amount: plan.priceCents,
+        productId: plan.id,
+        planName: plan.name,
       },
     });
 
@@ -76,7 +86,8 @@ export async function POST(request: NextRequest) {
       clientSecret: paymentIntent.clientSecret,
       orderId: order.id,
       orderNumber: order.order_number,
-      amount: quizResult.recommended_price_cents,
+      amount: plan.priceCents,
+      planName: plan.name,
     });
   } catch (error: any) {
     console.error('Create payment intent error:', error);
