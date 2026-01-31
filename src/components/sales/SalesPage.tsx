@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { usePostQuizState } from '@/hooks/usePostQuizState';
+import { calculateProjection } from '@/config/result-screens.config';
 import { StickyHeader } from './StickyHeader';
 import { TransformationDisplay } from './TransformationDisplay';
 import { PricingSection } from './PricingSection';
@@ -20,38 +23,52 @@ import {
   getRecommendedPlan,
 } from '@/config/sales-page.config';
 
-// Import types
-import type { StressStage } from '@/types/funnel.types';
-
-interface SalesPageProps {
-  // Dynamic data props (will be populated in Phase 2)
-  firstName?: string;
-  currentStressStage?: StressStage;
-  currentScore?: number;
-  targetScore?: number;
-  stageTitle?: string;
-  mainChallenge?: string;
-}
-
 /**
  * Main Sales/Offer Page Component
- * Phase 1: Static UI with placeholder data
- * Phase 2: Will be connected to usePostQuizState for dynamic data
+ * Phase 2: Connected to usePostQuizState for dynamic data
  */
-export function SalesPage({
-  // Placeholder data for Phase 1
-  firstName = 'Anna',
-  currentStressStage = 3 as StressStage,
-  currentScore = 42,
-  targetScore = 18,
-  stageTitle = 'Střední úroveň stresu',
-  mainChallenge = 'Vnitřní klid',
-}: SalesPageProps) {
+export function SalesPage() {
+  const router = useRouter();
+  const { completeData, funnelData } = usePostQuizState();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
+  // If no quiz data, redirect back to quiz
+  if (!completeData || !completeData.insights) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="text-center max-w-md p-8">
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-[#F9A201] mx-auto" />
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Načítání tvého plánu...
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Pokud se stránka nenačte, prosím vrať se k dotazníku.
+          </p>
+          <button
+            onClick={() => router.push('/q/better-lady')}
+            className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
+          >
+            Zpět na dotazník
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Extract data from quiz state
+  const { insights } = completeData;
+  const firstName = funnelData.firstName || 'tam';
+  const timeCommitmentMinutes = funnelData.timeCommitmentMinutes || 10;
+
+  // Calculate projection
+  const projection = calculateProjection(insights.normalizedScore, timeCommitmentMinutes);
+
+  // Extract main challenge from insight cards (first card is main challenge)
+  const mainChallenge = insights.insightCards?.[0]?.value || 'Vnitřní klid';
+
   // Get recommended plan based on stress stage
-  const recommendedPlanId = getRecommendedPlan(currentStressStage);
+  const recommendedPlanId = getRecommendedPlan(insights.stressStage);
 
   // Handle plan selection
   const handlePlanSelect = (planId: string) => {
@@ -77,10 +94,10 @@ export function SalesPage({
       {/* Transformation Display */}
       <TransformationDisplay
         firstName={firstName}
-        currentStressStage={currentStressStage}
-        currentScore={currentScore}
-        targetScore={targetScore}
-        stageTitle={stageTitle}
+        currentStressStage={insights.stressStage}
+        currentScore={projection.displayCurrentScore}
+        targetScore={projection.displayTargetScore}
+        stageTitle={insights.stageTitle}
       />
 
       {/* Plan Highlights */}

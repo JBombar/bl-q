@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type {
   FunnelScreen,
   FunnelMetadata,
@@ -37,13 +38,15 @@ interface PostQuizState {
   reset: () => void;
 }
 
-export const usePostQuizState = create<PostQuizState>((set, get) => ({
-  currentScreen: 'A',
-  completeData: null,
-  funnelData: {},
-  isLoading: false,
-  isSaving: false,
-  error: null,
+export const usePostQuizState = create<PostQuizState>()(
+  persist(
+    (set, get) => ({
+      currentScreen: 'A',
+      completeData: null,
+      funnelData: {},
+      isLoading: false,
+      isSaving: false,
+      error: null,
 
   /**
    * Initialize with data from /api/quiz/complete
@@ -262,17 +265,27 @@ export const usePostQuizState = create<PostQuizState>((set, get) => ({
     }
   },
 
-  /**
-   * Reset state
-   */
-  reset: () => {
-    set({
-      currentScreen: 'A',
-      completeData: null,
-      funnelData: {},
-      isLoading: false,
-      isSaving: false,
-      error: null,
-    });
-  },
-}));
+      /**
+       * Reset state
+       */
+      reset: () => {
+        set({
+          currentScreen: 'A',
+          completeData: null,
+          funnelData: {},
+          isLoading: false,
+          isSaving: false,
+          error: null,
+        });
+      },
+    }),
+    {
+      name: 'post-quiz-storage', // localStorage key
+      partialize: (state) => ({
+        completeData: state.completeData,
+        funnelData: state.funnelData,
+        currentScreen: state.currentScreen,
+      }),
+    }
+  )
+);

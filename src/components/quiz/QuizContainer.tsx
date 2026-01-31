@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuizState } from '@/hooks/useQuizState';
 import { QuizQuestion } from './QuizQuestion';
 import { PostQuizFlow } from '../results/PostQuizFlow';
@@ -11,10 +12,10 @@ interface QuizContainerProps {
 }
 
 export function QuizContainer({ slug }: QuizContainerProps) {
+  const router = useRouter();
   const { quiz, currentQuestionIndex, loadQuiz, isLoading, error } = useQuizState();
   const [showResult, setShowResult] = useState(false);
   const [resultData, setResultData] = useState<QuizCompleteResponse | null>(null);
-  const [showOffer, setShowOffer] = useState(false);
 
   useEffect(() => {
     loadQuiz(slug);
@@ -44,41 +45,12 @@ export function QuizContainer({ slug }: QuizContainerProps) {
 
   if (!quiz) return null;
 
-  // Show offer page after funnel is complete
-  if (showOffer && resultData) {
-    // TODO: Implement actual offer/sales page
-    // For now, show a placeholder that can be replaced with the real offer page
-    return (
-      <div className="min-h-screen bg-linear-to-b from-purple-50 to-white flex flex-col items-center justify-center p-4">
-        <div className="text-center max-w-md">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            Tvuj plan je pripraven!
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Nabidka produktu bude implementovana v dalsi fazi.
-          </p>
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 mb-2">Doporuceny produkt:</p>
-            <p className="text-lg font-semibold text-gray-800">
-              {resultData.offer?.productName || 'Better Lady Program'}
-            </p>
-            {resultData.offer?.priceCents && (
-              <p className="text-2xl font-bold text-[#F9A201] mt-2">
-                {(resultData.offer.priceCents / 100).toLocaleString('cs-CZ')} Kc
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Show post-quiz funnel (screens A-F)
   if (showResult && resultData) {
     return (
       <PostQuizFlow
         initialData={resultData}
-        onComplete={() => setShowOffer(true)}
+        onComplete={() => router.push('/offer')}
       />
     );
   }
