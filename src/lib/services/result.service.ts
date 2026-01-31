@@ -169,7 +169,7 @@ export async function calculateResult(params: CalculateResultParams): Promise<Qu
     recommended_product_name: offer?.productName,
     recommended_price_cents: offer?.priceCents,
     calculation_method: 'weighted_sum',
-    calculation_details: calculationDetails as Record<string, unknown>,
+    calculation_details: calculationDetails as unknown as Record<string, unknown>,
   };
 
   const { data, error } = await supabase

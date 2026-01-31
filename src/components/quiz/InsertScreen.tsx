@@ -8,14 +8,22 @@ import Image from 'next/image';
 
 interface InsertScreenProps {
   question: QuizQuestionWithOptions;
+  questionIndex?: number;
   onComplete?: () => void;
 }
 
-export function InsertScreen({ question, onComplete }: InsertScreenProps) {
-  const { nextQuestion, previousQuestion, currentQuestionIndex } = useQuizState();
+export function InsertScreen({ question, questionIndex, onComplete }: InsertScreenProps) {
+  const { nextQuestion, previousQuestion, currentQuestionIndex, quiz } = useQuizState();
 
   const handleContinue = () => {
-    nextQuestion();
+    // Check if this is the last question
+    const isLastQuestion = quiz && questionIndex !== undefined && questionIndex === quiz.questions.length - 1;
+
+    if (isLastQuestion && onComplete) {
+      onComplete();
+    } else {
+      nextQuestion();
+    }
   };
 
   const handleBack = () => {

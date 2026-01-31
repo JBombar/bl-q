@@ -8,14 +8,22 @@ import Image from 'next/image';
 
 interface TrustScreenProps {
   question: QuizQuestionWithOptions;
+  questionIndex?: number;
   onComplete?: () => void;
 }
 
-export function TrustScreen({ question, onComplete }: TrustScreenProps) {
-  const { nextQuestion, previousQuestion, currentQuestionIndex } = useQuizState();
+export function TrustScreen({ question, questionIndex, onComplete }: TrustScreenProps) {
+  const { nextQuestion, previousQuestion, currentQuestionIndex, quiz } = useQuizState();
 
   const handleContinue = () => {
-    nextQuestion();
+    // Check if this is the last question
+    const isLastQuestion = quiz && questionIndex !== undefined && questionIndex === quiz.questions.length - 1;
+
+    if (isLastQuestion && onComplete) {
+      onComplete();
+    } else {
+      nextQuestion();
+    }
   };
 
   const handleBack = () => {

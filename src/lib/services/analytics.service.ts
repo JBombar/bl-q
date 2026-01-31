@@ -7,6 +7,8 @@ export const EVENT_TYPES = {
   ANSWER_SAVED: 'answer_saved',
   QUIZ_COMPLETED: 'quiz_completed',
   RESULT_VIEWED: 'result_viewed',
+  FUNNEL_STEP_COMPLETED: 'funnel_step_completed',
+  EMAIL_CAPTURED: 'email_captured',
   CHECKOUT_STARTED: 'checkout_started',
   PAYMENT_SUBMITTED: 'payment_submitted',
   PAYMENT_SUCCEEDED: 'payment_succeeded',

@@ -13,3 +13,6 @@ export type * from './api.types';
 
 // Stripe types
 export type * from './stripe.types';
+
+// Funnel types
+export type * from './funnel.types';

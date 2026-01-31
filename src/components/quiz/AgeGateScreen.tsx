@@ -9,11 +9,12 @@ import Image from 'next/image';
 
 interface AgeGateScreenProps {
   question: QuizQuestionWithOptions;
+  questionIndex?: number;
   onComplete?: () => void;
 }
 
-export function AgeGateScreen({ question, onComplete }: AgeGateScreenProps) {
-  const { selectAnswer, nextQuestion, previousQuestion, currentQuestionIndex } = useQuizState();
+export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateScreenProps) {
+  const { selectAnswer, nextQuestion, previousQuestion, currentQuestionIndex, quiz } = useQuizState();
   const [startTime] = useState(Date.now());
 
   const handleAgeSelect = async (optionId: string) => {
@@ -21,7 +22,14 @@ export function AgeGateScreen({ question, onComplete }: AgeGateScreenProps) {
     selectAnswer(question.id, [optionId], timeSpent); // Non-blocking
 
     setTimeout(() => {
-      nextQuestion();
+      // Check if this is the last question
+      const isLastQuestion = quiz && questionIndex !== undefined && questionIndex === quiz.questions.length - 1;
+
+      if (isLastQuestion && onComplete) {
+        onComplete();
+      } else {
+        nextQuestion();
+      }
     }, 100);
   };
 

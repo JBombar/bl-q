@@ -28,14 +28,14 @@ export function QuizQuestion({ question, questionIndex, onComplete }: QuizQuesti
       return <LikertScaleQuestion question={question} questionIndex={questionIndex} onComplete={onComplete} />;
 
     case 'age_select':
-      return <AgeGateScreen question={question} onComplete={onComplete} />;
+      return <AgeGateScreen question={question} questionIndex={questionIndex} onComplete={onComplete} />;
 
     case 'info_trust':
-      return <TrustScreen question={question} onComplete={onComplete} />;
+      return <TrustScreen question={question} questionIndex={questionIndex} onComplete={onComplete} />;
 
     case 'education_insert':
     case 'validation_info':
-      return <InsertScreen question={question} onComplete={onComplete} />;
+      return <InsertScreen question={question} questionIndex={questionIndex} onComplete={onComplete} />;
 
     case 'single_choice':
     default:

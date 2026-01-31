@@ -1,0 +1,278 @@
+import { create } from 'zustand';
+import type {
+  FunnelScreen,
+  FunnelMetadata,
+  QuizCompleteResponse,
+  FunnelUpdateRequest,
+  TimeCommitmentMinutes,
+  MicroCommitmentKey,
+} from '@/types/funnel.types';
+import { getNextScreen } from '@/config/result-screens.config';
+
+interface PostQuizState {
+  // Current screen in the funnel
+  currentScreen: FunnelScreen;
+
+  // Complete response from /api/quiz/complete
+  completeData: QuizCompleteResponse | null;
+
+  // Funnel data (synced with server)
+  funnelData: FunnelMetadata;
+
+  // Loading states
+  isLoading: boolean;
+  isSaving: boolean;
+  error: string | null;
+
+  // Actions
+  initialize: (data: QuizCompleteResponse) => void;
+  setScreen: (screen: FunnelScreen) => void;
+  goToNextScreen: () => void;
+  saveTimeCommitment: (minutes: TimeCommitmentMinutes) => Promise<void>;
+  saveMicroCommitment: (key: MicroCommitmentKey, value: boolean) => Promise<void>;
+  saveEmail: (email: string) => Promise<void>;
+  saveFirstName: (firstName: string) => Promise<void>;
+  sendPlanEmail: () => Promise<boolean>;
+  completeFunnel: () => Promise<void>;
+  reset: () => void;
+}
+
+export const usePostQuizState = create<PostQuizState>((set, get) => ({
+  currentScreen: 'A',
+  completeData: null,
+  funnelData: {},
+  isLoading: false,
+  isSaving: false,
+  error: null,
+
+  /**
+   * Initialize with data from /api/quiz/complete
+   * Resumes from saved funnel step if available
+   */
+  initialize: (data: QuizCompleteResponse) => {
+    const funnelState = data.funnelState || {};
+    const resumeScreen = funnelState.funnelStep || 'A';
+
+    set({
+      completeData: data,
+      funnelData: funnelState,
+      currentScreen: resumeScreen,
+      error: null,
+    });
+  },
+
+  /**
+   * Set current screen directly
+   */
+  setScreen: (screen: FunnelScreen) => {
+    set({ currentScreen: screen });
+  },
+
+  /**
+   * Navigate to next screen in funnel
+   */
+  goToNextScreen: () => {
+    const { currentScreen } = get();
+    const nextScreen = getNextScreen(currentScreen);
+    if (nextScreen) {
+      set({ currentScreen: nextScreen as FunnelScreen });
+    }
+  },
+
+  /**
+   * Save time commitment (Screen B)
+   */
+  saveTimeCommitment: async (minutes: TimeCommitmentMinutes) => {
+    set({ isSaving: true, error: null });
+    try {
+      const response = await fetch('/api/quiz/funnel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          step: 'B',
+          timeCommitmentMinutes: minutes,
+        } as FunnelUpdateRequest),
+      });
+
+      if (!response.ok) throw new Error('Failed to save time commitment');
+
+      const data = await response.json();
+
+      set(state => ({
+        funnelData: { ...state.funnelData, ...data.funnelState, timeCommitmentMinutes: minutes },
+        isSaving: false,
+      }));
+
+      get().goToNextScreen();
+    } catch (error: any) {
+      set({ error: error.message, isSaving: false });
+      throw error;
+    }
+  },
+
+  /**
+   * Save micro-commitment answer (Screens C1-C3)
+   */
+  saveMicroCommitment: async (key: MicroCommitmentKey, value: boolean) => {
+    const { currentScreen, funnelData } = get();
+    set({ isSaving: true, error: null });
+
+    try {
+      const response = await fetch('/api/quiz/funnel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          step: currentScreen,
+          microCommitment: { key, value },
+        } as FunnelUpdateRequest),
+      });
+
+      if (!response.ok) throw new Error('Failed to save micro-commitment');
+
+      const data = await response.json();
+
+      set(state => ({
+        funnelData: {
+          ...state.funnelData,
+          ...data.funnelState,
+          microCommitments: {
+            ...state.funnelData.microCommitments,
+            [key]: value,
+          },
+        },
+        isSaving: false,
+      }));
+
+      get().goToNextScreen();
+    } catch (error: any) {
+      set({ error: error.message, isSaving: false });
+      throw error;
+    }
+  },
+
+  /**
+   * Save email (Screen D)
+   */
+  saveEmail: async (email: string) => {
+    set({ isSaving: true, error: null });
+
+    try {
+      const response = await fetch('/api/quiz/funnel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          step: 'D',
+          email,
+        } as FunnelUpdateRequest),
+      });
+
+      if (!response.ok) throw new Error('Failed to save email');
+
+      const data = await response.json();
+
+      set(state => ({
+        funnelData: { ...state.funnelData, ...data.funnelState },
+        isSaving: false,
+      }));
+
+      get().goToNextScreen();
+    } catch (error: any) {
+      set({ error: error.message, isSaving: false });
+      throw error;
+    }
+  },
+
+  /**
+   * Save first name (Screen E)
+   */
+  saveFirstName: async (firstName: string) => {
+    set({ isSaving: true, error: null });
+
+    try {
+      const response = await fetch('/api/quiz/funnel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          step: 'E',
+          firstName,
+        } as FunnelUpdateRequest),
+      });
+
+      if (!response.ok) throw new Error('Failed to save name');
+
+      const data = await response.json();
+
+      set(state => ({
+        funnelData: { ...state.funnelData, ...data.funnelState, firstName },
+        isSaving: false,
+      }));
+
+      // Don't auto-advance here - we trigger email first
+    } catch (error: any) {
+      set({ error: error.message, isSaving: false });
+      throw error;
+    }
+  },
+
+  /**
+   * Send plan email (after Screen E)
+   * Returns true if email was sent, false if it failed (but doesn't block funnel)
+   */
+  sendPlanEmail: async () => {
+    try {
+      const response = await fetch('/api/quiz/send-plan-email', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+      return data.success && data.emailSent;
+    } catch (error) {
+      console.error('Failed to send plan email:', error);
+      return false; // Don't block funnel
+    }
+  },
+
+  /**
+   * Mark funnel as complete
+   */
+  completeFunnel: async () => {
+    set({ isSaving: true, error: null });
+
+    try {
+      const response = await fetch('/api/quiz/funnel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          step: 'complete',
+        } as FunnelUpdateRequest),
+      });
+
+      if (!response.ok) throw new Error('Failed to complete funnel');
+
+      const data = await response.json();
+
+      set(state => ({
+        funnelData: { ...state.funnelData, ...data.funnelState },
+        currentScreen: 'complete',
+        isSaving: false,
+      }));
+    } catch (error: any) {
+      set({ error: error.message, isSaving: false });
+      throw error;
+    }
+  },
+
+  /**
+   * Reset state
+   */
+  reset: () => {
+    set({
+      currentScreen: 'A',
+      completeData: null,
+      funnelData: {},
+      isLoading: false,
+      isSaving: false,
+      error: null,
+    });
+  },
+}));

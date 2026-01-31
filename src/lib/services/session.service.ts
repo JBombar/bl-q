@@ -67,7 +67,14 @@ export async function setSessionCookie(sessionToken: string): Promise<void> {
   });
 }
 
-export async function updateSession(sessionId: string, updates: { current_question_index?: number; completed_at?: string; email?: string }): Promise<void> {
+interface SessionUpdates {
+  current_question_index?: number;
+  completed_at?: string;
+  email?: string;
+  user_metadata?: Record<string, unknown>;
+}
+
+export async function updateSession(sessionId: string, updates: SessionUpdates): Promise<void> {
   const updateData = { ...updates, updated_at: new Date().toISOString() };
 
   const { error } = await (supabase
@@ -76,4 +83,46 @@ export async function updateSession(sessionId: string, updates: { current_questi
     .eq('id', sessionId);
 
   if (error) throw new Error(`Failed to update session: ${error.message}`);
+}
+
+/**
+ * Merge update into session's user_metadata JSONB field
+ * Used for saving funnel state incrementally
+ */
+export async function mergeSessionMetadata(
+  sessionId: string,
+  metadataUpdates: Record<string, unknown>
+): Promise<Record<string, unknown>> {
+  // First, get current metadata
+  const { data: session, error: fetchError } = await supabase
+    .from('quiz_sessions')
+    .select('user_metadata')
+    .eq('id', sessionId)
+    .single();
+
+  if (fetchError) {
+    throw new Error(`Failed to fetch session metadata: ${fetchError.message}`);
+  }
+
+  const sessionData = session as { user_metadata: Record<string, unknown> | null } | null;
+  const currentMetadata = (sessionData?.user_metadata as Record<string, unknown>) || {};
+
+  // Merge new metadata
+  const mergedMetadata = {
+    ...currentMetadata,
+    ...metadataUpdates,
+  };
+
+  // Handle nested microCommitments merge
+  if (metadataUpdates.microCommitments && currentMetadata.microCommitments) {
+    mergedMetadata.microCommitments = {
+      ...(currentMetadata.microCommitments as Record<string, unknown>),
+      ...(metadataUpdates.microCommitments as Record<string, unknown>),
+    };
+  }
+
+  // Update with merged metadata
+  await updateSession(sessionId, { user_metadata: mergedMetadata });
+
+  return mergedMetadata;
 }
