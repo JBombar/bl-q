@@ -63,21 +63,8 @@ export const useQuizState = create<QuizState>((set, get) => ({
     newAnswers.push({ questionId, selectedOptionIds: optionIds, timeSpent });
     set({ answers: newAnswers });
 
-    // Background API call (non-blocking)
-    try {
-      await fetch('/api/quiz/answer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          questionId,
-          selectedOptionIds: optionIds,
-          timeSpentSeconds: timeSpent,
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to save answer:', error);
-      // Don't throw - UI continues even if API fails (will retry on complete)
-    }
+    // Note: Answer persistence now handled exclusively by batch-sync in completeQuiz
+    // This eliminates redundant individual API calls and improves performance
   },
 
   nextQuestion: () => {
@@ -95,40 +82,35 @@ export const useQuizState = create<QuizState>((set, get) => ({
   },
 
   completeQuiz: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
-      // PHASE 5: Flush all answers before completion to prevent missing data
       const { answers } = get();
 
-      // Retry failed answer submissions
-      for (const answer of answers) {
-        try {
-          await fetch('/api/quiz/answer', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              questionId: answer.questionId,
-              selectedOptionIds: answer.selectedOptionIds,
-              timeSpentSeconds: answer.timeSpent || 0,
-            }),
-          });
-        } catch (err) {
-          console.error('Failed to flush answer:', err);
-          // Continue anyway - server may have already received it
-        }
+      // Batch sync all answers in a single API call
+      const batchSyncResponse = await fetch('/api/quiz/answers/batch-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers }),
+      });
+
+      if (!batchSyncResponse.ok) {
+        const errorData = await batchSyncResponse.json();
+        throw new Error(errorData.error || 'Failed to sync answers');
       }
 
-      // Now safe to complete quiz
-      const response = await fetch('/api/quiz/complete', {
+      // Answers successfully synced - now safe to complete quiz
+      const completeResponse = await fetch('/api/quiz/complete', {
         method: 'POST',
       });
 
-      if (!response.ok) throw new Error('Failed to complete quiz');
+      if (!completeResponse.ok) {
+        throw new Error('Failed to complete quiz');
+      }
 
-      const data = await response.json();
+      const data = await completeResponse.json();
       set({ isLoading: false });
 
-      return data; // { result, offer }
+      return data; // { result, offer, insights, funnelState }
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
       throw error;
