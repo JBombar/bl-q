@@ -1,12 +1,39 @@
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-8">Page not found</p>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(to bottom right, #eff6ff, #e0e7ff)',
+    }}>
+      <div style={{ textAlign: 'center' }}>
+        <h1 style={{
+          fontSize: '3.75rem',
+          fontWeight: 'bold',
+          color: '#111827',
+          marginBottom: '1rem',
+        }}>
+          404
+        </h1>
+        <p style={{
+          fontSize: '1.25rem',
+          color: '#4b5563',
+          marginBottom: '2rem',
+        }}>
+          Page not found
+        </p>
         <a
           href="/"
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          style={{
+            display: 'inline-block',
+            padding: '0.75rem 1.5rem',
+            background: '#2563eb',
+            color: 'white',
+            borderRadius: '0.5rem',
+            textDecoration: 'none',
+            fontWeight: '500',
+          }}
         >
           Go Home
         </a>
