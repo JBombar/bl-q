@@ -13,6 +13,14 @@ export const EVENT_TYPES = {
   PAYMENT_SUBMITTED: 'payment_submitted',
   PAYMENT_SUCCEEDED: 'payment_succeeded',
   PAYMENT_FAILED: 'payment_failed',
+  // Subscription events
+  SUBSCRIPTION_STARTED: 'subscription_started',
+  SUBSCRIPTION_CREATED: 'subscription_created',
+  SUBSCRIPTION_RENEWED: 'subscription_renewed',
+  SUBSCRIPTION_CANCELED: 'subscription_canceled',
+  SUBSCRIPTION_UPDATED: 'subscription_updated',
+  INVOICE_PAID: 'invoice_paid',
+  INVOICE_PAYMENT_FAILED: 'invoice_payment_failed',
 } as const;
 
 export async function trackEvent(

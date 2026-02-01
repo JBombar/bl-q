@@ -4,6 +4,11 @@ import {
   verifyWebhookSignature,
   handlePaymentIntentSucceeded,
   handlePaymentIntentFailed,
+  handleInvoicePaid,
+  handleInvoicePaymentFailed,
+  handleSubscriptionUpdated,
+  handleSubscriptionDeleted,
+  handleSubscriptionCreated,
 } from '@/lib/stripe/webhook.service';
 
 export async function POST(request: NextRequest) {
@@ -36,12 +41,35 @@ export async function POST(request: NextRequest) {
 
     // Handle event
     switch (event.type) {
+      // Payment Intent events (one-time payments)
       case 'payment_intent.succeeded':
         await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
         break;
 
       case 'payment_intent.payment_failed':
         await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+        break;
+
+      // Invoice events (subscription billing)
+      case 'invoice.paid':
+        await handleInvoicePaid(event.data.object as Stripe.Invoice);
+        break;
+
+      case 'invoice.payment_failed':
+        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
+        break;
+
+      // Subscription lifecycle events
+      case 'customer.subscription.created':
+        await handleSubscriptionCreated(event.data.object as Stripe.Subscription);
+        break;
+
+      case 'customer.subscription.updated':
+        await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+        break;
+
+      case 'customer.subscription.deleted':
+        await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
 
       default:
