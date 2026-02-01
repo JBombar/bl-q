@@ -24,7 +24,7 @@ export function StressSlider({ normalizedScore }: StressSliderProps) {
       </div>
 
       {/* Slider track */}
-      <div className="relative h-3 rounded-full bg-linear-to-r from-green-400 via-orange-400 via-orange-400 to-red-500">
+      <div className="relative h-3 rounded-full bg-linear-to-r from-green-400 via-orange-400 to-red-500">
         {/* Indicator */}
         <motion.div
           className="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-lg border-2 border-gray-300"

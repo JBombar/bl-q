@@ -30,7 +30,7 @@ export default function PaymentSuccessPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-            className="inline-block w-24 h-24 bg-linear-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg"
+            className="w-24 h-24 bg-linear-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg"
           >
             <svg
               className="w-12 h-12 text-white"
