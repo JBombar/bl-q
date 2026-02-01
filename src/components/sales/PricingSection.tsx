@@ -5,6 +5,7 @@ import { PricingOption } from './PricingOption';
 import { useCountdownTimer } from '@/hooks/useCountdownTimer';
 import { usePostQuizState } from '@/hooks/usePostQuizState';
 import type { PlanWithPricing } from '@/config/pricing.config';
+import { getDynamicDisclaimerText } from '@/config/pricing.config';
 import {
   PLAN_INFO_CARDS,
   PROMO_CODE,
@@ -93,6 +94,14 @@ export function PricingSection({
 
   // Use selected plan from state, or default to recommended
   const currentSelectedId = selectedPlanId || defaultPlanId;
+
+  // Find the currently selected plan object for dynamic disclaimer
+  const selectedPlan = plans.find(p => p.id === currentSelectedId);
+
+  // Generate dynamic disclaimer text based on selected plan
+  const disclaimerText = selectedPlan
+    ? getDynamicDisclaimerText(selectedPlan)
+    : 'Vyberte si prosím plán výše.';
 
   const handlePlanSelect = (planId: string) => {
     setSelectedPlanId(planId);
@@ -253,9 +262,9 @@ export function PricingSection({
           {CTA_BUTTON_TEXT}
         </motion.button>
 
-        {/* Disclaimer text */}
+        {/* Dynamic Disclaimer text - updates based on selected plan */}
         <p className="text-[10px] text-[#949BA1] text-center mt-4 leading-[1.4em]">
-          Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte s uzavřením Smlouvy. Úplné znění obchodních podmínek naleznete na naší webové stránce.
+          {disclaimerText}
         </p>
       </div>
     </div>

@@ -281,3 +281,24 @@ export function isValidPlanId(planId: string): boolean {
 export function isValidPricingTier(tier: string): tier is PricingTier {
   return ['FIRST_DISCOUNT', 'MAX_DISCOUNT', 'FULL_PRICE'].includes(tier);
 }
+
+/**
+ * Generate dynamic disclaimer text based on the selected plan
+ * This provides legally accurate pricing information for each plan duration
+ */
+export function getDynamicDisclaimerText(plan: PlanWithPricing): string {
+  const initialPrice = formatPrice(plan.initialPriceCents);
+  const recurringPrice = formatPrice(plan.recurringPriceCents);
+
+  let periodText = '';
+
+  if (plan.duration === '7_days') {
+    periodText = `s úvodním týdnem za ${initialPrice} Kč, který poté automaticky přejde na měsíční předplatné za ${recurringPrice} Kč`;
+  } else if (plan.duration === '1_month') {
+    periodText = `s úvodním měsícem za ${initialPrice} Kč, který poté automaticky přejde na měsíční předplatné za ${recurringPrice} Kč`;
+  } else if (plan.duration === '3_months') {
+    periodText = `s úvodními 3 měsíci za ${initialPrice} Kč, které poté automaticky přejdou na 3-měsíční předplatné za ${recurringPrice} Kč`;
+  }
+
+  return `Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte ${periodText}, pokud nebude zrušeno. Zrušit lze v aplikaci nebo e-mailem: podpora@betterlady.cz. Podrobnosti viz Podmínky předplatného.`;
+}
