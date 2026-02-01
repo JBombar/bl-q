@@ -4,11 +4,65 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PricingOption } from './PricingOption';
 import type { PricingPlan } from '@/config/sales-page.config';
+import {
+  SECTION_HEADINGS,
+  PLAN_INFO_CARDS,
+  PROMO_CODE,
+  CTA_BUTTON_TEXT,
+  COUNTDOWN_TIMER,
+} from '@/config/sales-page-content';
 
 export interface PricingSectionProps {
   plans: PricingPlan[];
   recommendedPlanId: string;
   onPlanSelect: (planId: string) => void;
+}
+
+/**
+ * Brain Icon SVG
+ */
+function BrainIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2C9.5 2 7.5 4 7.5 6.5C7.5 7.5 7.8 8.4 8.3 9.1C6.9 9.5 6 10.9 6 12.5C6 13.6 6.4 14.6 7.1 15.3C6.4 15.9 6 16.9 6 18C6 20 7.5 21.5 9.5 21.5C10.2 21.5 10.8 21.3 11.3 21H12.7C13.2 21.3 13.8 21.5 14.5 21.5C16.5 21.5 18 20 18 18C18 16.9 17.6 15.9 16.9 15.3C17.6 14.6 18 13.6 18 12.5C18 10.9 17.1 9.5 15.7 9.1C16.2 8.4 16.5 7.5 16.5 6.5C16.5 4 14.5 2 12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+/**
+ * Target Icon SVG
+ */
+function TargetIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
+      <circle cx="12" cy="12" r="6" stroke="white" strokeWidth="2"/>
+      <circle cx="12" cy="12" r="2" fill="white"/>
+    </svg>
+  );
+}
+
+/**
+ * Tag Icon SVG
+ */
+function TagIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-green">
+      <path d="M20.59 13.41L13.42 20.58C13.2343 20.766 13.0137 20.9135 12.7709 21.0141C12.5281 21.1148 12.2678 21.1666 12.005 21.1666C11.7422 21.1666 11.4819 21.1148 11.2391 21.0141C10.9963 20.9135 10.7757 20.766 10.59 20.58L2 12V2H12L20.59 10.59C20.9625 10.9647 21.1716 11.4716 21.1716 12C21.1716 12.5284 20.9625 13.0353 20.59 13.41Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M7 7H7.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+/**
+ * Checkmark Icon SVG
+ */
+function CheckIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-green">
+      <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
 }
 
 export function PricingSection({
@@ -17,7 +71,7 @@ export function PricingSection({
   onPlanSelect,
 }: PricingSectionProps) {
   const [selectedPlanId, setSelectedPlanId] = useState<string>(recommendedPlanId);
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(COUNTDOWN_TIMER.durationSeconds);
 
   // Countdown timer
   useEffect(() => {
@@ -31,7 +85,7 @@ export function PricingSection({
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins} : ${secs.toString().padStart(2, '0')}`;
+    return { mins: mins.toString().padStart(2, '0'), secs: secs.toString().padStart(2, '0') };
   };
 
   const handlePlanSelect = (planId: string) => {
@@ -44,9 +98,11 @@ export function PricingSection({
     }
   };
 
+  const time = formatTime(timeLeft);
+
   return (
-    <div className="w-full">
-      <div className="max-w-3xl mx-auto">
+    <div className="w-full font-figtree">
+      <div className="max-w-[500px] mx-auto px-4">
 
         {/* Header: Tvůj personalizovaný plán */}
         <motion.div
@@ -54,114 +110,97 @@ export function PricingSection({
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-            Tvůj <span className="text-green-700">personalizovaný plán</span> vnitřního klidu je připraven!
+          <h2 className="text-2xl font-bold text-dark mb-6">
+            Tvůj <span className="text-primary-green">personalizovaný plán</span> vnitřního klidu je připraven!
           </h2>
 
-          {/* Info boxes */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            {/* Hlavní spouštěč */}
-            <div className="flex items-center gap-2 text-sm text-gray-700">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
+          {/* Plan Info Cards */}
+          <div className="flex items-center justify-center gap-4 mb-6">
+            {PLAN_INFO_CARDS.map((card, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 bg-linear-to-b from-primary-green-light to-primary-green-lighter p-4 rounded-lg"
+              >
+                <div className="w-12 h-12 bg-primary-green rounded-lg flex items-center justify-center shrink-0">
+                  {card.icon === 'brain' ? <BrainIcon /> : <TargetIcon />}
+                </div>
+                <div className="text-left">
+                  <div className="text-xs text-gray-500 font-medium">{card.label}</div>
+                  <div className="text-base font-bold text-dark">{card.value}</div>
+                </div>
               </div>
-              <div className="text-left">
-                <div className="text-xs text-gray-500">Hlavní spouštěč</div>
-                <div className="font-semibold">Stres</div>
-              </div>
-            </div>
-
-            {/* Cíl plánu */}
-            <div className="flex items-center gap-2 text-sm text-gray-700">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="text-left">
-                <div className="text-xs text-gray-500">Cíl plánu</div>
-                <div className="font-semibold">Reset nervového systému</div>
-              </div>
-            </div>
+            ))}
           </div>
         </motion.div>
 
-        {/* Green container with ticket stub cutouts */}
+        {/* Promo Code Section */}
         <motion.div
-          className="relative bg-green-50 rounded-2xl p-6 md:p-8 border border-green-100"
+          className="bg-white rounded-lg border border-gray-light p-4 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          style={{
-            // Ticket stub cutouts using radial gradients
-            background: `
-              radial-gradient(circle at 0% 50%, transparent 12px, rgb(240 253 244) 12px),
-              radial-gradient(circle at 100% 50%, transparent 12px, rgb(240 253 244) 12px)
-            `,
-          }}
         >
-          {/* Promo code section */}
-          <div className="mb-6">
-            {/* Green tag: "Tvůj slevový kód je uplatněn!" */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 9V5a3 3 0 013-3h4c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-              </svg>
-              <span className="text-sm font-bold text-green-700">
-                Tvůj slevový kód je uplatněn!
-              </span>
-            </div>
-
-            {/* Promo code input field */}
-            <div className="flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-green-200 mb-4">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm font-mono text-gray-700">[DYNAMIC PROMO KÓD]</span>
-              </div>
-
-              {/* Countdown timer */}
-              <div className="bg-gray-100 rounded-md px-3 py-1">
-                <div className="text-sm font-mono font-bold text-gray-700">
-                  {formatTime(timeLeft)}
-                </div>
-                <div className="text-[10px] text-gray-500 text-center">minut, sekund</div>
-              </div>
-            </div>
+          {/* Promo applied message */}
+          <div className="flex items-center gap-2 mb-3">
+            <TagIcon />
+            <span className="text-sm font-medium text-dark">
+              {PROMO_CODE.appliedText}
+            </span>
           </div>
 
-          {/* Pricing options */}
-          <div className="space-y-3 mb-6">
-            {plans.map((plan, index) => (
-              <PricingOption
-                key={plan.id}
-                plan={plan}
-                isSelected={selectedPlanId === plan.id}
-                isRecommended={plan.id === recommendedPlanId}
-                onSelect={() => handlePlanSelect(plan.id)}
-              />
-            ))}
+          {/* Promo code display */}
+          <div className="flex items-center gap-3 bg-white border border-gray-light rounded-lg px-4 py-3 mb-4">
+            <CheckIcon />
+            <span className="text-lg font-bold text-dark">[DYNAMIC PROMO KÓD]</span>
           </div>
 
-          {/* CTA Button */}
-          <button
-            onClick={handleCTA}
-            className="w-full py-4 bg-gradient-to-r from-[#F9A201] to-orange-500 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
-          >
-            CHCI SVŮJ PLÁN
-          </button>
-
-          {/* Disclaimer text */}
-          <p className="text-[10px] text-gray-500 text-center mt-4 leading-relaxed">
-            Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte s uzavřením Smlouvy na CÉENA i.o., který začne
-            platit ihned po nákupu a můžete se vzdát práva na 14-ti denní lhůtu pro odstoupení od smlouvy.
-            Úplné znění obchodních podmínek naleznete na naší webové stránce.
-          </p>
+          {/* Timer */}
+          <div className="bg-linear-to-r from-gray-light to-gray-medium rounded-lg p-4">
+            <div className="flex items-center justify-center gap-1">
+              <span className="text-3xl font-bold text-primary-green">{time.mins}</span>
+              <span className="text-3xl font-bold text-primary-green">:</span>
+              <span className="text-3xl font-bold text-primary-green">{time.secs}</span>
+            </div>
+            <div className="flex justify-center gap-8 text-xs text-gray-500 mt-1">
+              <span>{PROMO_CODE.timerLabels.minutes}</span>
+              <span>{PROMO_CODE.timerLabels.seconds}</span>
+            </div>
+          </div>
         </motion.div>
 
+        {/* Pricing options */}
+        <motion.div
+          className="space-y-3 mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          {plans.map((plan) => (
+            <PricingOption
+              key={plan.id}
+              plan={plan}
+              isSelected={selectedPlanId === plan.id}
+              isRecommended={plan.id === recommendedPlanId}
+              onSelect={() => handlePlanSelect(plan.id)}
+            />
+          ))}
+        </motion.div>
+
+        {/* CTA Button */}
+        <motion.button
+          onClick={handleCTA}
+          className="w-full py-4 bg-primary-green text-white text-lg font-bold rounded-lg shadow-card hover:bg-opacity-90 transition-all uppercase tracking-wide"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          {CTA_BUTTON_TEXT}
+        </motion.button>
+
+        {/* Disclaimer text */}
+        <p className="text-[10px] text-gray-500 text-center mt-4 leading-relaxed">
+          Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte s uzavřením Smlouvy. Úplné znění obchodních podmínek naleznete na naší webové stránce.
+        </p>
       </div>
     </div>
   );

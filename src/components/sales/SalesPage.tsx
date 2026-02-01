@@ -12,22 +12,21 @@ import { SocialProofStats } from './SocialProofStats';
 import { PainPointsList } from './PainPointsList';
 import { GainsChecklist } from './GainsChecklist';
 import { CurriculumSection } from './CurriculumSection';
-import { FeaturesSection } from './FeaturesSection';
 import { Testimonials } from './Testimonials';
 import { FaqSection } from './FaqSection';
 import { GuaranteeBox } from './GuaranteeBox';
 import { SalesPageFooter } from './SalesPageFooter';
 import {
   PRICING_PLANS,
-  PLAN_HIGHLIGHTS,
   getRecommendedPlan,
   getPlanById,
 } from '@/config/sales-page.config';
+import { CTA_BUTTON_TEXT } from '@/config/sales-page-content';
 import { CheckoutModal } from '../checkout/CheckoutModal';
 
 /**
  * Main Sales/Offer Page Component
- * Phase 2: Connected to usePostQuizState for dynamic data
+ * Styled according to figma_design.md specification
  */
 export function SalesPage() {
   const router = useRouter();
@@ -38,10 +37,10 @@ export function SalesPage() {
   // If no quiz data, redirect back to quiz
   if (!completeData || !completeData.insights) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-white font-figtree">
         <div className="text-center max-w-md p-8">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-[#F9A201] mx-auto" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-light border-t-primary-green mx-auto" />
+          <h2 className="text-xl font-bold text-dark mb-2">
             Načítání tvého plánu...
           </h2>
           <p className="text-gray-600 mb-6">
@@ -49,7 +48,7 @@ export function SalesPage() {
           </p>
           <button
             onClick={() => router.push('/q/better-lady')}
-            className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
+            className="px-6 py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 font-semibold"
           >
             Zpět na dotazník
           </button>
@@ -65,9 +64,6 @@ export function SalesPage() {
 
   // Calculate projection
   const projection = calculateProjection(insights.normalizedScore, timeCommitmentMinutes);
-
-  // Extract main challenge from insight cards (first card is main challenge)
-  const mainChallenge = insights.insightCards?.[0]?.value || 'Vnitřní klid';
 
   // Get recommended plan based on stress stage
   const recommendedPlanId = getRecommendedPlan(insights.stressStage);
@@ -99,12 +95,12 @@ export function SalesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white font-figtree">
       {/* Sticky Header */}
       <StickyHeader />
 
       {/* Transformation Display - Two cards side-by-side */}
-      <div className="py-8 px-4 bg-white">
+      <div className="py-8 bg-white">
         <TransformationDisplay
           firstName={firstName}
           currentStressStage={insights.stressStage}
@@ -115,7 +111,7 @@ export function SalesPage() {
       </div>
 
       {/* Pricing Section - Below the cards */}
-      <div id="pricing-section" className="py-8 px-4 bg-white">
+      <div id="pricing-section" className="py-8 bg-white">
         <PricingSection
           plans={PRICING_PLANS}
           recommendedPlanId={recommendedPlanId}
@@ -123,23 +119,20 @@ export function SalesPage() {
         />
       </div>
 
-      {/* Plan Highlights */}
-      <PlanHighlights highlights={PLAN_HIGHLIGHTS} mainChallenge={mainChallenge} />
+      {/* Plan Features/Highlights */}
+      <PlanHighlights />
 
-      {/* Social Proof Stats */}
+      {/* Social Proof */}
       <SocialProofStats />
 
-      {/* Pain Points */}
+      {/* Pain Points - Problems List */}
       <PainPointsList />
 
-      {/* Gains Checklist */}
+      {/* Gains Checklist - Solutions List */}
       <GainsChecklist />
 
-      {/* Curriculum */}
+      {/* Course Modules */}
       <CurriculumSection />
-
-      {/* Features */}
-      <FeaturesSection />
 
       {/* Testimonials */}
       <Testimonials />
@@ -151,23 +144,14 @@ export function SalesPage() {
       <GuaranteeBox />
 
       {/* Final CTA Section */}
-      <section className="py-16 px-4 bg-linear-to-b from-purple-50 to-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            Jsi připravená začít svou transformaci?
-          </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            Připoj se k tisícům žen, které už změnily svůj život. Začni ještě dnes.
-          </p>
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-[500px] mx-auto text-center">
           <button
             onClick={scrollToPricing}
-            className="inline-block px-12 py-5 bg-gradient-to-r from-[#F9A201] to-orange-500 text-white text-xl font-bold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all"
+            className="w-full py-4 bg-primary-green text-white text-lg font-bold rounded-lg shadow-card hover:bg-opacity-90 transition-all uppercase tracking-wide"
           >
-            CHCI ZAČÍT HNED 🚀
+            {CTA_BUTTON_TEXT}
           </button>
-          <p className="text-sm text-gray-500 mt-4">
-            ✓ Začni během 2 minut • ✓ 30denní záruka vrácení peněz
-          </p>
         </div>
       </section>
 

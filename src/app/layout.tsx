@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="cs" className={`${inter.variable} ${figtree.variable}`}>
-      <body className="font-sans antialiased" style={{ fontFamily: 'var(--font-figtree), var(--font-inter), sans-serif' }} suppressHydrationWarning>
+      <body className="font-sans antialiased bg-white text-dark" suppressHydrationWarning>
         {children}
       </body>
     </html>

@@ -1,50 +1,41 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import type { HighlightItem } from '@/config/sales-page.config';
+import { PLAN_FEATURES } from '@/config/sales-page-content';
 
-export interface PlanHighlightsProps {
-  highlights: HighlightItem[];
-  mainChallenge?: string;
+/**
+ * Feature Icon placeholder
+ */
+function FeatureIcon({ index }: { index: number }) {
+  const icons = ['📋', '🎯', '📱', '🧘', '📊'];
+  return (
+    <div className="w-12 h-12 bg-card-bg rounded-lg flex items-center justify-center shrink-0">
+      <span className="text-2xl">{icons[index] || '✓'}</span>
+    </div>
+  );
 }
 
-export function PlanHighlights({ highlights, mainChallenge }: PlanHighlightsProps) {
+/**
+ * PlanHighlights Component
+ * Plan Features List matching figma_design.md specification
+ */
+export function PlanHighlights() {
   return (
-    <section className="py-16 px-4 bg-white">
-      <div className="max-w-5xl mx-auto">
-        {/* Section Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            To nejdůležitější z tvého plánu
-          </h2>
-          {mainChallenge && (
-            <p className="text-lg text-gray-600">
-              Zaměříme se na: <span className="font-semibold text-[#F9A201]">{mainChallenge}</span>
-            </p>
-          )}
-        </motion.div>
-
-        {/* Highlights Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {highlights.map((highlight, index) => (
+    <section className="py-12 px-4 bg-white font-figtree">
+      <div className="max-w-[500px] mx-auto">
+        {/* Features list */}
+        <div className="space-y-4">
+          {PLAN_FEATURES.map((feature, index) => (
             <motion.div
               key={index}
-              className="bg-linear-to-br from-purple-50 to-white p-6 rounded-xl border border-purple-100 shadow-sm hover:shadow-md transition-shadow"
+              className="flex items-start gap-4 p-4 bg-card-bg rounded-lg"
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <div className="text-4xl mb-3">{highlight.icon}</div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                {highlight.title}
-              </h3>
-              <p className="text-sm text-gray-600">
-                {highlight.description}
-              </p>
+              <FeatureIcon index={index} />
+              <p className="text-base text-dark leading-relaxed">{feature}</p>
             </motion.div>
           ))}
         </div>

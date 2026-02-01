@@ -1,56 +1,44 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ModuleAccordion } from './ModuleAccordion';
-import { PROGRAM_MODULES } from '@/config/sales-page.config';
+import { COURSE_MODULES } from '@/config/sales-page-content';
 
+/**
+ * CurriculumSection Component
+ * Course Modules matching figma_design.md specification
+ */
 export function CurriculumSection() {
   return (
-    <section className="py-16 px-4 bg-white">
-      <div className="max-w-5xl mx-auto">
-        {/* Section Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Co tě čeká v programu
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            90denní cesta rozdělen na 6 modulů. Každý modul obsahuje praktické lekce a cvičení.
-          </p>
-        </motion.div>
-
-        {/* Modules */}
-        <div className="space-y-4">
-          {PROGRAM_MODULES.map((module, index) => (
+    <section className="py-12 px-4 bg-white font-figtree">
+      <div className="max-w-[500px] mx-auto">
+        {/* Modules list */}
+        <div className="space-y-6">
+          {COURSE_MODULES.map((module, index) => (
             <motion.div
-              key={module.id}
+              key={index}
+              className="flex items-start gap-4"
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <ModuleAccordion module={module} defaultExpanded={index === 0} />
+              {/* Module number */}
+              <div className="w-12 h-12 bg-linear-to-b from-primary-green-light to-primary-green-lighter rounded-lg flex items-center justify-center shrink-0">
+                <span className="text-2xl font-bold text-primary-green">{module.number}</span>
+              </div>
+
+              {/* Module content */}
+              <div>
+                <h3 className="text-xl font-bold text-dark mb-2">
+                  {module.title}
+                </h3>
+                <p className="text-base text-gray-600">
+                  {module.description}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>
-
-        {/* Timeline Visual */}
-        <motion.div
-          className="mt-12 bg-gradient-to-r from-purple-50 to-green-50 rounded-xl p-6 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          <p className="text-sm font-semibold text-gray-700 mb-2">
-            📅 Celková délka programu
-          </p>
-          <p className="text-3xl font-bold text-gray-900">90 dní</p>
-          <p className="text-sm text-gray-600 mt-2">
-            12 týdnů systematického vedení k vnitřnímu klidu
-          </p>
-        </motion.div>
       </div>
     </section>
   );

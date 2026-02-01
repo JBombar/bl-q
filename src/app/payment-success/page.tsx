@@ -78,7 +78,7 @@ export default function PaymentSuccessPage() {
             </h2>
             <div className="text-left space-y-4">
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
+                <div className="shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
                   1
                 </div>
                 <div>
@@ -92,7 +92,7 @@ export default function PaymentSuccessPage() {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
+                <div className="shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
                   2
                 </div>
                 <div>
@@ -106,7 +106,7 @@ export default function PaymentSuccessPage() {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
+                <div className="shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
                   3
                 </div>
                 <div>
@@ -133,7 +133,7 @@ export default function PaymentSuccessPage() {
                 // TODO: Link to member area/dashboard
                 window.location.href = '/dashboard';
               }}
-              className="w-full py-4 bg-gradient-to-r from-[#F9A201] to-orange-500 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+              className="w-full py-4 bg-linear-to-r from-[#F9A201] to-orange-500 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
             >
               Začít s programem 🚀
             </button>

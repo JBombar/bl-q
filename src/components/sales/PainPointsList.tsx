@@ -1,54 +1,56 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { PAIN_POINTS } from '@/config/sales-page.config';
+import { PROBLEMS, SECTION_HEADINGS } from '@/config/sales-page-content';
 
+/**
+ * Gray Checkmark Icon
+ */
+function GrayCheckIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-400 shrink-0">
+      <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+/**
+ * PainPointsList Component
+ * "Jak může vypadat život bez Better Lady" section
+ * Matches figma_design.md "Problems List" specification
+ */
 export function PainPointsList() {
   return (
-    <section className="py-16 px-4 bg-red-50">
-      <div className="max-w-4xl mx-auto">
-        {/* Section Header */}
+    <section className="py-12 px-4 bg-white font-figtree">
+      <div className="max-w-[500px] mx-auto">
+        {/* Card container */}
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="bg-card-bg p-6 rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Jak může vypadat život bez Better Lady?
-          </h2>
-          <p className="text-lg text-gray-600">
-            Rozpoznáváš některé z těchto pocitů?
-          </p>
-        </motion.div>
+          {/* Section heading */}
+          <h3 className="text-xl font-bold text-dark mb-6">
+            {SECTION_HEADINGS.problemsList}
+          </h3>
 
-        {/* Pain Points List */}
-        <div className="bg-white rounded-2xl p-8 shadow-lg">
+          {/* Problems list */}
           <ul className="space-y-4">
-            {PAIN_POINTS.map((point, index) => (
+            {PROBLEMS.map((problem, index) => (
               <motion.li
                 key={index}
-                className="flex items-start gap-3 text-gray-700"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                className="flex items-start gap-3"
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
               >
-                <span className="text-red-500 mt-1 flex-shrink-0">✗</span>
-                <span>{point}</span>
+                <GrayCheckIcon />
+                <span className="text-base text-dark">{problem}</span>
               </motion.li>
             ))}
           </ul>
-        </div>
-
-        {/* CTA */}
-        <motion.div
-          className="text-center mt-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <p className="text-lg text-gray-700 font-semibold">
-            Nemusíš tak žít. Změna začíná dnes.
-          </p>
         </motion.div>
       </div>
     </section>

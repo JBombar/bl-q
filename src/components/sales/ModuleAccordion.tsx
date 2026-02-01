@@ -27,7 +27,7 @@ export function ModuleAccordion({ module, defaultExpanded = false }: ModuleAccor
             {module.description}
           </p>
         </div>
-        <div className="ml-4 flex-shrink-0">
+        <div className="ml-4 shrink-0">
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
@@ -66,7 +66,7 @@ export function ModuleAccordion({ module, defaultExpanded = false }: ModuleAccor
                 <ul className="space-y-2">
                   {module.lessons.map((lesson, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                      <span className="text-green-500 mt-0.5 shrink-0">✓</span>
                       <span>{lesson}</span>
                     </li>
                   ))}

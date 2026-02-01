@@ -9,38 +9,51 @@ export interface FaqAccordionProps {
   defaultExpanded?: boolean;
 }
 
+/**
+ * Chevron Icon
+ */
+function ChevronIcon({ isExpanded }: { isExpanded: boolean }) {
+  return (
+    <motion.svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="text-gray-400"
+      animate={{ rotate: isExpanded ? 180 : 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      <path
+        d="M6 9L12 15L18 9"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </motion.svg>
+  );
+}
+
+/**
+ * FaqAccordion Component
+ * Expandable FAQ item
+ */
 export function FaqAccordion({ faq, defaultExpanded = false }: FaqAccordionProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="bg-card-bg rounded-lg overflow-hidden font-figtree">
       {/* Question */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition-colors text-left"
+        className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-100 transition-colors text-left"
       >
-        <h3 className="text-lg font-semibold text-gray-900 pr-4">
+        <h3 className="text-base font-semibold text-dark pr-4">
           {faq.question}
         </h3>
-        <div className="flex-shrink-0">
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <svg
-              className="w-6 h-6 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </motion.div>
+        <div className="shrink-0">
+          <ChevronIcon isExpanded={isExpanded} />
         </div>
       </button>
 
@@ -53,8 +66,8 @@ export function FaqAccordion({ faq, defaultExpanded = false }: FaqAccordionProps
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="px-6 pb-5 border-t border-gray-100">
-              <p className="text-gray-600 leading-relaxed pt-4">
+            <div className="px-5 pb-4">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 {faq.answer}
               </p>
             </div>

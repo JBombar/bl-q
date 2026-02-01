@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { COUNTDOWN_CONFIG } from '@/config/sales-page.config';
+import { COUNTDOWN_TIMER, CTA_BUTTON_TEXT } from '@/config/sales-page-content';
 
+/**
+ * StickyHeader Component
+ * Matches figma_design.md "Countdown Timer Banner" section
+ */
 export function StickyHeader() {
-  const [timeLeft, setTimeLeft] = useState(COUNTDOWN_CONFIG.durationMinutes * 60); // seconds
+  const [timeLeft, setTimeLeft] = useState(COUNTDOWN_TIMER.durationSeconds);
   const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
@@ -29,36 +33,31 @@ export function StickyHeader() {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 py-3">
+    <div className="sticky top-0 z-50 bg-white shadow-sm">
+      <div className="max-w-[500px] mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-linear-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">BL</span>
-            </div>
-            <span className="font-semibold text-gray-900 hidden sm:inline">Better Lady</span>
-          </div>
-
-          {/* Countdown */}
-          <div className="flex items-center gap-3">
+          {/* Left side - Countdown info */}
+          <div className="flex flex-col">
             {!isExpired ? (
               <>
-                <span className="text-sm text-gray-600 hidden sm:inline">
-                  {COUNTDOWN_CONFIG.urgencyMessage}
+                <span className="text-sm text-dark">
+                  {COUNTDOWN_TIMER.discountText}
                 </span>
-                <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-1.5">
-                  <span className="text-red-600 font-mono font-bold text-lg">
-                    {formatTime(timeLeft)}
-                  </span>
-                </div>
+                <span className="text-2xl font-bold text-dark">
+                  {formatTime(timeLeft)}
+                </span>
               </>
             ) : (
               <span className="text-sm text-gray-500">
-                {COUNTDOWN_CONFIG.expiredMessage}
+                Nabídka vypršela
               </span>
             )}
           </div>
+
+          {/* Right side - CTA Button */}
+          <button className="bg-primary-green text-white px-6 py-3 rounded-lg font-bold text-sm uppercase tracking-wide hover:bg-opacity-90 transition-all shadow-card">
+            {CTA_BUTTON_TEXT}
+          </button>
         </div>
       </div>
     </div>
