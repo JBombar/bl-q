@@ -5,7 +5,7 @@ import { GUARANTEE } from '@/config/sales-page.config';
 
 export function GuaranteeBox() {
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-white to-green-50">
+    <section className="py-16 px-4 bg-linear-to-b from-white to-green-50">
       <div className="max-w-4xl mx-auto">
         <motion.div
           className="bg-white rounded-2xl p-8 md:p-12 shadow-2xl border-2 border-green-200"
@@ -15,7 +15,7 @@ export function GuaranteeBox() {
         >
           {/* Icon */}
           <div className="text-center mb-6">
-            <div className="inline-block w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-4xl mb-4 shadow-lg">
+            <div className="inline-block w-20 h-20 bg-linear-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-4xl mb-4 shadow-lg">
               {GUARANTEE.icon}
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">

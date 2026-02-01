@@ -5,7 +5,7 @@ import { GAINS_CHECKLIST } from '@/config/sales-page.config';
 
 export function GainsChecklist() {
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-white to-green-50">
+    <section className="py-16 px-4 bg-linear-to-b from-white to-green-50">
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
         <motion.div

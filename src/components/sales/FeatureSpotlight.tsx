@@ -24,7 +24,7 @@ export function FeatureSpotlight({ feature, index = 0 }: FeatureSpotlightProps) 
     >
       {/* Image */}
       <div className={`${isEven ? '' : 'md:col-start-2'}`}>
-        <div className="relative aspect-square bg-gradient-to-br from-purple-100 to-green-100 rounded-2xl overflow-hidden shadow-lg">
+        <div className="relative aspect-square bg-linear-to-br from-purple-100 to-green-100 rounded-2xl overflow-hidden shadow-lg">
           {feature.imageUrl ? (
             <img
               src={feature.imageUrl}
@@ -42,7 +42,7 @@ export function FeatureSpotlight({ feature, index = 0 }: FeatureSpotlightProps) 
       {/* Content */}
       <div className={`${isEven ? '' : 'md:col-start-1 md:row-start-1'}`}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-[#F9A201] to-orange-500 rounded-xl flex items-center justify-center text-2xl">
+          <div className="w-12 h-12 bg-linear-to-br from-[#F9A201] to-orange-500 rounded-xl flex items-center justify-center text-2xl">
             {feature.icon}
           </div>
           <h3 className="text-2xl font-bold text-gray-900">

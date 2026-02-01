@@ -103,26 +103,28 @@ export function SalesPage() {
       {/* Sticky Header */}
       <StickyHeader />
 
-      {/* Transformation Display */}
-      <TransformationDisplay
-        firstName={firstName}
-        currentStressStage={insights.stressStage}
-        currentScore={projection.displayCurrentScore}
-        targetScore={projection.displayTargetScore}
-        stageTitle={insights.stageTitle}
-      />
+      {/* Transformation Display - Two cards side-by-side */}
+      <div className="py-8 px-4 bg-white">
+        <TransformationDisplay
+          firstName={firstName}
+          currentStressStage={insights.stressStage}
+          currentScore={projection.displayCurrentScore}
+          targetScore={projection.displayTargetScore}
+          stageTitle={insights.stageTitle}
+        />
+      </div>
 
-      {/* Plan Highlights */}
-      <PlanHighlights highlights={PLAN_HIGHLIGHTS} mainChallenge={mainChallenge} />
-
-      {/* Pricing Section */}
-      <div id="pricing-section">
+      {/* Pricing Section - Below the cards */}
+      <div id="pricing-section" className="py-8 px-4 bg-white">
         <PricingSection
           plans={PRICING_PLANS}
           recommendedPlanId={recommendedPlanId}
           onPlanSelect={handlePlanSelect}
         />
       </div>
+
+      {/* Plan Highlights */}
+      <PlanHighlights highlights={PLAN_HIGHLIGHTS} mainChallenge={mainChallenge} />
 
       {/* Social Proof Stats */}
       <SocialProofStats />
@@ -149,7 +151,7 @@ export function SalesPage() {
       <GuaranteeBox />
 
       {/* Final CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-b from-purple-50 to-white">
+      <section className="py-16 px-4 bg-linear-to-b from-purple-50 to-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Jsi připravená začít svou transformaci?

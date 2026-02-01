@@ -33,7 +33,7 @@ export function PlanHighlights({ highlights, mainChallenge }: PlanHighlightsProp
           {highlights.map((highlight, index) => (
             <motion.div
               key={index}
-              className="bg-gradient-to-br from-purple-50 to-white p-6 rounded-xl border border-purple-100 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-linear-to-br from-purple-50 to-white p-6 rounded-xl border border-purple-100 shadow-sm hover:shadow-md transition-shadow"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}

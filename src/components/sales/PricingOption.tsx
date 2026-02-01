@@ -1,15 +1,20 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import type { PricingPlan } from '@/config/sales-page.config';
 
 export interface PricingOptionProps {
   plan: PricingPlan;
+  isSelected: boolean;
   isRecommended?: boolean;
   onSelect: () => void;
 }
 
-export function PricingOption({ plan, isRecommended, onSelect }: PricingOptionProps) {
+export function PricingOption({
+  plan,
+  isSelected,
+  isRecommended,
+  onSelect,
+}: PricingOptionProps) {
   const formatPrice = (cents: number) => {
     return (cents / 100).toLocaleString('cs-CZ', {
       minimumFractionDigits: 0,
@@ -17,87 +22,94 @@ export function PricingOption({ plan, isRecommended, onSelect }: PricingOptionPr
     });
   };
 
-  const savings = plan.originalPriceCents
-    ? plan.originalPriceCents - plan.priceCents
-    : 0;
+  // Calculate per-day price (assuming 90 days for all plans)
+  const pricePerDay = Math.round(plan.priceCents / 90 / 100);
+  const originalPricePerDay = plan.originalPriceCents
+    ? Math.round(plan.originalPriceCents / 90 / 100)
+    : null;
 
   return (
-    <motion.div
+    <button
+      onClick={onSelect}
       className={`
-        relative bg-white rounded-2xl p-6 border-2 shadow-lg transition-all
-        ${isRecommended
-          ? 'border-[#F9A201] shadow-xl scale-105'
-          : 'border-gray-200 hover:border-gray-300'
+        relative w-full text-left rounded-xl p-4 border-2 transition-all
+        ${
+          isSelected
+            ? 'bg-green-50 border-green-400'
+            : 'bg-white border-gray-200 hover:border-gray-300'
         }
       `}
-      whileHover={{ y: -4 }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
     >
-      {/* Badge */}
-      {plan.badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="bg-gradient-to-r from-[#F9A201] to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase shadow-lg">
-            {plan.badge}
-          </span>
+      <div className="flex items-center gap-4">
+        {/* Radio button */}
+        <div className="flex-shrink-0">
+          <div
+            className={`
+              w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
+              ${
+                isSelected
+                  ? 'border-green-500 bg-green-500'
+                  : 'border-gray-300 bg-white'
+              }
+            `}
+          >
+            {isSelected && (
+              <div className="w-2 h-2 bg-white rounded-full" />
+            )}
+          </div>
         </div>
-      )}
 
-      {/* Plan Name */}
-      <h3 className="text-xl font-bold text-gray-900 mb-2 text-center mt-2">
-        {plan.name}
-      </h3>
+        {/* Plan details */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-baseline gap-2 mb-1">
+            {/* Plan name */}
+            <h3 className="font-bold text-sm text-gray-900 uppercase tracking-wide">
+              {plan.name}
+            </h3>
 
-      {/* Billing Period */}
-      <p className="text-sm text-gray-600 text-center mb-4">
-        {plan.billingPeriod}
-      </p>
+            {/* Recommended badge */}
+            {isRecommended && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-700 text-white text-[10px] font-bold rounded-md">
+                <span>★</span>
+                <span>Nejoblíbenější volba</span>
+              </span>
+            )}
+          </div>
 
-      {/* Pricing */}
-      <div className="text-center mb-4">
-        {plan.originalPriceCents && (
-          <div className="mb-1">
-            <span className="text-lg text-gray-400 line-through">
-              {formatPrice(plan.originalPriceCents)} Kč
+          {/* Pricing */}
+          <div className="flex items-baseline gap-2">
+            {/* Original price (crossed out) */}
+            {plan.originalPriceCents && (
+              <span className="text-sm text-gray-400 line-through">
+                {formatPrice(plan.originalPriceCents)} Kč
+              </span>
+            )}
+
+            {/* Current price */}
+            <span className="text-base font-bold text-gray-900">
+              {formatPrice(plan.priceCents)} Kč
             </span>
           </div>
-        )}
-        <div className="flex items-baseline justify-center gap-1">
-          <span className="text-4xl font-bold text-gray-900">
-            {formatPrice(plan.priceCents)}
-          </span>
-          <span className="text-xl text-gray-600">Kč</span>
         </div>
-        {savings > 0 && (
-          <p className="text-sm text-green-600 font-semibold mt-1">
-            Ušetříš {formatPrice(savings)} Kč
-          </p>
-        )}
+
+        {/* Per-day price box */}
+        <div className="flex-shrink-0 text-right">
+          {/* Original per-day price */}
+          {originalPricePerDay && (
+            <div className="text-xs text-gray-400 line-through mb-0.5">
+              {originalPricePerDay} Kč
+            </div>
+          )}
+
+          {/* Current per-day price in gray box */}
+          <div className="bg-gray-100 rounded-md px-3 py-1 inline-block">
+            <div className="text-lg font-bold text-gray-900">
+              {pricePerDay} <span className="text-xs font-normal">Kč</span>
+            </div>
+            <div className="text-[10px] text-gray-500 text-center">/den</div>
+          </div>
+        </div>
       </div>
-
-      {/* Features */}
-      <ul className="space-y-3 mb-6">
-        {plan.features.map((feature, index) => (
-          <li key={index} className="flex items-start gap-2 text-sm">
-            <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
-            <span className="text-gray-700">{feature}</span>
-          </li>
-        ))}
-      </ul>
-
-      {/* CTA Button */}
-      <button
-        onClick={onSelect}
-        className={`
-          w-full py-4 rounded-xl font-bold text-lg transition-all
-          ${isRecommended
-            ? 'bg-gradient-to-r from-[#F9A201] to-orange-500 text-white hover:shadow-xl hover:scale-105'
-            : 'bg-gray-900 text-white hover:bg-gray-800'
-          }
-        `}
-      >
-        {plan.ctaText}
-      </button>
-    </motion.div>
+    </button>
   );
 }

@@ -16,7 +16,7 @@ export function Testimonials() {
   };
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-purple-50 to-white">
+    <section className="py-16 px-4 bg-linear-to-b from-purple-50 to-white">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <motion.div
@@ -73,7 +73,7 @@ export function Testimonials() {
 
               {/* Author */}
               <div className="flex items-center gap-4 border-t border-gray-100 pt-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-200 to-green-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="w-12 h-12 bg-linear-to-br from-purple-200 to-green-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                   {testimonial.photo ? (
                     <img
                       src={testimonial.photo}

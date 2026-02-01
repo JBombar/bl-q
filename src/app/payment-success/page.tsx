@@ -17,7 +17,7 @@ export default function PaymentSuccessPage() {
   const firstName = funnelData.firstName || 'tam';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-b from-green-50 to-white flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -30,7 +30,7 @@ export default function PaymentSuccessPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-            className="inline-block w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg"
+            className="inline-block w-24 h-24 bg-linear-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg"
           >
             <svg
               className="w-12 h-12 text-white"
@@ -71,7 +71,7 @@ export default function PaymentSuccessPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl p-6 mb-8 border border-green-100"
+            className="bg-linear-to-br from-green-50 to-blue-50 rounded-xl p-6 mb-8 border border-green-100"
           >
             <h2 className="text-lg font-bold text-gray-900 mb-4">
               Co se stane dál?

@@ -5,7 +5,7 @@ import { SOCIAL_PROOF_STATS } from '@/config/sales-page.config';
 
 export function SocialProofStats() {
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-green-50 to-white">
+    <section className="py-16 px-4 bg-linear-to-b from-green-50 to-white">
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
         <motion.div

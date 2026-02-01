@@ -34,7 +34,7 @@ export function StickyHeader() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-linear-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm">BL</span>
             </div>
             <span className="font-semibold text-gray-900 hidden sm:inline">Better Lady</span>
