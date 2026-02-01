@@ -1,35 +1,27 @@
 'use client';
 
-import type { PricingPlan } from '@/config/sales-page.config';
+import type { PlanWithPricing } from '@/config/pricing.config';
+import { formatPrice } from '@/config/pricing.config';
 
 export interface PricingOptionProps {
-  plan: PricingPlan;
+  plan: PlanWithPricing;
   isSelected: boolean;
-  isRecommended?: boolean;
   onSelect: () => void;
 }
 
 /**
  * PricingOption Component
- * Radio-style pricing option card
+ * Radio-style pricing option card with dynamic tier pricing
  */
 export function PricingOption({
   plan,
   isSelected,
-  isRecommended,
   onSelect,
 }: PricingOptionProps) {
-  const formatPrice = (cents: number) => {
-    return (cents / 100).toLocaleString('cs-CZ', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    });
-  };
-
-  // Calculate per-day price (assuming 90 days for all plans)
-  const pricePerDay = Math.round(plan.priceCents / 90 / 100);
+  // Per-day price comes directly from pricing config now
+  const pricePerDay = Math.round(plan.perDayPriceCents / 100);
   const originalPricePerDay = plan.originalPriceCents
-    ? Math.round(plan.originalPriceCents / 90 / 100)
+    ? Math.round((plan.originalPriceCents / plan.durationDays) / 100)
     : null;
 
   return (
@@ -48,10 +40,10 @@ export function PricingOption({
       } : undefined}
     >
       {/* Recommended badge - positioned at top */}
-      {isRecommended && (
+      {plan.isRecommended && plan.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#327455] text-white text-[12px] font-bold rounded-full whitespace-nowrap">
-            ★ Nejoblíbenější volba
+            ★ {plan.badge}
           </span>
         </div>
       )}
@@ -86,16 +78,16 @@ export function PricingOption({
 
           {/* Pricing */}
           <div className="flex items-baseline gap-2">
-            {/* Original price (crossed out) */}
+            {/* Original price (crossed out) - only shown when there's a discount */}
             {plan.originalPriceCents && (
               <span className="text-[14px] text-[#949BA1] line-through">
                 {formatPrice(plan.originalPriceCents)} Kč
               </span>
             )}
 
-            {/* Current price */}
+            {/* Current price (tier-specific initial price) */}
             <span className="text-[16px] font-bold text-[#292424]">
-              {formatPrice(plan.priceCents)} Kč
+              {formatPrice(plan.initialPriceCents)} Kč
             </span>
           </div>
         </div>

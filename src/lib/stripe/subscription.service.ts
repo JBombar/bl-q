@@ -36,13 +36,18 @@ export interface Subscription {
   updated_at: string;
 }
 
+import type { PricingTier, BillingInterval } from '@/config/pricing.config';
+
 export interface CreateSubscriptionParams {
   email: string;
   sessionId?: string;
   stripePriceId: string;
-  billingInterval: 'month' | 'year';
-  discountAmountCents?: number; // One-time discount for first invoice
+  billingInterval: BillingInterval;
+  discountAmountCents: number;       // One-time discount for first invoice
+  initialAmountCents: number;        // What customer pays on first invoice
+  recurringAmountCents: number;      // Full recurring price
   productName: string;
+  pricingTier: PricingTier;          // For metadata tracking
   resultId?: string;
 }
 
@@ -165,7 +170,7 @@ export async function findOrCreateCustomer(data: {
 // ============================================================================
 
 /**
- * Create a new subscription with optional introductory discount
+ * Create a new subscription with tier-specific introductory discount
  */
 export async function createSubscription(
   params: CreateSubscriptionParams
@@ -176,7 +181,10 @@ export async function createSubscription(
     stripePriceId,
     billingInterval,
     discountAmountCents,
+    initialAmountCents,
+    recurringAmountCents,
     productName,
+    pricingTier,
     resultId,
   } = params;
 
@@ -200,6 +208,9 @@ export async function createSubscription(
       session_id: sessionId || '',
       result_id: resultId || '',
       product_name: productName,
+      pricing_tier: pricingTier,
+      initial_amount_cents: String(initialAmountCents),
+      recurring_amount_cents: String(recurringAmountCents),
     },
   };
 

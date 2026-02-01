@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PricingOption } from './PricingOption';
-import type { PricingPlan } from '@/config/sales-page.config';
+import { useCountdownTimer } from '@/hooks/useCountdownTimer';
+import { usePostQuizState } from '@/hooks/usePostQuizState';
+import type { PlanWithPricing } from '@/config/pricing.config';
 import {
-  SECTION_HEADINGS,
   PLAN_INFO_CARDS,
   PROMO_CODE,
   CTA_BUTTON_TEXT,
@@ -13,8 +13,7 @@ import {
 } from '@/config/sales-page-content';
 
 export interface PricingSectionProps {
-  plans: PricingPlan[];
-  recommendedPlanId: string;
+  plans: PlanWithPricing[];
   onPlanSelect: (planId: string) => void;
 }
 
@@ -67,38 +66,55 @@ function CheckIcon() {
 
 export function PricingSection({
   plans,
-  recommendedPlanId,
   onPlanSelect,
 }: PricingSectionProps) {
-  const [selectedPlanId, setSelectedPlanId] = useState<string>(recommendedPlanId);
-  const [timeLeft, setTimeLeft] = useState(COUNTDOWN_TIMER.durationSeconds);
+  // Get pricing tier state and actions from global store
+  const {
+    selectedPlanId,
+    setSelectedPlanId,
+    handleTimerExpired,
+    pricingTier,
+  } = usePostQuizState();
 
-  // Countdown timer
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
+  // Use the countdown timer hook with persistence
+  const {
+    formattedTime,
+    isExpired,
+  } = useCountdownTimer({
+    durationSeconds: COUNTDOWN_TIMER.durationSeconds,
+    onExpire: handleTimerExpired,
+    autoStart: true,
+    storageKey: 'discount-timer',
+  });
 
-    return () => clearInterval(timer);
-  }, []);
+  // Find recommended plan or default to first
+  const recommendedPlan = plans.find(p => p.isRecommended);
+  const defaultPlanId = recommendedPlan?.id || plans[0]?.id || '';
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return { mins: mins.toString().padStart(2, '0'), secs: secs.toString().padStart(2, '0') };
-  };
+  // Use selected plan from state, or default to recommended
+  const currentSelectedId = selectedPlanId || defaultPlanId;
 
   const handlePlanSelect = (planId: string) => {
     setSelectedPlanId(planId);
   };
 
   const handleCTA = () => {
-    if (selectedPlanId) {
-      onPlanSelect(selectedPlanId);
+    if (currentSelectedId) {
+      onPlanSelect(currentSelectedId);
     }
   };
 
-  const time = formatTime(timeLeft);
+  // Determine promo text based on tier
+  const getPromoText = () => {
+    switch (pricingTier) {
+      case 'MAX_DISCOUNT':
+        return 'Speciální nabídka aktivována!';
+      case 'FULL_PRICE':
+        return 'Standardní cena';
+      default:
+        return PROMO_CODE.appliedText;
+    }
+  };
 
   return (
     <div className="w-full font-figtree">
@@ -136,51 +152,78 @@ export function PricingSection({
         </motion.div>
 
         {/* Promo Code Section - Ticket Stub Shape */}
-        <motion.div
-          className="relative mb-6"
-          style={{
-            backgroundImage: "url('/masks/ticket-mask.svg')",
-            backgroundSize: '100% 100%',
-            backgroundRepeat: 'no-repeat',
-            aspectRatio: '500 / 173',
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          {/* Content positioned inside the ticket shape */}
-          <div className="absolute inset-0 flex flex-col justify-center px-6 py-4">
-            {/* Promo applied message */}
-            <div className="flex items-center gap-2 mb-3">
-              <TagIcon />
-              <span className="text-[14px] font-bold text-[#327455]">
-                {PROMO_CODE.appliedText}
-              </span>
-            </div>
-
-            {/* Bottom row: Promo code + Timer */}
-            <div className="flex items-center gap-3">
-              {/* Promo code display */}
-              <div className="flex items-center gap-3 bg-white border border-[#EBEBEB] rounded-full px-4 py-2 flex-1">
-                <CheckIcon />
-                <span className="text-[14px] font-medium text-[#292424]">{'{DYNAMIC PROMO KOD}'}</span>
+        {/* Only show when not at full price */}
+        {pricingTier !== 'FULL_PRICE' && (
+          <motion.div
+            className="relative mb-6"
+            style={{
+              backgroundImage: "url('/masks/ticket-mask.svg')",
+              backgroundSize: '100% 100%',
+              backgroundRepeat: 'no-repeat',
+              aspectRatio: '500 / 173',
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            {/* Content positioned inside the ticket shape */}
+            <div className="absolute inset-0 flex flex-col justify-center px-6 py-4">
+              {/* Promo applied message */}
+              <div className="flex items-center gap-2 mb-3">
+                <TagIcon />
+                <span className="text-[14px] font-bold text-[#327455]">
+                  {getPromoText()}
+                </span>
               </div>
 
-              {/* Timer */}
-              <div className="flex flex-col items-center">
-                <div className="flex items-center gap-1">
-                  <span className="text-[24px] font-bold text-[#292424]">{time.mins}</span>
-                  <span className="text-[24px] font-bold text-[#292424]">:</span>
-                  <span className="text-[24px] font-bold text-[#292424]">{time.secs}</span>
+              {/* Bottom row: Promo code + Timer */}
+              <div className="flex items-center gap-3">
+                {/* Promo code display */}
+                <div className="flex items-center gap-3 bg-white border border-[#EBEBEB] rounded-full px-4 py-2 flex-1">
+                  <CheckIcon />
+                  <span className="text-[14px] font-medium text-[#292424]">
+                    {pricingTier === 'MAX_DISCOUNT' ? 'MAXSLEVA' : 'SLEVA2024'}
+                  </span>
                 </div>
-                <div className="flex gap-4 text-[10px] text-[#949BA1]">
-                  <span>{PROMO_CODE.timerLabels.minutes}</span>
-                  <span>{PROMO_CODE.timerLabels.seconds}</span>
+
+                {/* Timer - show countdown or expired state */}
+                <div className="flex flex-col items-center">
+                  {!isExpired ? (
+                    <>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[24px] font-bold text-[#292424]">{formattedTime.minutes}</span>
+                        <span className="text-[24px] font-bold text-[#292424]">:</span>
+                        <span className="text-[24px] font-bold text-[#292424]">{formattedTime.seconds}</span>
+                      </div>
+                      <div className="flex gap-4 text-[10px] text-[#949BA1]">
+                        <span>{PROMO_CODE.timerLabels.minutes}</span>
+                        <span>{PROMO_CODE.timerLabels.seconds}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-[14px] font-bold text-[#F9A201]">
+                      Aktivní
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
+
+        {/* Expired notice when at full price */}
+        {pricingTier === 'FULL_PRICE' && (
+          <motion.div
+            className="mb-6 p-4 bg-gray-100 rounded-[10px] text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <p className="text-[14px] text-[#949BA1]">
+              Slevová akce vypršela. Stále můžete zakoupit za standardní cenu.
+            </p>
+          </motion.div>
+        )}
 
         {/* Pricing options */}
         <motion.div
@@ -193,8 +236,7 @@ export function PricingSection({
             <PricingOption
               key={plan.id}
               plan={plan}
-              isSelected={selectedPlanId === plan.id}
-              isRecommended={plan.id === recommendedPlanId}
+              isSelected={currentSelectedId === plan.id}
               onSelect={() => handlePlanSelect(plan.id)}
             />
           ))}

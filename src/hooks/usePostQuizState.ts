@@ -9,6 +9,7 @@ import type {
   MicroCommitmentKey,
 } from '@/types/funnel.types';
 import { getNextScreen } from '@/config/result-screens.config';
+import type { PricingTier } from '@/config/pricing.config';
 
 interface PostQuizState {
   // Current screen in the funnel
@@ -25,6 +26,12 @@ interface PostQuizState {
   isSaving: boolean;
   error: string | null;
 
+  // Pricing tier management
+  pricingTier: PricingTier;
+  timerExpired: boolean;
+  checkoutCanceled: boolean;
+  selectedPlanId: string | null;
+
   // Actions
   initialize: (data: QuizCompleteResponse) => void;
   setScreen: (screen: FunnelScreen) => void;
@@ -36,6 +43,12 @@ interface PostQuizState {
   sendPlanEmail: () => Promise<boolean>;
   completeFunnel: () => Promise<void>;
   reset: () => void;
+
+  // Pricing tier actions
+  setPricingTier: (tier: PricingTier) => void;
+  handleTimerExpired: () => void;
+  handleCheckoutCanceled: () => void;
+  setSelectedPlanId: (planId: string) => void;
 }
 
 export const usePostQuizState = create<PostQuizState>()(
@@ -47,6 +60,12 @@ export const usePostQuizState = create<PostQuizState>()(
       isLoading: false,
       isSaving: false,
       error: null,
+
+      // Pricing tier state (default to FIRST_DISCOUNT)
+      pricingTier: 'FIRST_DISCOUNT' as PricingTier,
+      timerExpired: false,
+      checkoutCanceled: false,
+      selectedPlanId: null,
 
   /**
    * Initialize with data from /api/quiz/complete
@@ -276,7 +295,43 @@ export const usePostQuizState = create<PostQuizState>()(
           isLoading: false,
           isSaving: false,
           error: null,
+          pricingTier: 'FIRST_DISCOUNT' as PricingTier,
+          timerExpired: false,
+          checkoutCanceled: false,
+          selectedPlanId: null,
         });
+      },
+
+      /**
+       * Set pricing tier directly
+       */
+      setPricingTier: (tier: PricingTier) => {
+        set({ pricingTier: tier });
+      },
+
+      /**
+       * Handle timer expiration - upgrades to FULL_PRICE unless MAX_DISCOUNT is active
+       */
+      handleTimerExpired: () => {
+        const { checkoutCanceled } = get();
+        // MAX_DISCOUNT (from checkout cancel) takes precedence over timer expiration
+        if (!checkoutCanceled) {
+          set({ timerExpired: true, pricingTier: 'FULL_PRICE' });
+        }
+      },
+
+      /**
+       * Handle checkout cancellation - applies MAX_DISCOUNT (best offer)
+       */
+      handleCheckoutCanceled: () => {
+        set({ checkoutCanceled: true, pricingTier: 'MAX_DISCOUNT' });
+      },
+
+      /**
+       * Set selected plan ID
+       */
+      setSelectedPlanId: (planId: string) => {
+        set({ selectedPlanId: planId });
       },
     }),
     {
@@ -285,6 +340,10 @@ export const usePostQuizState = create<PostQuizState>()(
         completeData: state.completeData,
         funnelData: state.funnelData,
         currentScreen: state.currentScreen,
+        pricingTier: state.pricingTier,
+        timerExpired: state.timerExpired,
+        checkoutCanceled: state.checkoutCanceled,
+        selectedPlanId: state.selectedPlanId,
       }),
     }
   )

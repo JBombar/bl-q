@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePostQuizState } from '@/hooks/usePostQuizState';
 import { calculateProjection } from '@/config/result-screens.config';
@@ -16,23 +16,33 @@ import { Testimonials } from './Testimonials';
 import { FaqSection } from './FaqSection';
 import { GuaranteeBox } from './GuaranteeBox';
 import { SalesPageFooter } from './SalesPageFooter';
-import {
-  PRICING_PLANS,
-  getRecommendedPlan,
-  getPlanById,
-} from '@/config/sales-page.config';
-import { CTA_BUTTON_TEXT } from '@/config/sales-page-content';
+import { getAllPlansWithPricing, getPlanWithPricing } from '@/config/pricing.config';
+import { CTA_BUTTON_TEXT, getPricingDisclaimer } from '@/config/sales-page-content';
 import { CheckoutModal } from '../checkout/CheckoutModal';
 
 /**
  * Main Sales/Offer Page Component
  * Styled according to figma_design.md specification
+ * Integrates dynamic tier-based pricing
  */
 export function SalesPage() {
   const router = useRouter();
-  const { completeData, funnelData } = usePostQuizState();
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const { completeData, funnelData, pricingTier, selectedPlanId, setSelectedPlanId } = usePostQuizState();
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+
+  // Get plans with pricing for current tier - memoized to avoid recalculation
+  const plansWithPricing = useMemo(() => {
+    return getAllPlansWithPricing(pricingTier);
+  }, [pricingTier]);
+
+  // Get selected plan with current tier pricing
+  const selectedPlanWithPricing = useMemo(() => {
+    if (!selectedPlanId) return null;
+    return getPlanWithPricing(selectedPlanId, pricingTier);
+  }, [selectedPlanId, pricingTier]);
+
+  // Get user email for checkout (from funnel data which may have email field)
+  const userEmail = (funnelData as any).email || '';
 
   // If no quiz data, redirect back to quiz
   if (!completeData || !completeData.insights) {
@@ -65,10 +75,7 @@ export function SalesPage() {
   // Calculate projection
   const projection = calculateProjection(insights.normalizedScore, timeCommitmentMinutes);
 
-  // Get recommended plan based on stress stage
-  const recommendedPlanId = getRecommendedPlan(insights.stressStage);
-
-  // Handle plan selection
+  // Handle plan selection - opens checkout modal
   const handlePlanSelect = (planId: string) => {
     setSelectedPlanId(planId);
     setShowCheckoutModal(true);
@@ -80,10 +87,10 @@ export function SalesPage() {
     router.push('/payment-success');
   };
 
-  // Handle modal cancel
+  // Handle modal cancel - pricing tier will be updated by the modal itself
   const handleModalCancel = () => {
     setShowCheckoutModal(false);
-    setSelectedPlanId(null);
+    // Note: pricing tier update happens in CheckoutModal's handleCancel
   };
 
   // Scroll to pricing section
@@ -113,8 +120,7 @@ export function SalesPage() {
       {/* Pricing Section - Below the cards */}
       <div id="pricing-section" className="py-8 bg-white">
         <PricingSection
-          plans={PRICING_PLANS}
-          recommendedPlanId={recommendedPlanId}
+          plans={plansWithPricing}
           onPlanSelect={handlePlanSelect}
         />
       </div>
@@ -140,8 +146,7 @@ export function SalesPage() {
       {/* Second Pricing Section - Final CTA after testimonials */}
       <div className="py-8 bg-white">
         <PricingSection
-          plans={PRICING_PLANS}
-          recommendedPlanId={recommendedPlanId}
+          plans={plansWithPricing}
           onPlanSelect={handlePlanSelect}
         />
       </div>
@@ -168,9 +173,10 @@ export function SalesPage() {
       <SalesPageFooter />
 
       {/* Checkout Modal */}
-      {showCheckoutModal && selectedPlanId && (
+      {showCheckoutModal && selectedPlanWithPricing && (
         <CheckoutModal
-          plan={getPlanById(selectedPlanId)!}
+          plan={selectedPlanWithPricing}
+          email={userEmail}
           onSuccess={handlePaymentSuccess}
           onCancel={handleModalCancel}
         />

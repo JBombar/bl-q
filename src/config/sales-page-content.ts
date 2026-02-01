@@ -4,6 +4,9 @@
  * These are the exact texts for the sales/offer page UI
  */
 
+import type { PlanWithPricing } from './pricing.config';
+import { formatPrice, getBillingPeriodText } from './pricing.config';
+
 // ============================================================================
 // PROBLEMS LIST - "Jak může vypadat život bez Better Lady"
 // ============================================================================
@@ -331,4 +334,22 @@ export const STRESS_CARD_LABELS = {
 // DISCLAIMER TEXT
 // ============================================================================
 
-export const PRICING_DISCLAIMER = 'Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte s úvodním týdnem za [CENA] Kč, který poté automaticky přejde na měsíční předplatné za 995 Kč, pokud nebude zrušeno. Zrušit lze v aplikaci nebo e-mailem: podpora@betterlady.cz. Podrobnosti viz Podmínky předplatného.';
+/**
+ * Generate dynamic disclaimer text based on selected plan and pricing tier
+ */
+export function getPricingDisclaimer(plan: PlanWithPricing): string {
+  const initialPrice = formatPrice(plan.initialPriceCents);
+  const recurringPrice = formatPrice(plan.recurringPriceCents);
+  const billingPeriod = getBillingPeriodText(plan.billingInterval);
+
+  if (plan.initialPriceCents === plan.recurringPriceCents) {
+    // No discount - full price tier
+    return `Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte s předplatným za ${recurringPrice} Kč / ${billingPeriod}, které se automaticky obnovuje. Zrušit lze v aplikaci nebo e-mailem: podpora@betterlady.cz. Podrobnosti viz Podmínky předplatného.`;
+  }
+
+  // With introductory discount
+  return `Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte s úvodní cenou ${initialPrice} Kč za první ${billingPeriod}, která poté automaticky přejde na ${recurringPrice} Kč / ${billingPeriod}, pokud nebude zrušeno. Zrušit lze v aplikaci nebo e-mailem: podpora@betterlady.cz. Podrobnosti viz Podmínky předplatného.`;
+}
+
+// Legacy static export for backwards compatibility (uses placeholder)
+export const PRICING_DISCLAIMER = 'Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte s úvodním obdobím za zvýhodněnou cenu, které poté automaticky přejde na standardní předplatné, pokud nebude zrušeno. Zrušit lze v aplikaci nebo e-mailem: podpora@betterlady.cz. Podrobnosti viz Podmínky předplatného.';
