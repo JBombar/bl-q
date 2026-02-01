@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+/* Custom mask utility for ticket stub shape */
+.mask-ticket {
+  -webkit-mask-image: url('/masks/ticket-mask.svg');
+  mask-image: url('/masks/ticket-mask.svg');
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}

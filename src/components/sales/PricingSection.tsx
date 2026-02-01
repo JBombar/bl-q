@@ -114,25 +114,24 @@ export function PricingSection({
             Tvůj <span className="text-[#327455]">personalizovaný plán</span> vnitřního klidu je připraven!
           </h2>
 
-          {/* Plan Info Cards */}
-          <div className="flex items-center justify-center gap-4 mb-6">
-            {PLAN_INFO_CARDS.map((card, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 p-4 rounded-[10px]"
-                style={{
-                  background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
-                }}
-              >
-                <div className="w-12 h-12 bg-[#327455] rounded-[10px] flex items-center justify-center shrink-0">
-                  {card.icon === 'brain' ? <BrainIcon /> : <TargetIcon />}
+          {/* Plan Info Cards - Ticket Stub Shape */}
+          <div className="mask-ticket bg-[#D2EBE0] border border-[#327455] p-6 mb-6">
+            <div className="flex items-center justify-center gap-4">
+              {PLAN_INFO_CARDS.map((card, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 bg-white/50 rounded-[10px]"
+                >
+                  <div className="w-12 h-12 bg-[#327455] rounded-[10px] flex items-center justify-center shrink-0">
+                    {card.icon === 'brain' ? <BrainIcon /> : <TargetIcon />}
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[12px] text-[#949BA1] font-medium">{card.label}</div>
+                    <div className="text-[16px] font-bold text-[#292424]">{card.value}</div>
+                  </div>
                 </div>
-                <div className="text-left">
-                  <div className="text-[12px] text-[#949BA1] font-medium">{card.label}</div>
-                  <div className="text-[16px] font-bold text-[#292424]">{card.value}</div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </motion.div>
 

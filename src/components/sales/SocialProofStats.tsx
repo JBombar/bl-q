@@ -1,15 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import {
   SOCIAL_PROOF_TITLE,
-  SOCIAL_PROOF_STATS,
   SOCIAL_PROOF_DISCLAIMER,
 } from '@/config/sales-page-content';
 
 /**
  * SocialProofStats Component
- * Shows the main title, 3 percentage stats, and disclaimer
+ * Shows the main title, static graph image, and disclaimer
  */
 export function SocialProofStats() {
   return (
@@ -17,7 +17,7 @@ export function SocialProofStats() {
       <div className="max-w-[500px] mx-auto">
         {/* Main Title */}
         <motion.h2
-          className="text-[24px] font-bold text-[#292424] leading-[1.2em] text-center mb-8"
+          className="text-[24px] font-bold text-[#327455] leading-[1.2em] text-center mb-8"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -25,24 +25,22 @@ export function SocialProofStats() {
           {SOCIAL_PROOF_TITLE}
         </motion.h2>
 
-        {/* Stats Grid */}
+        {/* Static Graph Image */}
         <motion.div
-          className="grid grid-cols-3 gap-4 mb-6"
+          className="flex justify-center mb-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
         >
-          {SOCIAL_PROOF_STATS.map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-[32px] font-bold text-[#327455] leading-[1em] mb-1">
-                {stat.percentage}%
-              </div>
-              <div className="text-[14px] text-[#292424] leading-[1.3em]">
-                {stat.label}
-              </div>
-            </div>
-          ))}
+          <Image
+            src="/images/sales-page/social-proof-graph.svg"
+            alt="Statistiky úspěšnosti: 81% méně stresu, 73% nárůst energie, 72% vyšší sebevědomí"
+            width={450}
+            height={200}
+            className="w-full h-auto max-w-[450px]"
+            priority
+          />
         </motion.div>
 
         {/* Disclaimer */}
