@@ -106,7 +106,9 @@ export interface Lesson {
 
 export interface CourseModule {
   id: string;
+  moduleNumber: number;
   title: string;
+  image: string;
   goal: string;
   lessons: Lesson[];
 }
@@ -127,8 +129,10 @@ export const PLAN_SECTIONS: PlanSection[] = [
     modules: [
       {
         id: 'module-1',
-        title: 'MODUL 1: Restart nervového systému',
-        goal: 'Cíl: Okamžitá úleva, pochopení signálů těla a první hluboký nádech.',
+        moduleNumber: 1,
+        title: 'Restart nervového systému',
+        image: '/images/modules/module-1.png',
+        goal: 'Okamžitá úleva, pochopení signálů těla a první hluboký nádech.',
         lessons: [
           { number: 1, title: 'Vítej na cestě: Jak si nastavit tento program pro úspěch' },
           { number: 2, title: 'Tlačítko "Start": Jak okamžitě aktivovat energii' },
@@ -141,8 +145,10 @@ export const PLAN_SECTIONS: PlanSection[] = [
       },
       {
         id: 'module-2',
-        title: 'MODUL 2: Budování odolnosti a vnitřní síly',
-        goal: 'Cíl: Zlepšit spánek, naučit se říkat "ne" a zvládnout větší tlak bez zhroucení.',
+        moduleNumber: 2,
+        title: 'Budování odolnosti a vnitřní síly',
+        image: '/images/modules/module-2.png',
+        goal: 'Zlepšit spánek, naučit se říkat "ne" a zvládnout větší tlak bez zhroucení.',
         lessons: [
           { number: 8, title: 'Rituál vitality: Jak nastartovat den (Dobrovolná výzva)' },
           { number: 9, title: 'Architektura spánku: Jak se ráno budit skutečně odpočatá' },
@@ -155,8 +161,10 @@ export const PLAN_SECTIONS: PlanSection[] = [
       },
       {
         id: 'module-3',
-        title: 'MODUL 3: Emoční stabilita v každodenním životě',
-        goal: 'Cíl: Vypnout hlavu a mít po ruce nástroje pro krizové situace.',
+        moduleNumber: 3,
+        title: 'Emoční stabilita v každodenním životě',
+        image: '/images/modules/module-3.png',
+        goal: 'Vypnout hlavu a mít po ruce nástroje pro krizové situace.',
         lessons: [
           { number: 15, title: 'Druhá vlna uvolnění: Hlubší práce s dechem' },
           { number: 16, title: 'Povzbuzení metabolismu: Energie pro náročné dny' },
@@ -169,8 +177,10 @@ export const PLAN_SECTIONS: PlanSection[] = [
       },
       {
         id: 'module-4',
-        title: 'MODUL 4: Vnitřní klid a trvalá rovnováha',
-        goal: 'Cíl: Uzdravení starých zranění, prevence vyhoření a udržení výsledků.',
+        moduleNumber: 4,
+        title: 'Vnitřní klid a trvalá rovnováha',
+        image: '/images/modules/module-4.png',
+        goal: 'Uzdravení starých zranění, prevence vyhoření a udržení výsledků.',
         lessons: [
           { number: 22, title: 'Body Scan: Propojení mysli a těla (Mindfulness)' },
           { number: 23, title: 'Výzva odolnosti: Překonání vlastního pohodlí' },
