@@ -114,8 +114,8 @@ export function PricingSection({
             Tvůj <span className="text-[#327455]">personalizovaný plán</span> vnitřního klidu je připraven!
           </h2>
 
-          {/* Plan Info Cards - Ticket Stub Shape */}
-          <div className="mask-ticket bg-[#D2EBE0] border border-[#327455] p-6 mb-6">
+          {/* Plan Info Cards */}
+          <div className="bg-[#D2EBE0] border border-[#327455] rounded-[10px] p-6 mb-6">
             <div className="flex items-center justify-center gap-4">
               {PLAN_INFO_CARDS.map((card, index) => (
                 <div
@@ -135,37 +135,49 @@ export function PricingSection({
           </div>
         </motion.div>
 
-        {/* Promo Code Section */}
+        {/* Promo Code Section - Ticket Stub Shape */}
         <motion.div
-          className="bg-white rounded-[10px] border border-[#EBEBEB] p-4 mb-6"
+          className="relative mb-6"
+          style={{
+            backgroundImage: "url('/masks/ticket-mask.svg')",
+            backgroundSize: '100% 100%',
+            backgroundRepeat: 'no-repeat',
+            aspectRatio: '500 / 173',
+          }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          {/* Promo applied message */}
-          <div className="flex items-center gap-2 mb-3">
-            <TagIcon />
-            <span className="text-[14px] font-medium text-[#292424]">
-              {PROMO_CODE.appliedText}
-            </span>
-          </div>
-
-          {/* Promo code display */}
-          <div className="flex items-center gap-3 bg-white border border-[#EBEBEB] rounded-[10px] px-4 py-3 mb-4">
-            <CheckIcon />
-            <span className="text-[18px] font-bold text-[#292424]">[DYNAMIC PROMO KÓD]</span>
-          </div>
-
-          {/* Timer */}
-          <div className="bg-[#F6F6F6] rounded-[10px] p-4">
-            <div className="flex items-center justify-center gap-1">
-              <span className="text-[32px] font-bold text-[#327455]">{time.mins}</span>
-              <span className="text-[32px] font-bold text-[#327455]">:</span>
-              <span className="text-[32px] font-bold text-[#327455]">{time.secs}</span>
+          {/* Content positioned inside the ticket shape */}
+          <div className="absolute inset-0 flex flex-col justify-center px-6 py-4">
+            {/* Promo applied message */}
+            <div className="flex items-center gap-2 mb-3">
+              <TagIcon />
+              <span className="text-[14px] font-bold text-[#327455]">
+                {PROMO_CODE.appliedText}
+              </span>
             </div>
-            <div className="flex justify-center gap-8 text-[12px] text-[#949BA1] mt-1">
-              <span>{PROMO_CODE.timerLabels.minutes}</span>
-              <span>{PROMO_CODE.timerLabels.seconds}</span>
+
+            {/* Bottom row: Promo code + Timer */}
+            <div className="flex items-center gap-3">
+              {/* Promo code display */}
+              <div className="flex items-center gap-3 bg-white border border-[#EBEBEB] rounded-full px-4 py-2 flex-1">
+                <CheckIcon />
+                <span className="text-[14px] font-medium text-[#292424]">{'{DYNAMIC PROMO KOD}'}</span>
+              </div>
+
+              {/* Timer */}
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-1">
+                  <span className="text-[24px] font-bold text-[#292424]">{time.mins}</span>
+                  <span className="text-[24px] font-bold text-[#292424]">:</span>
+                  <span className="text-[24px] font-bold text-[#292424]">{time.secs}</span>
+                </div>
+                <div className="flex gap-4 text-[10px] text-[#949BA1]">
+                  <span>{PROMO_CODE.timerLabels.minutes}</span>
+                  <span>{PROMO_CODE.timerLabels.seconds}</span>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
