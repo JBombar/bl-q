@@ -137,6 +137,15 @@ export function SalesPage() {
       {/* Testimonials */}
       <Testimonials />
 
+      {/* Second Pricing Section - Final CTA after testimonials */}
+      <div className="py-8 bg-white">
+        <PricingSection
+          plans={PRICING_PLANS}
+          recommendedPlanId={recommendedPlanId}
+          onPlanSelect={handlePlanSelect}
+        />
+      </div>
+
       {/* FAQ */}
       <FaqSection />
 
