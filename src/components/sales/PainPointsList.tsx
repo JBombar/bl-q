@@ -4,12 +4,14 @@ import { motion } from 'framer-motion';
 import { PROBLEMS, SECTION_HEADINGS } from '@/config/sales-page-content';
 
 /**
- * Gray Checkmark Icon - #949BA1
+ * Circled X Icon - #949BA1
  */
-function GrayCheckIcon() {
+function CircledXIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-      <path d="M20 6L9 17L4 12" stroke="#949BA1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="12" r="10" stroke="#949BA1" strokeWidth="2"/>
+      <path d="M15 9L9 15" stroke="#949BA1" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M9 9L15 15" stroke="#949BA1" strokeWidth="2" strokeLinecap="round"/>
     </svg>
   );
 }
@@ -46,7 +48,7 @@ export function PainPointsList() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
               >
-                <GrayCheckIcon />
+                <CircledXIcon />
                 <span className="text-[16px] text-[#292424] leading-[1.4em]">{problem}</span>
               </motion.li>
             ))}

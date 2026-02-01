@@ -123,14 +123,14 @@ export function PlanHighlights() {
             return (
               <motion.div
                 key={index}
-                className="flex items-start gap-3"
+                className="flex items-center gap-3"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
                 <IconComponent className="shrink-0 text-[#949BA1]" />
-                <p className="text-[16px] text-[#292424] leading-[1.4em] pt-3">
+                <p className="text-[16px] text-[#292424] leading-[1.4em]">
                   <span className="font-bold">{highlight.title}</span>
                   {' – '}
                   {highlight.description}
@@ -151,8 +151,8 @@ export function PlanHighlights() {
           <Image
             src="/logos/three-logos.svg"
             alt="Důvěryhodné platební brány"
-            width={300}
-            height={50}
+            width={450}
+            height={75}
             className="h-auto max-w-full"
           />
         </motion.div>
