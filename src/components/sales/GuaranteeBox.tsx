@@ -21,26 +21,29 @@ function ShieldIcon() {
  */
 export function GuaranteeBox() {
   return (
-    <section className="py-12 px-4 bg-white font-figtree">
+    <section className="py-12 px-6 bg-white font-figtree">
       <div className="max-w-[500px] mx-auto">
         <motion.div
-          className="bg-primary-green-light rounded-lg p-6 border border-primary-green"
+          className="rounded-[10px] p-6 border border-[#327455]"
+          style={{
+            background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
+          }}
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
         >
           <div className="flex items-start gap-4">
             {/* Icon */}
-            <div className="w-14 h-14 bg-primary-green rounded-lg flex items-center justify-center shrink-0">
+            <div className="w-14 h-14 bg-[#327455] rounded-[10px] flex items-center justify-center shrink-0">
               <ShieldIcon />
             </div>
 
             {/* Content */}
             <div>
-              <h3 className="text-lg font-bold text-dark mb-2">
+              <h3 className="text-[18px] font-bold text-[#292424] leading-[1.2em] mb-2">
                 {GUARANTEE.title}
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-[14px] text-[#949BA1] leading-[1.5em]">
                 {GUARANTEE.description}
               </p>
             </div>

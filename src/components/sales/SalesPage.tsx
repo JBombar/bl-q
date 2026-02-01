@@ -39,16 +39,16 @@ export function SalesPage() {
     return (
       <div className="flex h-screen items-center justify-center bg-white font-figtree">
         <div className="text-center max-w-md p-8">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-light border-t-primary-green mx-auto" />
-          <h2 className="text-xl font-bold text-dark mb-2">
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-[#E4E4E4] border-t-[#327455] mx-auto" />
+          <h2 className="text-[20px] font-bold text-[#292424] mb-2">
             Načítání tvého plánu...
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[16px] text-[#949BA1] mb-6">
             Pokud se stránka nenačte, prosím vrať se k dotazníku.
           </p>
           <button
             onClick={() => router.push('/q/better-lady')}
-            className="px-6 py-3 bg-primary-green text-white rounded-lg hover:bg-opacity-90 font-semibold"
+            className="px-6 py-3 bg-[#327455] hover:bg-[#2a6349] text-white rounded-[10px] font-semibold transition-all"
           >
             Zpět na dotazník
           </button>
@@ -143,12 +143,12 @@ export function SalesPage() {
       {/* Guarantee */}
       <GuaranteeBox />
 
-      {/* Final CTA Section */}
-      <section className="py-12 px-4 bg-white">
+      {/* Final CTA Section - ORANGE #F9A201 */}
+      <section className="py-12 px-6 bg-white">
         <div className="max-w-[500px] mx-auto text-center">
           <button
             onClick={scrollToPricing}
-            className="w-full py-4 bg-primary-green text-white text-lg font-bold rounded-lg shadow-card hover:bg-opacity-90 transition-all uppercase tracking-wide"
+            className="w-full py-4 bg-[#F9A201] hover:bg-[#E09201] active:scale-[0.98] text-white text-[16px] font-extrabold rounded-[10px] shadow-cta transition-all uppercase tracking-wide"
           >
             {CTA_BUTTON_TEXT}
           </button>

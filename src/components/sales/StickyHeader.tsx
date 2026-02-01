@@ -33,29 +33,29 @@ export function StickyHeader() {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-white shadow-sm">
-      <div className="max-w-[500px] mx-auto px-4 py-3">
+    <div className="sticky top-0 z-50 bg-white">
+      <div className="max-w-[500px] mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Left side - Countdown info */}
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-1">
             {!isExpired ? (
               <>
-                <span className="text-sm text-dark">
+                <span className="text-[#292424] text-[16px] font-medium leading-[1.1em]">
                   {COUNTDOWN_TIMER.discountText}
                 </span>
-                <span className="text-2xl font-bold text-dark">
+                <span className="text-[#292424] text-[16px] font-medium leading-[1.1em]">
                   {formatTime(timeLeft)}
                 </span>
               </>
             ) : (
-              <span className="text-sm text-gray-500">
+              <span className="text-[#949BA1] text-[14px]">
                 Nabídka vypršela
               </span>
             )}
           </div>
 
-          {/* Right side - CTA Button */}
-          <button className="bg-primary-green text-white px-6 py-3 rounded-lg font-bold text-sm uppercase tracking-wide hover:bg-opacity-90 transition-all shadow-card">
+          {/* Right side - CTA Button (ORANGE!) */}
+          <button className="bg-[#F9A201] hover:bg-[#E09201] active:scale-[0.98] text-white font-extrabold text-[16px] leading-[1em] uppercase py-4 px-8 rounded-[10px] shadow-cta transition-all">
             {CTA_BUTTON_TEXT}
           </button>
         </div>

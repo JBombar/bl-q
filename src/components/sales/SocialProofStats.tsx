@@ -9,7 +9,7 @@ import { SOCIAL_PROOF_TEXT } from '@/config/sales-page-content';
  */
 export function SocialProofStats() {
   return (
-    <section className="py-8 px-4 bg-white font-figtree">
+    <section className="py-8 px-6 bg-white font-figtree">
       <div className="max-w-[500px] mx-auto">
         <motion.div
           className="text-center"
@@ -17,7 +17,7 @@ export function SocialProofStats() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-2xl font-bold text-dark">
+          <h2 className="text-[24px] font-bold text-[#292424] leading-[1.2em]">
             {SOCIAL_PROOF_TEXT}
           </h2>
         </motion.div>

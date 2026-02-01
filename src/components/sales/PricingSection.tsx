@@ -110,8 +110,8 @@ export function PricingSection({
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h2 className="text-2xl font-bold text-dark mb-6">
-            Tvůj <span className="text-primary-green">personalizovaný plán</span> vnitřního klidu je připraven!
+          <h2 className="text-[24px] font-bold text-[#292424] leading-[1.2em] mb-6">
+            Tvůj <span className="text-[#327455]">personalizovaný plán</span> vnitřního klidu je připraven!
           </h2>
 
           {/* Plan Info Cards */}
@@ -119,14 +119,17 @@ export function PricingSection({
             {PLAN_INFO_CARDS.map((card, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 bg-linear-to-b from-primary-green-light to-primary-green-lighter p-4 rounded-lg"
+                className="flex items-center gap-3 p-4 rounded-[10px]"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
+                }}
               >
-                <div className="w-12 h-12 bg-primary-green rounded-lg flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 bg-[#327455] rounded-[10px] flex items-center justify-center shrink-0">
                   {card.icon === 'brain' ? <BrainIcon /> : <TargetIcon />}
                 </div>
                 <div className="text-left">
-                  <div className="text-xs text-gray-500 font-medium">{card.label}</div>
-                  <div className="text-base font-bold text-dark">{card.value}</div>
+                  <div className="text-[12px] text-[#949BA1] font-medium">{card.label}</div>
+                  <div className="text-[16px] font-bold text-[#292424]">{card.value}</div>
                 </div>
               </div>
             ))}
@@ -135,7 +138,7 @@ export function PricingSection({
 
         {/* Promo Code Section */}
         <motion.div
-          className="bg-white rounded-lg border border-gray-light p-4 mb-6"
+          className="bg-white rounded-[10px] border border-[#EBEBEB] p-4 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -143,25 +146,25 @@ export function PricingSection({
           {/* Promo applied message */}
           <div className="flex items-center gap-2 mb-3">
             <TagIcon />
-            <span className="text-sm font-medium text-dark">
+            <span className="text-[14px] font-medium text-[#292424]">
               {PROMO_CODE.appliedText}
             </span>
           </div>
 
           {/* Promo code display */}
-          <div className="flex items-center gap-3 bg-white border border-gray-light rounded-lg px-4 py-3 mb-4">
+          <div className="flex items-center gap-3 bg-white border border-[#EBEBEB] rounded-[10px] px-4 py-3 mb-4">
             <CheckIcon />
-            <span className="text-lg font-bold text-dark">[DYNAMIC PROMO KÓD]</span>
+            <span className="text-[18px] font-bold text-[#292424]">[DYNAMIC PROMO KÓD]</span>
           </div>
 
           {/* Timer */}
-          <div className="bg-linear-to-r from-gray-light to-gray-medium rounded-lg p-4">
+          <div className="bg-[#F6F6F6] rounded-[10px] p-4">
             <div className="flex items-center justify-center gap-1">
-              <span className="text-3xl font-bold text-primary-green">{time.mins}</span>
-              <span className="text-3xl font-bold text-primary-green">:</span>
-              <span className="text-3xl font-bold text-primary-green">{time.secs}</span>
+              <span className="text-[32px] font-bold text-[#327455]">{time.mins}</span>
+              <span className="text-[32px] font-bold text-[#327455]">:</span>
+              <span className="text-[32px] font-bold text-[#327455]">{time.secs}</span>
             </div>
-            <div className="flex justify-center gap-8 text-xs text-gray-500 mt-1">
+            <div className="flex justify-center gap-8 text-[12px] text-[#949BA1] mt-1">
               <span>{PROMO_CODE.timerLabels.minutes}</span>
               <span>{PROMO_CODE.timerLabels.seconds}</span>
             </div>
@@ -186,10 +189,10 @@ export function PricingSection({
           ))}
         </motion.div>
 
-        {/* CTA Button */}
+        {/* CTA Button - ORANGE #F9A201 */}
         <motion.button
           onClick={handleCTA}
-          className="w-full py-4 bg-primary-green text-white text-lg font-bold rounded-lg shadow-card hover:bg-opacity-90 transition-all uppercase tracking-wide"
+          className="w-full py-4 bg-[#F9A201] hover:bg-[#E09201] active:scale-[0.98] text-white text-[16px] font-extrabold rounded-[10px] shadow-cta transition-all uppercase tracking-wide"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -198,7 +201,7 @@ export function PricingSection({
         </motion.button>
 
         {/* Disclaimer text */}
-        <p className="text-[10px] text-gray-500 text-center mt-4 leading-relaxed">
+        <p className="text-[10px] text-[#949BA1] text-center mt-4 leading-[1.4em]">
           Kliknutím na „CHCI SVŮJ PLÁN" souhlasíte s uzavřením Smlouvy. Úplné znění obchodních podmínek naleznete na naší webové stránce.
         </p>
       </div>

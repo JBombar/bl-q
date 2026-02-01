@@ -1,4 +1,4 @@
-# Better Lady - Quiz Offer Page Design Specification
+# Better Lady - Quiz Offer Page - PIXEL-PERFECT STYLING GUIDE
 
 ## 📋 Overview
 
@@ -11,260 +11,538 @@
 
 ---
 
-## 🎨 Design System
+## 🎯 QUICK REFERENCE - EXACT COLOR VALUES
 
-### Color Palette
+> **DEVELOPER NOTE:** Use these EXACT hex/rgba values. Do NOT approximate or guess colors.
 
-```css
-/* Primary Colors */
---primary-green: #327455 (rgb(50, 116, 85))
---primary-green-light: rgba(50, 116, 85, 0.12)
---primary-green-lighter: rgba(50, 116, 85, 0.03)
-
-/* Neutral Colors */
---white: #FFFFFF
---gray-light: #EAEAEA (rgb(234, 234, 234))
---gray-medium: rgba(234, 234, 234, 0.5)
---dark: #292424
-
-/* Semantic Colors */
---error-red: #FF0000 (implied for high stress)
---success-green: #327455
---background-card: rgba(234, 234, 234, 0.2)
-```
-
-### Typography
-
-**Font Family:** Figtree (Google Font)
+### Complete Color Palette
 
 ```css
-/* Heading Styles */
-.heading-large {
-  font-family: 'Figtree', sans-serif;
-  font-weight: 700;
-  font-size: 32px;
-  line-height: 1.2em;
-}
+/* === PRIMARY COLORS === */
+--color-primary-green: #327455;
+--color-primary-green-transparent: rgba(50, 116, 85, 0.12);
+--color-cta-orange: #F9A201;        /* ⚠️ CTA BUTTONS ARE ORANGE, NOT GREEN! */
+--color-cta-orange-light: #FFFAEF;
 
-.heading-medium {
-  font-family: 'Figtree', sans-serif;
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 1.3em;
-}
+/* === BACKGROUND COLORS === */
+--color-bg-white: #FFFFFF;
+--color-bg-page: #FFFFFF;
+--color-bg-card-gray: #F6F6F6;
+--color-bg-card-mint: #E6EEEB;
+--color-bg-badge-pink: #FFD2D2;
+--color-bg-badge-mint: #D2EBE0;
+--color-bg-yellow: #FFD021;
+--color-bg-light-gray: #F5F5F5;
+--color-bg-black: #140C0C;
 
-.heading-small {
-  font-family: 'Figtree', sans-serif;
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 1.4em;
-}
+/* === TEXT COLORS === */
+--color-text-primary: #292424;      /* Main text - dark gray/black */
+--color-text-white: #FFFFFF;
+--color-text-gray: #949BA1;
+--color-text-gray-medium: #919191;
 
-/* Body Text */
-.body-regular {
-  font-family: 'Figtree', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 1.5em;
-}
+/* === BORDER/STROKE COLORS === */
+--color-border-gray-light: #E4E4E4;
+--color-border-gray: #D9D9D9;
+--color-border-gray-medium: #B7B7B7;
+--color-border-gray-dark: #D6D6D6;
+--color-border-green: #327455;
+--color-border-light: #EBEBEB;
 
-.body-medium {
-  font-family: 'Figtree', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.5em;
-}
+/* === SEMANTIC COLORS === */
+--color-error-red: #E60000;         /* High stress indicator */
+--color-success-green: #327455;
+--color-warning-orange: #F9A201;
 
-.body-bold {
-  font-family: 'Figtree', sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1.5em;
-}
+/* === OVERLAY/TRANSPARENT === */
+--color-overlay-gray: rgba(132, 132, 132, 0.18);
+--color-overlay-orange: rgba(208, 125, 0, 0.36);
+--color-overlay-green: rgba(50, 116, 85, 0.12);
 
-/* Small Text */
-.text-small {
-  font-family: 'Figtree', sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 1.4em;
-}
-
-/* Button Text */
-.button-text {
-  font-family: 'Figtree', sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-```
-
-### Spacing System
-
-```css
-/* Use Tailwind spacing or custom scale */
---spacing-xs: 4px;
---spacing-sm: 8px;
---spacing-md: 16px;
---spacing-lg: 24px;
---spacing-xl: 32px;
---spacing-2xl: 48px;
---spacing-3xl: 64px;
-```
-
-### Border Radius
-
-```css
---radius-sm: 6px;
---radius-md: 8px;
---radius-lg: 10px;
+/* === GRADIENTS === */
+--gradient-green-vertical: linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%);
+--gradient-yellow: linear-gradient(180deg, rgba(255, 224, 61, 1) 0%, rgba(255, 206, 30, 1) 100%);
+--gradient-white-fade: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
 ```
 
 ---
 
-## 📐 Layout Structure
+## 📝 TYPOGRAPHY - EXACT SPECIFICATIONS
 
-### Container
-- **Max Width:** 1000px (500px effective width for mobile-first)
-- **Padding:** 24px horizontal
-- **Background:** White
+> **DEVELOPER NOTE:** All measurements are in pixels. Line-height is expressed as em multiplier.
 
-### Page Sections (Top to Bottom)
+**Font Family:** Figtree (Google Fonts)  
+**Import:** `import { Figtree } from 'next/font/google'`
 
-1. **Countdown Timer Header**
-2. **Hero Section with Stress Level Cards**
-3. **Before/After Comparison Cards**
-4. **Plan Details Section**
-5. **Benefits Lists**
-6. **Plan Features**
-7. **Testimonials Section**
-8. **CTA Section**
+### Complete Typography System
+
+```typescript
+// Typography Style Definitions (from Figma)
+const typography = {
+  // === HEADINGS ===
+  heading_large: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '28px',
+    lineHeight: '1.1em',
+    textAlign: 'center'
+  },
+  
+  heading_medium: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '24px',
+    lineHeight: '1.1em'
+  },
+  
+  heading_section: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '22px',
+    lineHeight: '1.4em'
+  },
+  
+  heading_card: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '20px',
+    lineHeight: '1.1em'
+  },
+  
+  heading_small: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '18px',
+    lineHeight: '1.1em'
+  },
+  
+  // === BODY TEXT ===
+  body_bold: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '16px',
+    lineHeight: '1.1em'
+  },
+  
+  body_bold_relaxed: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '16px',
+    lineHeight: '1.4em'
+  },
+  
+  body_regular: {
+    fontFamily: 'Figtree',
+    fontWeight: 400,
+    fontSize: '16px',
+    lineHeight: '1.1em'
+  },
+  
+  body_regular_relaxed: {
+    fontFamily: 'Figtree',
+    fontWeight: 400,
+    fontSize: '16px',
+    lineHeight: '1.4em'
+  },
+  
+  body_medium: {
+    fontFamily: 'Figtree',
+    fontWeight: 500,
+    fontSize: '16px',
+    lineHeight: '1.1em'
+  },
+  
+  // === SMALL TEXT ===
+  text_small_bold: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '15px',
+    lineHeight: '1em'
+  },
+  
+  text_small_regular: {
+    fontFamily: 'Figtree',
+    fontWeight: 400,
+    fontSize: '15px',
+    lineHeight: '1.4em'
+  },
+  
+  text_small: {
+    fontFamily: 'Figtree',
+    fontWeight: 400,
+    fontSize: '14px',
+    lineHeight: '1em'
+  },
+  
+  text_badge: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '14px',
+    lineHeight: '1em'
+  },
+  
+  text_tiny: {
+    fontFamily: 'Figtree',
+    fontWeight: 400,
+    fontSize: '12px',
+    lineHeight: '1em'
+  },
+  
+  text_tiny_medium: {
+    fontFamily: 'Figtree',
+    fontWeight: 700,
+    fontSize: '12px',
+    lineHeight: '1.1em'
+  },
+  
+  text_micro: {
+    fontFamily: 'Figtree',
+    fontWeight: 400,
+    fontSize: '10px',
+    lineHeight: '1.1em'
+  },
+  
+  // === SPECIAL ===
+  button_text: {
+    fontFamily: 'Figtree',
+    fontWeight: 800,
+    fontSize: '16px',
+    lineHeight: '1em',
+    textTransform: 'uppercase'
+  },
+  
+  countdown_large: {
+    fontFamily: 'Figtree',
+    fontWeight: 800,
+    fontSize: '18px',
+    lineHeight: '1.1em'
+  },
+  
+  promo_code: {
+    fontFamily: 'Figtree',
+    fontWeight: 400,
+    fontSize: '15px',
+    lineHeight: '1em'
+  }
+};
+```
 
 ---
 
-## 🧩 Component Specifications
+## 🎨 TAILWIND CONFIGURATION
 
-### 1. Countdown Timer Banner
+> **DEVELOPER NOTE:** Add this to your `tailwind.config.js` file.
 
-**Location:** Top of page  
-**Layout:** Row with center alignment
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        // Primary
+        'primary-green': '#327455',
+        'primary-green-light': 'rgba(50, 116, 85, 0.12)',
+        'cta-orange': '#F9A201',
+        'cta-orange-light': '#FFFAEF',
+        
+        // Backgrounds
+        'bg-card-gray': '#F6F6F6',
+        'bg-card-mint': '#E6EEEB',
+        'bg-badge-pink': '#FFD2D2',
+        'bg-badge-mint': '#D2EBE0',
+        'bg-yellow': '#FFD021',
+        'bg-light-gray': '#F5F5F5',
+        
+        // Text
+        'text-dark': '#292424',
+        'text-gray': '#949BA1',
+        'text-gray-medium': '#919191',
+        
+        // Borders
+        'border-light': '#EBEBEB',
+        'border-gray-light': '#E4E4E4',
+        'border-gray': '#D9D9D9',
+        'border-gray-medium': '#B7B7B7',
+        'border-gray-dark': '#D6D6D6',
+        'border-green': '#327455',
+        
+        // Semantic
+        'error-red': '#E60000',
+      },
+      fontFamily: {
+        figtree: ['Figtree', 'sans-serif'],
+      },
+      borderRadius: {
+        'sm': '6px',
+        'md': '8px',
+        'lg': '10px',
+      },
+      boxShadow: {
+        'cta': '0px 0px 6.7px 0px rgba(0, 0, 0, 0.09)',
+      },
+      backgroundImage: {
+        'gradient-green': 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)',
+        'gradient-yellow': 'linear-gradient(180deg, rgba(255, 224, 61, 1) 0%, rgba(255, 206, 30, 1) 100%)',
+      },
+    },
+  },
+}
+```
 
-**Structure:**
+---
+
+## 🧩 COMPONENT SPECIFICATIONS - EXACT STYLING
+
+### 1. ⏰ Countdown Timer Banner (Top of Page)
+
+**Figma Reference:** Frame 28144 (ID: 1:4)
+
 ```tsx
-<div className="bg-linear-to-b from-green-light to-green-lighter p-6 text-center">
-  <p className="text-dark text-sm mb-2">30% sleva je rezervovaná na:</p>
-  <div className="text-4xl font-bold text-primary-green">10:00</div>
+// Component Structure
+<div className="w-full flex flex-col items-center gap-1 py-4">
+  <p className="text-text-dark text-[16px] font-medium leading-[1.1em] text-center">
+    30% sleva je rezervovaná na:
+  </p>
+  <div className="text-text-dark text-[16px] font-medium leading-[1.1em]">
+    {' '}10:00
+  </div>
 </div>
 ```
 
-**Specifications:**
-- Background: Linear gradient (180deg) from `rgba(50, 116, 85, 0.12)` to `rgba(50, 116, 85, 0.03)`
-- Text alignment: Center
-- Timer format: MM:SS
-- Font size for timer: 48px, bold
+**Exact Styling:**
+- Background: White (page background)
+- Text color: `#292424` (text-dark)
+- Font size: 16px
+- Font weight: 500 (medium)
+- Line height: 1.1em
+- Text align: center
+- Gap between elements: 4px (gap-1)
 
-### 2. Primary CTA Button
+---
 
-**Text:** "CHCI SVŮJ PLÁN"  
-**Appears:** Multiple times throughout the page
+### 2. 🔵 Primary CTA Button
+
+**Figma Reference:** Frame 28111 & Frame 28242 (ID: 1:7, 1:9)
 
 ```tsx
-<button className="w-full bg-primary-green text-white py-4 px-8 rounded-lg font-bold uppercase hover:bg-primary-green-dark transition-colors">
+<button className="w-full bg-cta-orange hover:bg-[#E09201] active:scale-[0.98] text-white font-extrabold text-[16px] leading-[1em] uppercase py-4 px-8 rounded-lg shadow-cta transition-all">
   CHCI SVŮJ PLÁN
 </button>
 ```
 
-**Specifications:**
-- Background: `#327455`
-- Text: White, uppercase, bold
-- Padding: 16px vertical, 32px horizontal
+**Exact Styling:**
+- ⚠️ **CRITICAL:** Background is **ORANGE (#F9A201)** NOT green!
+- Text color: White `#FFFFFF`
+- Font weight: 800 (extrabold)
+- Font size: 16px
+- Line height: 1em
+- Text transform: UPPERCASE
 - Border radius: 10px
-- Width: Full width on mobile, auto on desktop
-- Hover state: Slightly darker green
+- Padding: 16px vertical, 32px horizontal
 - Box shadow: `0px 0px 6.7px 0px rgba(0, 0, 0, 0.09)`
+- Width: 100% (full width)
+- Hover: Darken to `#E09201`
+- Active: scale(0.98)
 
-### 3. Status Badges
+---
 
-**Types:**
-- "Dnes" (Today) - Background: Light gray
-- "Tvůj cíl" (Your Goal) - Background: Primary green
+### 3. 🏷️ Status Badges
+
+#### Badge: "Dnes" (Today)
+**Figma Reference:** Frame 28134 (ID: 1:11)
 
 ```tsx
-<span className="inline-flex items-center px-4 py-2 rounded-md bg-gray-light text-dark text-sm font-medium">
-  Dnes
-</span>
-
-<span className="inline-flex items-center px-4 py-2 rounded-md bg-primary-green text-white text-sm font-medium">
-  Tvůj cíl
-</span>
+<div className="inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-bg-badge-pink rounded-[6px]">
+  <span className="text-text-dark font-bold text-[15px] leading-[1em]">
+    Dnes
+  </span>
+</div>
 ```
 
-**Specifications:**
+**Exact Styling:**
+- Background: `#FFD2D2` (light pink)
+- Text color: `#292424` (dark)
+- Font weight: 700 (bold)
+- Font size: 15px
+- Line height: 1em
 - Border radius: 6px
-- Padding: 8px 16px
-- Font size: 14px
-- Font weight: 600
+- Padding: 10px horizontal, 12px vertical
+- Gap: 8px
 
-### 4. Stress Level Cards
+#### Badge: "Tvůj cíl" (Your Goal)
+**Figma Reference:** Frame 28134 (ID: 1:13)
 
-**Two Card Variants:**
-
-#### Card 1: Current State (High Stress)
 ```tsx
-<div className="bg-card-background p-6 rounded-lg border border-gray-light">
-  <div className="flex items-center justify-between mb-4">
-    <span className="text-base font-medium">Úroveň stresu</span>
-    <span className="px-3 py-1 rounded-md bg-gray-light border border-gray text-sm text-red">
-      Vysoká
+<div className="inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-primary-green rounded-[6px]">
+  <span className="text-white font-bold text-[15px] leading-[1em]">
+    Tvůj cíl
+  </span>
+</div>
+```
+
+**Exact Styling:**
+- Background: `#327455` (primary green)
+- Text color: `#FFFFFF` (white)
+- Font weight: 700 (bold)
+- Font size: 15px
+- Line height: 1em
+- Border radius: 6px
+- Padding: 10px horizontal, 12px vertical
+
+---
+
+### 4. 📊 Stress Level Cards
+
+#### Card: Current State (High Stress)
+**Figma Reference:** Frame 28221 (ID: 1:17)
+
+```tsx
+<div className="flex flex-col gap-4 p-5 w-[246px] bg-bg-card-gray rounded-lg">
+  {/* Header Row */}
+  <div className="flex items-center justify-between gap-1 w-full">
+    <span className="text-text-dark font-bold text-[16px] leading-[1.1em]">
+      Úroveň stresu
     </span>
+    <div className="inline-flex items-center justify-center gap-2 px-2 py-1.5 bg-bg-badge-pink border-[1.5px] border-error-red rounded-[6px]">
+      <span className="text-error-red font-bold text-[14px] leading-[1em]">
+        Vysoká
+      </span>
+    </div>
   </div>
   
-  <div className="border-t border-gray-light my-4"></div>
+  {/* Divider */}
+  <div className="w-full h-0 border-t border-border-gray-light"></div>
   
-  <div className="space-y-4">
-    <div className="flex items-center justify-between">
-      <span className="text-base font-medium">Hladina energie</span>
-      <span className="text-sm">Nízká</span>
+  {/* Energy Level Row */}
+  <div className="flex flex-col gap-2.5 w-full">
+    <div className="flex flex-col gap-1 w-full">
+      <span className="text-text-dark font-bold text-[16px] leading-[1.1em]">
+        Hladina energie
+      </span>
+      <span className="text-text-dark font-normal text-[14px] leading-[1em]">
+        Nízká
+      </span>
     </div>
     
-    <div className="border-t border-gray-light"></div>
-    
-    <div className="flex items-center justify-between">
-      <span className="text-base font-medium">Úroveň sebevědomí</span>
-      <span className="text-sm">Nízká</span>
+    {/* Energy indicator SVG placeholder */}
+    <div className="flex items-stretch gap-1 w-full h-[3px]">
+      {/* Add energy bar SVG here */}
+    </div>
+  </div>
+  
+  {/* Divider */}
+  <div className="w-full h-0 border-t border-border-gray-light"></div>
+  
+  {/* Confidence Level Row */}
+  <div className="flex flex-col gap-1.5 w-full">
+    <div className="flex flex-col gap-1 w-full">
+      <span className="text-text-dark font-bold text-[16px] leading-[1.1em]">
+        Úroveň sebevědomí
+      </span>
+      <span className="text-text-dark font-normal text-[14px] leading-[1em]">
+        Nízká
+      </span>
     </div>
   </div>
 </div>
 ```
 
-#### Card 2: Goal State (Low Stress)
-- Same structure, different values:
-  - Úroveň stresu: **Nízká** (green badge)
-  - Hladina energie: **Vysoká**
-  - Úroveň sebevědomí: **Vysoká**
-
-**Specifications:**
-- Background: `rgba(234, 234, 234, 0.2)`
-- Border: 1px solid gray-light
+**Exact Styling:**
+- Background: `#F6F6F6` (light gray)
+- Width: 246px
 - Border radius: 10px
-- Padding: 24px
-- Dividers: 1px solid gray-light
+- Padding: 16px horizontal, 20px vertical
+- Gap between sections: 16px
+- Divider: 1px solid `#E4E4E4`
+- High stress badge background: `#FFD2D2` with `#E60000` border (1.5px)
+- High stress text: `#E60000` (red)
 
-### 5. Problems List (Jak může vypadat život bez Better Lady)
+#### Card: Goal State (Low Stress)
+**Figma Reference:** Frame 28220 (ID: 1:126)
 
 ```tsx
-<div className="bg-card-background p-6 rounded-lg">
-  <h3 className="text-xl font-bold mb-6">Jak může vypadat život bez Better Lady</h3>
+<div className="flex flex-col gap-4 p-5 w-[246px] bg-bg-card-gray rounded-lg">
+  {/* Header Row */}
+  <div className="flex items-center justify-between gap-1 w-full">
+    <span className="text-text-dark font-bold text-[16px] leading-[1.1em]">
+      Úroveň stresu
+    </span>
+    <div className="inline-flex items-center justify-center gap-2 px-2 py-1.5 bg-bg-badge-mint border-[1.5px] border-primary-green rounded-[6px]">
+      <span className="text-primary-green font-bold text-[14px] leading-[1em]">
+        Nízká
+      </span>
+    </div>
+  </div>
   
-  <ul className="space-y-4">
+  {/* Divider */}
+  <div className="w-full h-0 border-t border-border-gray-light"></div>
+  
+  {/* Energy Level Row */}
+  <div className="flex flex-col gap-2.5 w-full">
+    <div className="flex flex-col gap-1 w-full">
+      <span className="text-text-dark font-bold text-[16px] leading-[1.1em]">
+        Hladina energie
+      </span>
+      <span className="text-text-dark font-normal text-[14px] leading-[1em]">
+        Vysoká
+      </span>
+    </div>
+    
+    {/* Energy indicator SVG placeholder */}
+    <div className="flex items-stretch gap-1 w-full h-[3px]">
+      {/* Add energy bar SVG here */}
+    </div>
+  </div>
+  
+  {/* Divider */}
+  <div className="w-full h-0 border-t border-border-gray-light"></div>
+  
+  {/* Confidence Level Row */}
+  <div className="flex flex-col gap-1.5 w-full">
+    <div className="flex flex-col gap-1 w-full">
+      <span className="text-text-dark font-bold text-[16px] leading-[1.1em]">
+        Úroveň sebevědomí
+      </span>
+      <span className="text-text-dark font-normal text-[14px] leading-[1em]">
+        Vysoká
+      </span>
+    </div>
+  </div>
+</div>
+```
+
+**Exact Styling:**
+- Background: `#F6F6F6` (light gray)
+- Width: 246px
+- Low stress badge background: `#D2EBE0` (light mint) with `#327455` border (1.5px)
+- Low stress text: `#327455` (green)
+- Rest same as high stress card
+
+---
+
+### 5. ❌ Problems List Card
+
+**Figma Reference:** Frame 28252 (ID: 1:40)
+
+```tsx
+<div className="flex flex-col gap-5 p-6 bg-bg-card-gray rounded-lg">
+  <h3 className="text-text-dark font-bold text-[20px] leading-[1.1em]">
+    Jak může vypadat život bez Better Lady
+  </h3>
+  
+  <div className="flex flex-col gap-3">
     {problems.map((problem, index) => (
-      <li key={index} className="flex items-start gap-3">
-        <IconCheck className="w-6 h-6 text-gray shrink-0 mt-1" />
-        <span className="text-base">{problem}</span>
-      </li>
+      <div key={index} className="flex items-start gap-3">
+        {/* Gray checkmark icon */}
+        <div className="w-6 h-6 flex-shrink-0 mt-0.5">
+          {/* SVG Icon */}
+        </div>
+        <span className="text-text-dark font-normal text-[16px] leading-[1.1em]">
+          {problem}
+        </span>
+      </div>
     ))}
-  </ul>
+  </div>
 </div>
 ```
 
@@ -278,26 +556,42 @@
 7. Problémy s regenerací a odpočinkem
 8. Pocit únavy a přehlcení během dne
 
-**Specifications:**
-- Background: `rgba(234, 234, 234, 0.2)`
+**Exact Styling:**
+- Background: `#F6F6F6`
 - Border radius: 10px
-- Icon: SVG checkmark (gray)
-- Spacing between items: 16px
+- Padding: 24px
+- Gap between title and list: 20px
+- Gap between list items: 12px
+- Icon size: 24px × 24px
+- Icon color: Gray (use `#B7B7B7` or `#D9D9D9`)
+- Text font size: 16px
+- Text line height: 1.1em
 
-### 6. Solutions List (S čím ti Better Lady může pomoci)
+---
+
+### 6. ✅ Solutions List Card
+
+**Figma Reference:** Frame 28253 (ID: 1:83)
 
 ```tsx
-<div className="bg-linear-to-b from-green-light to-transparent p-6 rounded-lg border border-green">
-  <h3 className="text-xl font-bold mb-6">S čím ti Better Lady může pomoci</h3>
+<div className="flex flex-col gap-5 p-6 bg-bg-card-mint border-[1.5px] border-primary-green rounded-lg">
+  <h3 className="text-text-dark font-bold text-[20px] leading-[1.1em]">
+    S čím ti Better Lady může pomoci
+  </h3>
   
-  <ul className="space-y-4">
+  <div className="flex flex-col gap-3">
     {solutions.map((solution, index) => (
-      <li key={index} className="flex items-start gap-3">
-        <IconCheckGreen className="w-6 h-6 text-primary-green shrink-0 mt-1" />
-        <span className="text-base">{solution}</span>
-      </li>
+      <div key={index} className="flex items-start gap-3">
+        {/* Green checkmark icon */}
+        <div className="w-6 h-6 flex-shrink-0 mt-0.5">
+          {/* SVG Icon in green #327455 */}
+        </div>
+        <span className="text-text-dark font-normal text-[16px] leading-[1.1em]">
+          {solution}
+        </span>
+      </div>
     ))}
-  </ul>
+  </div>
 </div>
 ```
 
@@ -311,402 +605,494 @@
 7. Stabilní rutina v péči o sebe
 8. Život bez stresu a napětí
 
-**Specifications:**
-- Background: Gradient + border accent
-- Border: 1px solid `#327455`
+**Exact Styling:**
+- Background: `#E6EEEB` (light mint)
+- Border: 1.5px solid `#327455` (green)
 - Border radius: 10px
-- Icon: SVG checkmark (green)
+- Padding: 24px
+- Gap between sections: 20px
+- Icon color: `#327455` (green)
+- Rest same as problems list
 
-### 7. Promo Code Section
+---
+
+### 7. 🏷️ Promo Code Section
+
+**Figma Reference:** Group 28005 (ID: 1:154)
 
 ```tsx
-<div className="relative bg-white border border-gray-light rounded-lg p-6">
-  <div className="flex items-center gap-2 mb-4">
-    <IconTag className="w-5 h-5 text-primary-green" />
-    <span className="font-medium">Tvůj slevový kód je uplatněn!</span>
+<div className="flex flex-col items-center gap-6 relative">
+  {/* Tag with text */}
+  <div className="flex items-center gap-2">
+    {/* Tag icon SVG */}
+    <span className="text-text-dark font-bold text-[20px] leading-[1.1em]">
+      Tvůj slevový kód je uplatněn!
+    </span>
   </div>
   
-  <div className="bg-white border border-gray-light rounded-lg p-4 flex items-center gap-3">
-    <IconCheck className="w-6 h-6" />
-    <span className="font-bold text-lg">{DYNAMIC_PROMO_KOD}</span>
-  </div>
+  {/* Divider line */}
+  <div className="w-full h-0 border-t-[1.5px] border-primary-green"></div>
   
-  <div className="bg-linear-to-r from-gray-light to-gray-medium rounded-lg p-4 mt-4">
-    <div className="flex items-center justify-center gap-2">
-      <span className="text-3xl font-bold text-primary-green">10:00</span>
+  {/* Promo code box */}
+  <div className="flex items-center gap-3 px-6 py-4 bg-white border-[1.5px] border-primary-green rounded-lg">
+    {/* Checkmark icon */}
+    <div className="w-6 h-6">
+      {/* SVG */}
     </div>
-    <div className="flex justify-center gap-4 text-xs text-gray-600 mt-1">
-      <span>minut</span>
-      <span>sekund</span>
+    <span className="text-text-dark font-normal text-[15px] leading-[1em]">
+      {DYNAMIC_PROMO_KOD}
+    </span>
+  </div>
+  
+  {/* Countdown timer */}
+  <div className="flex flex-col items-center gap-2 px-6 py-4 bg-primary-green-light rounded-lg">
+    <div className="flex items-center gap-2">
+      <span className="text-primary-green font-extrabold text-[18px] leading-[1.1em]">
+        10
+      </span>
+      <span className="text-primary-green font-extrabold text-[18px] leading-[1.1em]">
+        :
+      </span>
+      <span className="text-primary-green font-extrabold text-[18px] leading-[1.1em]">
+        00
+      </span>
+    </div>
+    <div className="flex gap-4">
+      <span className="text-text-dark font-normal text-[12px] leading-[1em]">
+        minut
+      </span>
+      <span className="text-text-dark font-normal text-[12px] leading-[1em]">
+        sekund
+      </span>
     </div>
   </div>
 </div>
 ```
 
-**Specifications:**
-- Dynamic promo code display
-- Countdown timer integration
-- Border radius: 10px
-- Box shadow: subtle
+**Exact Styling:**
+- Promo code box:
+  - Background: White `#FFFFFF`
+  - Border: 1.5px solid `#327455`
+  - Border radius: 10px
+  - Padding: 16px 24px
+- Countdown box:
+  - Background: `rgba(50, 116, 85, 0.12)`
+  - Border radius: 8px
+  - Timer numbers: `#327455`, 800 weight, 18px
+  - Labels: `#292424`, 400 weight, 12px
+- Divider: 1.5px solid `#327455`
 
-### 8. Plan Info Cards
+---
+
+### 8. 🎯 Plan Info Cards (Trigger & Goal)
+
+**Figma Reference:** Frame 28232 (ID: 1:180)
 
 ```tsx
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-  <div className="flex items-start gap-4 bg-gradient p-4 rounded-lg">
-    <div className="w-12 h-12 bg-green rounded-lg flex items-center justify-center shrink-0">
-      <IconBrain className="w-6 h-6 text-white" />
+<div className="flex gap-4">
+  {/* Hlavní spouštěč */}
+  <div className="flex items-start gap-4">
+    <div className="w-12 h-12 bg-bg-card-mint rounded-lg flex items-center justify-center flex-shrink-0">
+      {/* Brain icon SVG */}
     </div>
-    <div>
-      <h4 className="font-medium text-sm mb-1">Hlavní spouštěč</h4>
-      <p className="text-lg font-bold">Stres</p>
+    <div className="flex flex-col gap-1">
+      <span className="text-text-dark font-normal text-[14px] leading-[1em]">
+        Hlavní spouštěč
+      </span>
+      <span className="text-text-dark font-bold text-[16px] leading-[1em]">
+        Stres
+      </span>
     </div>
   </div>
   
-  <div className="flex items-start gap-4 bg-gradient p-4 rounded-lg">
-    <div className="w-12 h-12 bg-green rounded-lg flex items-center justify-center shrink-0">
-      <IconTarget className="w-6 h-6 text-white" />
+  {/* Cíl plánu */}
+  <div className="flex items-start gap-4">
+    <div className="w-12 h-12 bg-bg-card-mint rounded-lg flex items-center justify-center flex-shrink-0">
+      {/* Target icon SVG */}
     </div>
-    <div>
-      <h4 className="font-medium text-sm mb-1">Cíl plánu</h4>
-      <p className="text-lg font-bold">Reset nervového systému</p>
+    <div className="flex flex-col gap-1">
+      <span className="text-text-dark font-normal text-[14px] leading-[1em]">
+        Cíl plánu
+      </span>
+      <span className="text-text-dark font-bold text-[16px] leading-[1em]">
+        Reset nervového systému
+      </span>
     </div>
   </div>
 </div>
 ```
 
-### 9. Plan Features List
+**Exact Styling:**
+- Icon container:
+  - Size: 48px × 48px
+  - Background: `#E6EEEB` (light mint)
+  - Border radius: 10px
+- Label text: 14px, 400 weight, `#292424`
+- Value text: 16px, 700 weight, `#292424`
+- Gap between icon and text: 16px
 
-**Features with icons:**
-1. Osobní plán den po dni – sestavený na míru tvým spouštěčům a projevům stresu
-2. Techniky zaměřené na praxi – rychlá a účinná cvičení, která hladce zapadnou do tvého dne
-3. Tvá okamžitá opora v kapse – nástroje pro rychlé zklidnění dostupné 24/7
-4. Nulové nároky na vybavení – všechna cvičení jsou navržena tak, aby ti stačila jen vlastní mysl a tělo
-5. Ověřený obsah založený na datech – vědecky podložené informace
+---
+
+### 9. 📋 Plan Features List
+
+**Figma Reference:** Frame 28247 (ID: 1:202)
 
 ```tsx
-<div className="space-y-4">
+<div className="flex flex-col gap-4">
   {features.map((feature, index) => (
-    <div key={index} className="flex items-start gap-4 p-4 bg-card-background rounded-lg">
-      <div className="w-12 h-12 bg-card rounded-lg shrink-0" />
-      <p className="text-base">{feature}</p>
+    <div key={index} className="flex items-start gap-4">
+      <div className="w-12 h-12 bg-bg-card-gray rounded-lg flex-shrink-0">
+        {/* Feature icon */}
+      </div>
+      <span className="text-text-dark font-normal text-[16px] leading-[1.4em]">
+        {feature}
+      </span>
     </div>
   ))}
 </div>
 ```
 
-### 10. Course Modules
+**Features List:**
+1. Osobní plán den po dni – sestavený na míru tvým spouštěčům a projevům stresu
+2. Techniky zaměřené na praxi – rychlá a účinná cvičení, která hladce zapadnou do tvého dne
+3. Tvá okamžitá opora v kapse – nástroje pro rychlé zklidnění dostupné 24/7, aby ti pomohly přesně tehdy, kdy to nejvíc potřebuješ
+4. Nulové nároky na vybavení – všechna cvičení jsou navržena tak, aby ti stačila jen vlastní mysl a tělo
+5. Ověřený obsah založený na datech – vědecky podložené informace pro spolehlivé a efektivní výsledky
 
-**Module structure:**
+**Exact Styling:**
+- Icon container:
+  - Size: 48px × 48px
+  - Background: `#F6F6F6`
+  - Border radius: 10px
+- Text: 16px, 400 weight for body, 700 weight for emphasized parts
+- Line height: 1.4em (relaxed)
+- Gap: 16px between items
+
+---
+
+### 10. 🎓 Course Module Cards
+
+**Figma Reference:** Frame 28231 (ID: 1:240), Frame 28277 (ID: 1:246)
 
 ```tsx
-<div className="flex items-start gap-4 mb-6">
-  <div className="w-12 h-12 bg-gradient rounded-lg flex items-center justify-center shrink-0">
-    <span className="text-2xl font-bold text-primary-green">{moduleNumber}</span>
+<div className="flex items-start gap-4">
+  {/* Module number badge */}
+  <div className="w-12 h-12 bg-bg-card-mint rounded-lg flex items-center justify-center flex-shrink-0">
+    <span className="text-primary-green font-bold text-[28px] leading-[1.1em]">
+      {moduleNumber}
+    </span>
   </div>
-  <div>
-    <h3 className="text-xl font-bold mb-2">{moduleTitle}</h3>
-    <p className="text-base text-gray-600">{moduleDescription}</p>
-  </div>
-</div>
-```
-
-**Modules:**
-
-**Module 1:**
-- Title: "Detox stresu: Cesta k vnitřnímu klidu"
-- Description: "Lekce krok za krokem, hluboká regenerace a nástroje pro okamžité zklidnění."
-
-**Module 2:**
-- Title: "Osobní mapa vnitřního světa"
-- Description: (Would need to read more of the file)
-
-**Module 3:**
-- Title: (Visible in data)
-- Description: (Would need to read more)
-
-### 11. Social Proof Section
-
-**Heading:** "Více než 59 žen začalo dnes svůj plán s Metodou vnitřního klidu™!"
-
-```tsx
-<div className="text-center py-8">
-  <h2 className="text-2xl font-bold mb-2">
-    Více než 59 žen začalo dnes svůj plán s Metodou vnitřního klidu™!
-  </h2>
-</div>
-```
-
-### 12. Testimonials Section
-
-**Heading:** "Pár slov od našich studentek"
-
-Structure for testimonial cards - would need additional design details from images.
-
----
-
-## 🖼️ Image Assets Required
-
-### SVG Icons/Graphics
-1. **Vector 7** - Decorative background element
-2. **Vector 8, 9, 10, 11** - Divider/separator lines
-3. **Checkmark icons** (2 variants: gray and green)
-4. **Tag icon** - For promo code section
-5. **Brain/Head icons** - For plan triggers
-6. **Target icon** - For plan goals
-7. **Feature icons** - 5 different icons for plan features
-
-### Raster Images
-1. **4-stadia-stresu 9** - Stress stages image 1
-2. **4-stadia-stresu 10** - Stress stages image 2
-3. **Circular progress indicators** - 3 SVG-based circular progress bars with gradients
-4. **Energy level indicator** - SVG graphic
-5. **Self-confidence indicator** - SVG graphic
-
-### Image Specifications
-- Format: SVG for icons, PNG/WebP for photos
-- Export scale for PNGs: 2x (@2x retina)
-- Optimization: Compress all images
-
----
-
-## 📱 Responsive Design
-
-### Breakpoints
-```css
-/* Mobile First Approach */
-sm: 640px   /* Small devices */
-md: 768px   /* Tablets */
-lg: 1024px  /* Desktops */
-xl: 1280px  /* Large screens */
-```
-
-### Mobile (< 768px)
-- Single column layout
-- Full-width buttons
-- Stack cards vertically
-- Reduce padding: 16px
-- Font sizes: Scale down by 0.875
-
-### Tablet (768px - 1023px)
-- 2 column grid for comparison cards
-- Maintain spacing
-- Adapt font sizes
-
-### Desktop (>= 1024px)
-- Max width container: 1000px
-- Center content
-- 2-3 column grids where appropriate
-- Increase padding: 24px
-
----
-
-## 🎯 Interactive Elements
-
-### 1. Countdown Timer
-**Functionality:**
-- Real-time countdown
-- Format: MM:SS
-- Updates every second
-- Expires after 10:00 minutes
-- Optional: Add urgency animation when < 2 minutes
-
-**Implementation:**
-```tsx
-const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
-
-useEffect(() => {
-  const timer = setInterval(() => {
-    setTimeLeft(prev => Math.max(0, prev - 1));
-  }, 1000);
   
-  return () => clearInterval(timer);
-}, []);
-
-const minutes = Math.floor(timeLeft / 60);
-const seconds = timeLeft % 60;
+  {/* Module content */}
+  <div className="flex flex-col gap-2">
+    <h3 className="text-text-dark font-bold text-[22px] leading-[1.4em]">
+      {moduleTitle}
+    </h3>
+    <p className="text-text-dark font-normal text-[16px] leading-[1.4em]">
+      {moduleDescription}
+    </p>
+  </div>
+</div>
 ```
 
-### 2. CTA Buttons
-**States:**
-- Default
-- Hover: Slightly darker background
-- Active/Pressed: Even darker + scale(0.98)
-- Focus: Outline ring
-
-### 3. Promo Code
-**Dynamic Value:**
-- Variable: `{DYNAMIC PROMO KOD}`
-- Format: All caps
-- Should be copy-able
-- Add "Copy" button on hover
+**Exact Styling:**
+- Number badge:
+  - Size: 48px × 48px
+  - Background: `#E6EEEB`
+  - Border radius: 10px
+  - Number color: `#327455`, 700 weight, 28px
+- Title: 22px, 700 weight, line-height 1.4em
+- Description: 16px, 400 weight, line-height 1.4em
 
 ---
 
-## 🚀 Implementation Notes
+### 11. 📢 Headings & Text Elements
 
-### 1. Next.js Structure
+#### Main Page Heading
+```tsx
+<h1 className="text-text-dark font-bold text-[28px] leading-[1.1em] text-center">
+  Tvůj personalizovaný plán vnitřního klidu je připraven!
+</h1>
 ```
-/app
-  /quiz-offer
-    page.tsx           # Main page component
-    /components
-      CountdownTimer.tsx
-      StressLevelCard.tsx
-      ProblemsList.tsx
-      SolutionsList.tsx
-      PlanFeatures.tsx
-      CTAButton.tsx
-      PromoCode.tsx
-      TestimonialCard.tsx
-    /hooks
-      useCountdown.ts
-    /utils
-      constants.ts     # Text content, lists
+- Font size: 28px
+- Font weight: 700
+- Line height: 1.1em
+- Text align: center
+- Color: `#292424`
+
+#### Section Headings
+```tsx
+<h2 className="text-text-dark font-bold text-[20px] leading-[1.1em]">
+  To nejdůležitější z tvého plánu
+</h2>
+```
+- Font size: 20px
+- Font weight: 700
+- Line height: 1.1em
+
+#### Social Proof Text
+```tsx
+<p className="text-text-dark font-bold text-[28px] leading-[1.1em] text-center">
+  Více než 59 žen začalo dnes svůj plán s Metodou vnitřního klidu™!
+</p>
 ```
 
-### 2. Tailwind Configuration
-```javascript
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        'primary-green': '#327455',
-        'primary-green-light': 'rgba(50, 116, 85, 0.12)',
-        'card-bg': 'rgba(234, 234, 234, 0.2)',
-      },
-      fontFamily: {
-        figtree: ['Figtree', 'sans-serif'],
-      },
-      borderRadius: {
-        'sm': '6px',
-        'md': '8px',
-        'lg': '10px',
-      },
-    },
+---
+
+## 📐 Layout & Spacing
+
+### Container Specifications
+```tsx
+<div className="w-full max-w-[1000px] mx-auto px-6 py-8">
+  {/* Page content */}
+</div>
+```
+
+**Page-level:**
+- Max width: 1000px
+- Content width (mobile): 500px
+- Horizontal padding: 24px
+- Vertical spacing: 32px between major sections
+
+### Common Spacing Values
+```typescript
+const spacing = {
+  xs: '4px',    // gap-1
+  sm: '8px',    // gap-2
+  md: '12px',   // gap-3
+  lg: '16px',   // gap-4
+  xl: '20px',   // gap-5
+  '2xl': '24px',// gap-6
+  '3xl': '32px',// gap-8
+};
+```
+
+---
+
+## 📱 Responsive Breakpoints
+
+```tsx
+// Mobile first approach
+{
+  // Mobile: < 768px
+  'base': {
+    width: '100%',
+    padding: '16px',
+    fontSize: 'base'
   },
+  
+  // Tablet: 768px+
+  'md': {
+    width: '768px',
+    padding: '24px',
+    gridCols: 2
+  },
+  
+  // Desktop: 1024px+
+  'lg': {
+    width: '1000px',
+    padding: '32px',
+    gridCols: 2
+  }
 }
 ```
 
-### 3. Font Import
+---
+
+## ⚡ Critical Developer Notes
+
+### 🚨 COMMON MISTAKES TO AVOID:
+
+1. **CTA Button Color:**
+   - ❌ WRONG: Background `#327455` (green)
+   - ✅ CORRECT: Background `#F9A201` (ORANGE)
+
+2. **Text Colors:**
+   - Main text is NOT black, it's `#292424` (dark gray)
+   - Use exact hex values, don't approximate
+
+3. **Border Radius:**
+   - Small elements (badges): 6px
+   - Medium elements (cards): 8-10px
+   - Use exact values from design
+
+4. **Font Weights:**
+   - Regular: 400
+   - Medium: 500
+   - Bold: 700
+   - Extrabold: 800
+   - Don't substitute weights
+
+5. **Line Heights:**
+   - Most text: 1.1em (tight)
+   - Relaxed text: 1.4em
+   - Use em units, not rem or px
+
+---
+
+## 🎯 Testing Checklist
+
+- [ ] CTA buttons are ORANGE (#F9A201), not green
+- [ ] All text uses exact `#292424` color, not pure black
+- [ ] Badge backgrounds match exact colors (pink: #FFD2D2, green: #327455, mint: #D2EBE0)
+- [ ] Border colors use `#E4E4E4` for light borders
+- [ ] Card backgrounds use `#F6F6F6` or `#E6EEEB`
+- [ ] Font sizes match exactly (28px, 20px, 16px, 14px, 12px)
+- [ ] Font weights are correct (400, 500, 700, 800)
+- [ ] Line heights use em units (1.1em, 1.4em)
+- [ ] Border radius values (6px, 8px, 10px)
+- [ ] Spacing between elements matches (4px, 8px, 12px, 16px, 20px, 24px)
+- [ ] Countdown timer shows correct colors and formatting
+- [ ] High stress badge: pink background with red border
+- [ ] Low stress badge: mint background with green border
+
+---
+
+## 📦 Complete Implementation Example
+
 ```tsx
-// app/layout.tsx
-import { Figtree } from 'next/font/google'
+// Example: Complete CTA Button Component
+export const CTAButton = () => {
+  return (
+    <button 
+      className="
+        w-full 
+        bg-[#F9A201] 
+        hover:bg-[#E09201] 
+        active:scale-[0.98] 
+        text-white 
+        font-extrabold 
+        text-[16px] 
+        leading-[1em] 
+        uppercase 
+        py-4 
+        px-8 
+        rounded-[10px] 
+        shadow-[0px_0px_6.7px_0px_rgba(0,0,0,0.09)]
+        transition-all 
+        duration-200
+      "
+    >
+      CHCI SVŮJ PLÁN
+    </button>
+  );
+};
 
-const figtree = Figtree({ 
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-figtree',
-})
+// Example: Status Badge Component
+export const StatusBadge = ({ type, children }) => {
+  const styles = {
+    today: 'bg-[#FFD2D2] text-[#292424]',
+    goal: 'bg-[#327455] text-white'
+  };
+  
+  return (
+    <div className={`
+      inline-flex 
+      items-center 
+      justify-center 
+      gap-2 
+      px-3 
+      py-2.5 
+      rounded-[6px] 
+      ${styles[type]}
+    `}>
+      <span className="font-bold text-[15px] leading-[1em]">
+        {children}
+      </span>
+    </div>
+  );
+};
+
+// Example: Stress Level Card Component
+export const StressLevelCard = ({ level = 'high' }) => {
+  const isHigh = level === 'high';
+  
+  return (
+    <div className="flex flex-col gap-4 p-5 w-[246px] bg-[#F6F6F6] rounded-[10px]">
+      <div className="flex items-center justify-between gap-1 w-full">
+        <span className="text-[#292424] font-bold text-[16px] leading-[1.1em]">
+          Úroveň stresu
+        </span>
+        <div className={`
+          inline-flex 
+          items-center 
+          justify-center 
+          gap-2 
+          px-2 
+          py-1.5 
+          rounded-[6px] 
+          border-[1.5px]
+          ${isHigh 
+            ? 'bg-[#FFD2D2] border-[#E60000] text-[#E60000]' 
+            : 'bg-[#D2EBE0] border-[#327455] text-[#327455]'
+          }
+        `}>
+          <span className="font-bold text-[14px] leading-[1em]">
+            {isHigh ? 'Vysoká' : 'Nízká'}
+          </span>
+        </div>
+      </div>
+      
+      <div className="w-full h-0 border-t border-[#E4E4E4]"></div>
+      
+      <div className="flex flex-col gap-2.5 w-full">
+        <div className="flex flex-col gap-1 w-full">
+          <span className="text-[#292424] font-bold text-[16px] leading-[1.1em]">
+            Hladina energie
+          </span>
+          <span className="text-[#292424] font-normal text-[14px] leading-[1em]">
+            {isHigh ? 'Nízká' : 'Vysoká'}
+          </span>
+        </div>
+      </div>
+      
+      <div className="w-full h-0 border-t border-[#E4E4E4]"></div>
+      
+      <div className="flex flex-col gap-1.5 w-full">
+        <div className="flex flex-col gap-1 w-full">
+          <span className="text-[#292424] font-bold text-[16px] leading-[1.1em]">
+            Úroveň sebevědomí
+          </span>
+          <span className="text-[#292424] font-normal text-[14px] leading-[1em]">
+            {isHigh ? 'Nízká' : 'Vysoká'}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
 ```
-
-### 4. Content Constants
-```typescript
-// utils/constants.ts
-export const PROBLEMS = [
-  'Pocity viny, když nejsi produktivní',
-  'Scrollování na sociálních sítích uprostřed rozdělaného úkolu',
-  // ... rest of problems
-];
-
-export const SOLUTIONS = [
-  'Nepřetržité soustředění a koncentrace',
-  'Vyšší hladina energie',
-  // ... rest of solutions
-];
-
-export const PLAN_FEATURES = [
-  'Osobní plán den po dni – sestavený na míru tvým spouštěčům a projevům stresu',
-  // ... rest of features
-];
-```
-
-### 5. Accessibility
-- Add ARIA labels to all interactive elements
-- Ensure color contrast ratios meet WCAG AA standards
-- Add alt text to all images
-- Make countdown timer screen reader friendly
-- Keyboard navigation support
-- Focus indicators visible
-
-### 6. Performance Optimization
-- Use Next.js Image component for all images
-- Lazy load below-the-fold content
-- Optimize fonts with `font-display: swap`
-- Minimize layout shift (CLS)
-- Preload critical assets
-
----
-
-## 📊 Content Hierarchy
-
-1. **Above the fold:**
-   - Countdown timer
-   - Main headline: "Tvůj personalizovaný plán vnitřního klidu je připraven!"
-   - Primary CTA button
-   - Promo code display
-
-2. **Mid-page:**
-   - Current state vs Goal state comparison
-   - Plan details
-   - Problems and solutions lists
-
-3. **Below the fold:**
-   - Plan features
-   - Module breakdown
-   - Social proof
-   - Testimonials
-   - Final CTA
-
----
-
-## ✅ Development Checklist
-
-- [ ] Set up Next.js project with TypeScript
-- [ ] Install and configure Tailwind CSS
-- [ ] Add Figtree font from Google Fonts
-- [ ] Create component structure
-- [ ] Implement countdown timer functionality
-- [ ] Build stress level comparison cards
-- [ ] Add problems and solutions lists
-- [ ] Implement promo code section
-- [ ] Create plan features section
-- [ ] Add module breakdown cards
-- [ ] Implement testimonials section
-- [ ] Add all CTA buttons with proper tracking
-- [ ] Export and optimize all SVG assets from Figma
-- [ ] Export and optimize all raster images
-- [ ] Implement responsive design for all breakpoints
-- [ ] Add hover and focus states
-- [ ] Test accessibility with screen reader
-- [ ] Optimize performance (Lighthouse score > 90)
-- [ ] Add analytics tracking
-- [ ] Test on multiple devices and browsers
-- [ ] Implement SEO meta tags
-
----
-
-## 📝 Additional Notes
-
-1. **Dynamic Content:** The promo code should be dynamically generated/fetched
-2. **Timer Persistence:** Consider using localStorage to persist timer across page refreshes
-3. **Analytics:** Track CTA clicks, time on page, scroll depth
-4. **A/B Testing:** Consider variants for different urgency levels
-5. **Localization:** All content is in Czech - ensure proper character encoding
-6. **Legal:** Add terms, privacy policy links if needed
 
 ---
 
 ## 🔗 Resources
 
-- Figma File: [View Design](https://www.figma.com/design/oo0TlCTqEEoWBpx5RAsI15/Untitled?node-id=1-2)
-- Font: [Figtree on Google Fonts](https://fonts.google.com/specimen/Figtree)
-- Next.js Docs: https://nextjs.org/docs
-- Tailwind CSS: https://tailwindcss.com/docs
+- **Figma File:** [View Design](https://www.figma.com/design/oo0TlCTqEEoWBpx5RAsI15/Untitled?node-id=1-2)
+- **Font:** [Figtree on Google Fonts](https://fonts.google.com/specimen/Figtree)
+- **Tailwind CSS:** [Documentation](https://tailwindcss.com/docs)
+- **Next.js:** [Documentation](https://nextjs.org/docs)
 
 ---
 
-**Document Version:** 1.0  
+## 📊 Color Reference Table (Quick Lookup)
+
+| Element | Background | Text Color | Border | Notes |
+|---------|-----------|------------|--------|-------|
+| **Page** | `#FFFFFF` | `#292424` | - | Main container |
+| **CTA Button** | `#F9A201` | `#FFFFFF` | - | ⚠️ ORANGE not green! |
+| **Badge "Dnes"** | `#FFD2D2` | `#292424` | - | Light pink |
+| **Badge "Tvůj cíl"** | `#327455` | `#FFFFFF` | - | Primary green |
+| **Card Gray** | `#F6F6F6` | `#292424` | - | Light gray |
+| **Card Mint** | `#E6EEEB` | `#292424` | `#327455` 1.5px | Accent card |
+| **High Stress Badge** | `#FFD2D2` | `#E60000` | `#E60000` 1.5px | Red alert |
+| **Low Stress Badge** | `#D2EBE0` | `#327455` | `#327455` 1.5px | Green success |
+| **Divider** | - | - | `#E4E4E4` 1px | Light gray line |
+| **Timer BG** | `rgba(50,116,85,0.12)` | `#327455` | - | Transparent green |
+
+---
+
+**Document Version:** 2.0 - PIXEL-PERFECT STYLING  
 **Last Updated:** February 1, 2026  
-**Prepared for:** Developer Implementation
+**Prepared for:** Developer Implementation with Exact Specifications
+
+**⚠️ CRITICAL:** This document contains EXACT values from Figma. Do NOT approximate or guess colors. Use the exact hex codes provided.

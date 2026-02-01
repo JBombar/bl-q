@@ -8,15 +8,15 @@ import { FOOTER } from '@/config/sales-page.config';
  */
 export function SalesPageFooter() {
   return (
-    <footer className="py-8 px-4 bg-white font-figtree border-t border-gray-light">
+    <footer className="py-8 px-6 bg-white font-figtree border-t border-[#E4E4E4]">
       <div className="max-w-[500px] mx-auto">
         {/* Links */}
-        <div className="flex flex-wrap justify-center gap-4 mb-4 text-sm">
+        <div className="flex flex-wrap justify-center gap-4 mb-4">
           {FOOTER.links.map((link, index) => (
             <a
               key={index}
               href={link.href}
-              className="text-gray-500 hover:text-dark transition-colors"
+              className="text-[14px] text-[#949BA1] hover:text-[#292424] transition-colors"
             >
               {link.label}
             </a>
@@ -24,7 +24,7 @@ export function SalesPageFooter() {
         </div>
 
         {/* Copyright */}
-        <p className="text-xs text-gray-400 text-center">
+        <p className="text-[12px] text-[#949BA1] text-center">
           {FOOTER.copyright}
         </p>
       </div>

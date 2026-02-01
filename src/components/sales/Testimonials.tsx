@@ -32,7 +32,7 @@ function StarRating({ rating }: { rating: number }) {
  */
 export function Testimonials() {
   return (
-    <section className="py-12 px-4 bg-white font-figtree">
+    <section className="py-12 px-6 bg-white font-figtree">
       <div className="max-w-[500px] mx-auto">
         {/* Section Header */}
         <motion.div
@@ -41,7 +41,7 @@ export function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-2xl font-bold text-dark">
+          <h2 className="text-[24px] font-bold text-[#292424] leading-[1.2em]">
             {SECTION_HEADINGS.testimonials}
           </h2>
         </motion.div>
@@ -51,7 +51,7 @@ export function Testimonials() {
           {TESTIMONIALS.slice(0, 3).map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
-              className="bg-card-bg rounded-lg p-6"
+              className="bg-[#F6F6F6] rounded-[10px] p-6"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -63,23 +63,28 @@ export function Testimonials() {
               </div>
 
               {/* Text */}
-              <p className="text-base text-dark mb-4 leading-relaxed">
+              <p className="text-[16px] text-[#292424] mb-4 leading-[1.4em]">
                 "{testimonial.text}"
               </p>
 
               {/* Before/After Stats */}
               {testimonial.beforeAfter && (
-                <div className="mb-4 p-3 bg-primary-green-light rounded-lg flex items-center justify-center gap-6">
+                <div
+                  className="mb-4 p-3 rounded-[10px] flex items-center justify-center gap-6"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
+                  }}
+                >
                   <div className="text-center">
-                    <p className="text-xs text-gray-600 mb-1">Před</p>
-                    <p className="text-base font-bold text-red-500">
+                    <p className="text-[12px] text-[#949BA1] mb-1">Před</p>
+                    <p className="text-[16px] font-bold text-[#E60000]">
                       {testimonial.beforeAfter.before}
                     </p>
                   </div>
-                  <span className="text-xl text-primary-green">→</span>
+                  <span className="text-[20px] text-[#327455]">→</span>
                   <div className="text-center">
-                    <p className="text-xs text-gray-600 mb-1">Po</p>
-                    <p className="text-base font-bold text-primary-green">
+                    <p className="text-[12px] text-[#949BA1] mb-1">Po</p>
+                    <p className="text-[16px] font-bold text-[#327455]">
                       {testimonial.beforeAfter.after}
                     </p>
                   </div>
@@ -87,17 +92,22 @@ export function Testimonials() {
               )}
 
               {/* Author */}
-              <div className="flex items-center gap-3 pt-4 border-t border-gray-light">
-                <div className="w-10 h-10 bg-primary-green-light rounded-full flex items-center justify-center overflow-hidden shrink-0">
-                  <span className="text-lg font-bold text-primary-green">
+              <div className="flex items-center gap-3 pt-4 border-t border-[#E4E4E4]">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden shrink-0"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
+                  }}
+                >
+                  <span className="text-[18px] font-bold text-[#327455]">
                     {testimonial.name.charAt(0)}
                   </span>
                 </div>
                 <div>
-                  <p className="font-semibold text-dark text-sm">
+                  <p className="font-semibold text-[#292424] text-[14px]">
                     {testimonial.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-[12px] text-[#949BA1]">
                     {testimonial.age} let
                     {testimonial.location && ` • ${testimonial.location}`}
                   </p>

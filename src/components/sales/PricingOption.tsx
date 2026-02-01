@@ -36,18 +36,21 @@ export function PricingOption({
     <button
       onClick={onSelect}
       className={`
-        relative w-full text-left rounded-lg p-4 border-2 transition-all font-figtree
+        relative w-full text-left rounded-[10px] p-4 border-2 transition-all font-figtree
         ${
           isSelected
-            ? 'bg-primary-green-light border-primary-green'
-            : 'bg-white border-gray-light hover:border-gray-300'
+            ? 'border-[#327455]'
+            : 'bg-white border-[#E4E4E4] hover:border-[#D9D9D9]'
         }
       `}
+      style={isSelected ? {
+        background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
+      } : undefined}
     >
       {/* Recommended badge - positioned at top */}
       {isRecommended && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-green text-white text-xs font-bold rounded-full">
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#327455] text-white text-[12px] font-bold rounded-full whitespace-nowrap">
             ★ Nejoblíbenější volba
           </span>
         </div>
@@ -61,8 +64,8 @@ export function PricingOption({
               w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
               ${
                 isSelected
-                  ? 'border-primary-green bg-primary-green'
-                  : 'border-gray-300 bg-white'
+                  ? 'border-[#327455] bg-[#327455]'
+                  : 'border-[#D9D9D9] bg-white'
               }
             `}
           >
@@ -76,7 +79,7 @@ export function PricingOption({
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-2 mb-1">
             {/* Plan name */}
-            <h3 className="font-bold text-sm text-dark uppercase tracking-wide">
+            <h3 className="font-bold text-[14px] text-[#292424] uppercase tracking-wide">
               {plan.name}
             </h3>
           </div>
@@ -85,13 +88,13 @@ export function PricingOption({
           <div className="flex items-baseline gap-2">
             {/* Original price (crossed out) */}
             {plan.originalPriceCents && (
-              <span className="text-sm text-gray-400 line-through">
+              <span className="text-[14px] text-[#949BA1] line-through">
                 {formatPrice(plan.originalPriceCents)} Kč
               </span>
             )}
 
             {/* Current price */}
-            <span className="text-base font-bold text-dark">
+            <span className="text-[16px] font-bold text-[#292424]">
               {formatPrice(plan.priceCents)} Kč
             </span>
           </div>
@@ -101,17 +104,17 @@ export function PricingOption({
         <div className="shrink-0 text-right">
           {/* Original per-day price */}
           {originalPricePerDay && (
-            <div className="text-xs text-gray-400 line-through mb-0.5">
+            <div className="text-[12px] text-[#949BA1] line-through mb-0.5">
               {originalPricePerDay} Kč
             </div>
           )}
 
           {/* Current per-day price in gray box */}
-          <div className="bg-gray-light rounded-md px-3 py-1 inline-block">
-            <div className="text-lg font-bold text-dark">
-              {pricePerDay} <span className="text-xs font-normal">Kč</span>
+          <div className="bg-[#F6F6F6] rounded-[8px] px-3 py-1 inline-block">
+            <div className="text-[18px] font-bold text-[#292424]">
+              {pricePerDay} <span className="text-[12px] font-normal">Kč</span>
             </div>
-            <div className="text-[10px] text-gray-500 text-center">/den</div>
+            <div className="text-[10px] text-[#949BA1] text-center">/den</div>
           </div>
         </div>
       </div>
