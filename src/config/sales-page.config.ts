@@ -364,42 +364,26 @@ export interface Testimonial {
 export const TESTIMONIALS: Testimonial[] = [
   {
     id: 'testimonial-1',
-    name: 'Petra K.',
-    age: 34,
-    location: 'Praha',
-    photo: '/images/testimonials/petra.jpg',
-    text: 'Během 60 dní se můj stres snížil o 45%. Konečně mám energii na věci, které miluji. Better Lady mi změnila život.',
+    name: 'Alena',
+    age: 35,
+    photo: '/images/testimonials/alena.jpg',
+    text: 'Díky Mirku, že jsi mi dal možnost zúčastnit se tohoto programu. Velmi mi to pomohlo. Celkově je to super strukturované, přesně něco takového jsem potřebovala. Co se týče výsledků, tak hned po prvních 2 dnech jsem cítila pozitivní změny, přesně jak jsi mi popisoval na hovoru minulý týden. Hlavní věc, kterou jsem si na sobě všimla, je, že už nereaguji tak impulzivně na různé situace, které mi během dne vyskočí. Když něco na mě přijde, co mě dříve zvyklo rozhodit, tak používám tu 4. techniku z programu. Nečekala jsem, že to bude až tak dobře fungovat. Těším se na hovor v pátek.',
     rating: 5,
-    beforeAfter: {
-      before: '48/60 bodů',
-      after: '26/60 bodů',
-    },
   },
   {
     id: 'testimonial-2',
-    name: 'Jana M.',
-    age: 41,
-    location: 'Brno',
-    photo: '/images/testimonials/jana.jpg',
-    text: 'Konečně jsem si uvedomila, že musím myslet i na sebe. Program mi pomohl nastavit hranice a najít čas pro sebe bez pocitu viny.',
+    name: 'Eva',
+    age: 62,
+    photo: '/images/testimonials/eva.jpg',
+    text: 'Myslela jsem si, že dechová cvičení jsou spíš pro mladé. Ale opak je pravdou. Já už jsem v důchodu a dlouho mě trápila nespavost a vysoký stres, hlavně kvůli zdraví manžela. Byla jsem vyčerpaná a bez nálady. Když jsem začala dělat techniky z programu, konečně jsem se po letech pořádně vyspala. Překvapilo mě, jak moc se zlepšila moje energie přes den a i tlak se mi stabilizoval. Dneska se cítím klidnější, vyrovnanější a mám víc radosti z maličkostí. Nelituju ani minuty, že jsem to zkusila.',
     rating: 5,
   },
   {
     id: 'testimonial-3',
-    name: 'Marie S.',
-    age: 29,
-    location: 'Ostrava',
-    photo: '/images/testimonials/marie.jpg',
-    text: 'Metody jsou jednoduché a fungují v běžném životě. Nemusíš měnit celý život, stačí malé kroky každý den.',
-    rating: 5,
-  },
-  {
-    id: 'testimonial-4',
-    name: 'Lucie T.',
-    age: 37,
-    location: 'Plzeň',
-    photo: '/images/testimonials/lucie.jpg',
-    text: 'Po 3 týdnech jsem konečně začala spát lépe. Ráno vstávám odpočatá a večer usínám bez přemýšlení.',
+    name: 'Šárka',
+    age: 24,
+    photo: '/images/testimonials/sarka.jpg',
+    text: 'Skončila jsem školu a nastoupila do svojí první práce. Myslela jsem si, že si konečně oddechnu, ale spíš to bylo naopak. Všechno nové: lidi, úkoly, šéf, zodpovědnost. Pořád jsem měla pocit, že musím něco dokazovat a že nesmím udělat chybu. Byla jsem z toho úplně vystresovaná. Domů jsem chodila vyřízená a i když jsem si lehla, hlava mi pořád jela. Nespala jsem skoro vůbec a ráno jsem vstávala už unavená. Když jsem začala dělat ty dechový věci s Mirkem, tak jsem poprvé cítila, že umím vypnout. Najednou jsem spala líp, přes den jsem měla víc energie a i ten stres v práci se mi líp zvládal. Už se necítím, že mě to semele hned na začátku. Fakt mi to hodně pomohlo.',
     rating: 5,
   },
 ];
@@ -417,51 +401,33 @@ export interface FaqItem {
 export const FAQ_ITEMS: FaqItem[] = [
   {
     id: 'faq-1',
-    question: 'Jak dlouho program trvá?',
+    question: 'Co je to vlastně Metoda vnitřního klidu™?',
     answer:
-      'Program je navržen na 90 dní (12 týdnů) s denními aktivitami. Každý den dostaneš nové cvičení nebo techniku, která ti zabere 10-20 minut. Pokud si vezmeš Premium plán, máš přístup na celých 6 měsíců.',
+      'Metoda vnitřního klidu™ je ucelený systém, který propojuje vědomou práci s dechem s moderními technikami pro regeneraci nervového systému. Je navržena tak, aby přepnula tvé tělo z režimu „přežití" do stavu hlubokého klidu a bezpečí. Na rozdíl od léků nebo obecných rad, které často řeší jen následky, jde tato metoda přímo ke kořenům problému – k fyziologické reakci tvého těla.',
   },
   {
     id: 'faq-2',
-    question: 'Kolik času musím věnovat denně?',
+    question: 'Co když už jsem podobné nástroje zkoušela a nefungovaly?',
     answer:
-      'Doporučujeme 10-20 minut denně. Cvičení a techniky jsou navržené tak, aby byly krátké a efektivní. I 5 minut denně ti může výrazně pomoci.',
+      'Tento program je jiný než nástroje, které jsi možná zkoušela dřív, protože je založený na vědě. Nejde o žádné obecné rady, které kloužou po povrchu. Kombinujeme techniky podložené výzkumem a vytvořené odborníky tak, aby garantovaly tvůj úspěch. Na rozdíl od univerzálních návodů je tento plán navržen tak, aby řešil tvé konkrétní potřeby a výzvy. Jdeme přímo k příčině stresu v nervovém systému, místo abychom jen hasili následky.',
   },
   {
     id: 'faq-3',
-    question: 'Potřebuji nějaké předchozí zkušenosti?',
+    question: 'Co když nemám dostatečně pevnou vůli na to, abych plán dodržela?',
     answer:
-      'Ne, program je vhodný pro každou ženu bez ohledu na zkušenosti. Vedeme tě krok za krokem od úplných základů.',
+      'Metoda vnitřního klidu™ není o tvrdém drilu nebo přemáhání se. Je navržena tak, aby byla jednoduchá, příjemná a zabrala ti jen pár minut denně. Místo tlaku stavíme na malých, přirozených krocích, které se ti snadno dostanou pod kůži, aniž bys musela bojovat sama se sebou. Program tě spíše „ponese", než abys ho musela „tlačit".',
   },
   {
     id: 'faq-4',
-    question: 'Co když mi program nebude vyhovovat?',
+    question: 'Za jak dlouho se začnu cítit lépe? A vydrží výsledky?',
     answer:
-      'Nabízíme 30denní záruku vrácení peněz. Pokud do 30 dní zjistíš, že program není pro tebe, vrátíme ti celou částku bez zbytečných otázek.',
+      'Mnoho žen se cítí klidně a vyrovnaně už po pár dnech. A co je na tom nejlepší – nejde jen o dočasnou úlevu. Techniky v programu pomáhají změnit, jak tvoje tělo i duše zvládají stres. Díky tomu se klid a pohoda stanou tvým novým normálem, ne jen chvilkovým stavem.',
   },
   {
     id: 'faq-5',
-    question: 'Jak funguje Kruh důvěry?',
+    question: 'Budu mít nějakou podporu, nebo v tom budu sama?',
     answer:
-      'Kruh důvěry je uzavřená online komunita pouze pro účastnice programu. Můžeš sdílet své zkušenosti, klást otázky a získat podporu od žen se stejnými cíli. Je to bezpečný prostor bez soudů.',
-  },
-  {
-    id: 'faq-6',
-    question: 'Mohu si koupit program jako dárek?',
-    answer:
-      'Ano, program lze koupit jako dárkový voucher. Po nákupu ti zašleme speciální dárkový kód, který můžeš předat.',
-  },
-  {
-    id: 'faq-7',
-    question: 'Je program nahradou za terapii?',
-    answer:
-      'Ne, program není náhradou za terapii ani lékařskou péči. Jde o preventivní nástroj pro zvládání běžného stresu. Pokud trpíš vážnými psychickými problémy, doporučujeme konzultovat odborníka.',
-  },
-  {
-    id: 'faq-8',
-    question: 'Jak rychle uvidím výsledky?',
-    answer:
-      'Většina účastnic hlásí první zlepšení během 2-3 týdnů. Výrazné změny nastávají po 4-6 týdnech pravidelné praxe. Každý pokračuje svým tempem.',
+      'Neboj, nikdy nejsi sama. Čeká tě pravidelný skupinový mentoring, prostor pro tvé dotazy a komunita žen, které procházejí tím samým, čím možná zrovna ty. A když budeš mít kdykoli otázku, Mirek a náš přátelský tým podpory jsou tu pro tebe.',
   },
 ];
 
@@ -470,14 +436,14 @@ export const FAQ_ITEMS: FaqItem[] = [
 // ============================================================================
 
 export const GUARANTEE = {
-  title: '30denní záruka vrácení peněz',
+  title: '30 denní záruka vrácení peněz',
   description:
-    'Pokud do 30 dní zjistíš, že program není pro tebe, vrátíme ti celou částku. Žádné otázky, žádné podmínky.',
+    'Na tvůj plán se vztahuje 100% záruka vrácení peněz. Jsme si natolik jistí, že ti program pomůže, že garantujeme vrácení peněz v plné výši do 30 dnů od nákupu, pokud i přes dodržování plánu nezaznamenáš viditelné výsledky. Zjistit více.',
   icon: '✅',
   features: [
     'Vrácení peněz do 30 dní',
-    'Žádné otázky ani podmínky',
-    'Jednoduchý proces vrácení',
+    '100% záruka',
+    'Bez zbytečných otázek',
   ],
 };
 
@@ -496,10 +462,9 @@ export const COUNTDOWN_CONFIG = {
 // ============================================================================
 
 export const FOOTER = {
-  copyright: '© 2026 Better Lady. Všechna práva vyhrazena.',
+  copyright: '© Copyrights by betterlady.cz All Rights Reserved.',
   links: [
-    { label: 'Ochrana soukromí', href: '/privacy' },
+    { label: 'Ochrana osobních údajů', href: '/privacy' },
     { label: 'Obchodní podmínky', href: '/terms' },
-    { label: 'Kontakt', href: '/contact' },
   ],
 };

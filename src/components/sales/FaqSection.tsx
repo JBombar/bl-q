@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { FaqAccordion } from './FaqAccordion';
 import { FAQ_ITEMS } from '@/config/sales-page.config';
+import { SECTION_HEADINGS } from '@/config/sales-page-content';
 
 /**
  * FaqSection Component
@@ -20,13 +21,13 @@ export function FaqSection() {
           viewport={{ once: true }}
         >
           <h2 className="text-[24px] font-bold text-[#292424] leading-[1.2em]">
-            Často kladené otázky
+            {SECTION_HEADINGS.faq}
           </h2>
         </motion.div>
 
-        {/* FAQ List */}
+        {/* FAQ List - All 5 items */}
         <div className="space-y-3">
-          {FAQ_ITEMS.slice(0, 5).map((faq, index) => (
+          {FAQ_ITEMS.map((faq, index) => (
             <motion.div
               key={faq.id}
               initial={{ opacity: 0, y: 20 }}
