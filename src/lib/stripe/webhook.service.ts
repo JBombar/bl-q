@@ -57,9 +57,9 @@ export async function handlePaymentIntentSucceeded(
   });
 
   // Update session completed_purchase flag
-  await (supabase
+  await supabase
     .from('quiz_sessions')
-    .update as any)({ completed_purchase: true })
+    .update({ completed_purchase: true })
     .eq('id', order.session_id);
 
   // Track payment success event
@@ -114,7 +114,7 @@ export async function handlePaymentIntentFailed(
  * Creates order record for subscription renewals
  */
 export async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
-  const subscriptionId = invoice.subscription as string | null;
+  const subscriptionId = (invoice as any).subscription as string | null;
 
   // Only process subscription invoices
   if (!subscriptionId) {
@@ -126,7 +126,7 @@ export async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> 
   if (invoice.billing_reason === 'subscription_create') {
     console.log('Initial subscription invoice, updating order to paid');
     // Update the existing pending order to paid
-    const paymentIntent = invoice.payment_intent as string | Stripe.PaymentIntent | null;
+    const paymentIntent = (invoice as any).payment_intent as string | Stripe.PaymentIntent | null;
     const paymentIntentId = typeof paymentIntent === 'string' ? paymentIntent : paymentIntent?.id;
 
     if (paymentIntentId) {
@@ -171,7 +171,7 @@ export async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> 
  * Tracks failed subscription payment attempts
  */
 export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
-  const subscriptionId = invoice.subscription as string | null;
+  const subscriptionId = (invoice as any).subscription as string | null;
 
   if (!subscriptionId) {
     console.log('Invoice is not for a subscription, skipping');
@@ -225,7 +225,7 @@ export async function handleSubscriptionUpdated(
       stripeSubscriptionId: subscriptionId,
       status: stripeSubscription.status,
       cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
-      currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+      currentPeriodEnd: new Date((stripeSubscription as any).current_period_end * 1000).toISOString(),
       customerId: customer?.id,
     },
   });

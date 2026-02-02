@@ -25,26 +25,30 @@ export async function GET(
     }
 
     // Get subscription status from our database
-    // Note: using 'as any' since subscriptions table types are newly added
     const { data: subscription, error } = await supabase
-      .from('subscriptions' as any)
+      .from('subscriptions')
       .select('status, stripe_subscription_id')
       .eq('id', subscriptionId)
       .single();
 
-    if (error || !subscription) {
+    if (error) {
+      console.error('Database error fetching subscription:', error);
       return NextResponse.json(
         { error: 'Subscription not found' },
         { status: 404 }
       );
     }
 
-    // Type assertion for newly added subscriptions table
-    const sub = subscription as { status: string; stripe_subscription_id: string };
+    if (!subscription) {
+      return NextResponse.json(
+        { error: 'Subscription not found' },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
-      status: sub.status,
-      stripeSubscriptionId: sub.stripe_subscription_id,
+      status: subscription.status,
+      stripeSubscriptionId: subscription.stripe_subscription_id,
     });
   } catch (error: any) {
     console.error('Subscription status error:', error);

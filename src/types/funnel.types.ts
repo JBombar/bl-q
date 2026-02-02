@@ -29,6 +29,9 @@ export interface FunnelMetadata {
     learnStress?: boolean;    // C3: "naučit zvládat stres"
   };
 
+  // Email (Screen D)
+  email?: string;
+
   // Name (Screen E)
   firstName?: string;
 

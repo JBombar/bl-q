@@ -52,7 +52,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<SendPlanE
 
     const sessionRecord = sessionData as { email: string | null; user_metadata: Record<string, unknown> | null };
     const email = sessionRecord.email;
-    const firstName = (sessionRecord.user_metadata as any)?.firstName || 'there';
+    const userMetadata = sessionRecord.user_metadata;
+    const firstName = (userMetadata && typeof userMetadata.firstName === 'string' ? userMetadata.firstName : null) ?? 'there';
 
     if (!email) {
       return NextResponse.json(

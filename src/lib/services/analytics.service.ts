@@ -42,7 +42,7 @@ export async function trackEvent(
     ip_address: data.ipAddress,
   };
 
-  const { error } = await supabase.from('quiz_events').insert(eventRecord as any);
+  const { error } = await supabase.from('quiz_events').insert(eventRecord);
 
   if (error) {
     console.error('Failed to track event:', error);

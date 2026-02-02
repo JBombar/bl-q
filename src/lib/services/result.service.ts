@@ -1,6 +1,19 @@
 import { supabase } from '@/lib/supabase/client';
 import type { QuizResult, QuizResultInsert, Json } from '@/types';
 
+// Partial types for specific query results
+interface AnswerQueryResult {
+  question_id: string;
+  answer_score: number | null;
+  selected_option_ids: string[];
+}
+
+interface QuestionQueryResult {
+  id: string;
+  question_type: string;
+  weight: number | null;
+}
+
 // Question types that contribute to scoring
 const SCORING_QUESTION_TYPES = [
   'single_choice',
@@ -39,7 +52,7 @@ export async function getExistingResult(sessionId: string): Promise<QuizResult |
     .single();
 
   if (error || !data) return null;
-  return data as QuizResult;
+  return data;
 }
 
 /**
@@ -60,7 +73,7 @@ export async function calculateResult(params: CalculateResultParams): Promise<Qu
 
   if (answersError) throw new Error(`Failed to load answers: ${answersError.message}`);
 
-  const answersData = (answers || []) as any[];
+  const answersData: AnswerQueryResult[] = answers || [];
 
   // Get all scoring questions with their weights
   const { data: questions, error: questionsError } = await supabase
@@ -71,7 +84,7 @@ export async function calculateResult(params: CalculateResultParams): Promise<Qu
 
   if (questionsError) throw new Error(`Failed to load questions: ${questionsError.message}`);
 
-  const questionsData = (questions || []) as any[];
+  const questionsData: QuestionQueryResult[] = questions || [];
 
   // Build question weight map
   const questionWeights = new Map<string, number>();
@@ -174,13 +187,14 @@ export async function calculateResult(params: CalculateResultParams): Promise<Qu
 
   const { data, error } = await supabase
     .from('quiz_results')
-    .upsert(resultData as any, {
+    .upsert(resultData, {
       onConflict: 'session_id'
     })
     .select()
     .single();
 
   if (error) throw new Error(`Failed to save result: ${error.message}`);
+  if (!data) throw new Error('Failed to save result: No data returned');
 
-  return data as QuizResult;
+  return data;
 }

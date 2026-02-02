@@ -4,9 +4,40 @@ import { calculateResult, getExistingResult } from '@/lib/services/result.servic
 import { getQuizInsights, extractFunnelState } from '@/lib/services/insights.service';
 import { trackEvent, EVENT_TYPES } from '@/lib/services/analytics.service';
 import { supabase } from '@/lib/supabase/client';
+import type { Json } from '@/types/supabase';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+/**
+ * Safely extract normalizedScore from JSONB calculation_details
+ * Returns default value (50) if not present or invalid
+ */
+function getNormalizedScore(calculationDetails: Json | null, defaultValue = 50): number {
+  if (
+    calculationDetails !== null &&
+    typeof calculationDetails === 'object' &&
+    !Array.isArray(calculationDetails) &&
+    'normalizedScore' in calculationDetails
+  ) {
+    const score = calculationDetails.normalizedScore;
+    if (typeof score === 'number') {
+      return score;
+    }
+  }
+  return defaultValue;
+}
+
+/**
+ * Safely convert Json type to Record<string, unknown> for user_metadata
+ * Returns null if the value is not a valid object
+ */
+function toMetadataRecord(json: Json | null): Record<string, unknown> | null {
+  if (json !== null && typeof json === 'object' && !Array.isArray(json)) {
+    return json as Record<string, unknown>;
+  }
+  return null;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,17 +67,13 @@ export async function POST(request: NextRequest) {
           Object.values(quizData.offer_mapping)[0];
 
         // Get normalized score from calculation details
-        const normalizedScore = (existingResult.calculation_details as any)?.normalizedScore ?? 50;
+        const normalizedScore = getNormalizedScore(existingResult.calculation_details);
 
         // Get insights for Screen A
         const insights = await getQuizInsights(session.id, session.quiz_id, normalizedScore);
 
         // Extract funnel state for resume functionality
-        const funnelState = extractFunnelState(
-          session.user_metadata && typeof session.user_metadata === 'object' && !Array.isArray(session.user_metadata)
-            ? session.user_metadata as Record<string, unknown>
-            : null
-        );
+        const funnelState = extractFunnelState(toMetadataRecord(session.user_metadata));
 
         return NextResponse.json({
           result: existingResult,
@@ -85,17 +112,13 @@ export async function POST(request: NextRequest) {
     const offer = quizData.offer_mapping[result.result_value];
 
     // Get normalized score from calculation details
-    const normalizedScore = (result.calculation_details as any)?.normalizedScore ?? 50;
+    const normalizedScore = getNormalizedScore(result.calculation_details);
 
     // Get insights for Screen A
     const insights = await getQuizInsights(session.id, session.quiz_id, normalizedScore);
 
     // Extract funnel state (will be null for first completion)
-    const funnelState = extractFunnelState(
-      session.user_metadata && typeof session.user_metadata === 'object' && !Array.isArray(session.user_metadata)
-        ? session.user_metadata as Record<string, unknown>
-        : null
-    );
+    const funnelState = extractFunnelState(toMetadataRecord(session.user_metadata));
 
     return NextResponse.json({
       result,

@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import type { QuizSession, QuizSessionInsert } from '@/types';
+import type { QuizSession, QuizSessionInsert, QuizSessionUpdate, Json } from '@/types';
 import { cookies } from 'next/headers';
 
 const COOKIE_NAME = 'qb_sid';
@@ -19,13 +19,13 @@ export async function createSession(quizId: string, quizVersion: number): Promis
 
   const { data, error } = await supabase
     .from('quiz_sessions')
-    .insert(sessionData as any)
+    .insert(sessionData)
     .select()
     .single();
 
-  if (error) throw new Error(`Failed to create session: ${error.message}`);
+  if (error || !data) throw new Error(`Failed to create session: ${error?.message ?? 'No data returned'}`);
 
-  return data as QuizSession;
+  return data;
 }
 
 export async function getSession(sessionToken: string): Promise<QuizSession | null> {
@@ -35,16 +35,14 @@ export async function getSession(sessionToken: string): Promise<QuizSession | nu
     .eq('session_token', sessionToken)
     .single();
 
-  if (error) return null;
-
-  const session = data as QuizSession;
+  if (error || !data) return null;
 
   // Check if expired
-  if (session.expires_at && new Date(session.expires_at) < new Date()) {
+  if (data.expires_at && new Date(data.expires_at) < new Date()) {
     return null;
   }
 
-  return session;
+  return data;
 }
 
 export async function getSessionFromCookie(): Promise<QuizSession | null> {
@@ -67,19 +65,12 @@ export async function setSessionCookie(sessionToken: string): Promise<void> {
   });
 }
 
-interface SessionUpdates {
-  current_question_index?: number;
-  completed_at?: string;
-  email?: string;
-  user_metadata?: Record<string, unknown>;
-}
+export async function updateSession(sessionId: string, updates: QuizSessionUpdate): Promise<void> {
+  const updateData: QuizSessionUpdate = { ...updates, updated_at: new Date().toISOString() };
 
-export async function updateSession(sessionId: string, updates: SessionUpdates): Promise<void> {
-  const updateData = { ...updates, updated_at: new Date().toISOString() };
-
-  const { error } = await (supabase
+  const { error } = await supabase
     .from('quiz_sessions')
-    .update as any)(updateData)
+    .update(updateData)
     .eq('id', sessionId);
 
   if (error) throw new Error(`Failed to update session: ${error.message}`);
@@ -100,29 +91,30 @@ export async function mergeSessionMetadata(
     .eq('id', sessionId)
     .single();
 
-  if (fetchError) {
-    throw new Error(`Failed to fetch session metadata: ${fetchError.message}`);
+  if (fetchError || !session) {
+    throw new Error(`Failed to fetch session metadata: ${fetchError?.message ?? 'Session not found'}`);
   }
 
-  const sessionData = session as { user_metadata: Record<string, unknown> | null } | null;
-  const currentMetadata = (sessionData?.user_metadata as Record<string, unknown>) || {};
+  const currentMetadata = (session.user_metadata ?? {}) as Record<string, unknown>;
 
   // Merge new metadata
-  const mergedMetadata = {
+  const mergedMetadata: Record<string, unknown> = {
     ...currentMetadata,
     ...metadataUpdates,
   };
 
   // Handle nested microCommitments merge
   if (metadataUpdates.microCommitments && currentMetadata.microCommitments) {
+    const existingCommitments = currentMetadata.microCommitments as Record<string, unknown>;
+    const newCommitments = metadataUpdates.microCommitments as Record<string, unknown>;
     mergedMetadata.microCommitments = {
-      ...(currentMetadata.microCommitments as Record<string, unknown>),
-      ...(metadataUpdates.microCommitments as Record<string, unknown>),
+      ...existingCommitments,
+      ...newCommitments,
     };
   }
 
   // Update with merged metadata
-  await updateSession(sessionId, { user_metadata: mergedMetadata });
+  await updateSession(sessionId, { user_metadata: mergedMetadata as Json });
 
   return mergedMetadata;
 }

@@ -76,7 +76,24 @@ export function getSubscriptionOfferById(offerId: string): SubscriptionOffer | u
  * Get recommended subscription offer
  */
 export function getRecommendedSubscriptionOffer(): SubscriptionOffer {
-  return SUBSCRIPTION_OFFERS.find(offer => offer.isRecommended) || SUBSCRIPTION_OFFERS[0];
+  // First, find the recommended offer.
+  const recommendedOffer = SUBSCRIPTION_OFFERS.find(offer => offer.isRecommended);
+
+  // If a recommended offer is found, return it immediately.
+  // This is a type guard that TypeScript understands.
+  if (recommendedOffer) {
+    return recommendedOffer;
+  }
+
+  // If no recommended offer was found, check if the array is empty.
+  // If it is, we have a critical configuration error.
+  if (SUBSCRIPTION_OFFERS.length === 0) {
+    throw new Error("Configuration error: SUBSCRIPTION_OFFERS array is empty and no recommended offer was found.");
+  }
+
+  // If we reach this point, TypeScript knows the array is not empty,
+  // so it knows SUBSCRIPTION_OFFERS[0] is a valid SubscriptionOffer.
+  return SUBSCRIPTION_OFFERS[0]!;
 }
 
 /**

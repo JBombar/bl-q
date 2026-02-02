@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import type { QuizDefinition, QuizQuestionWithOptions, QuizAnswerData } from '@/types';
+import type { QuizDefinition, QuizQuestionWithOptions, QuizAnswerData, Quiz, QuizQuestion, QuizOption, QuizAnswerInsert, QuizConfig, ResultConfig, OfferMapping } from '@/types';
 
 export async function getQuizBySlug(slug: string): Promise<QuizDefinition | null> {
   // Get quiz
@@ -12,29 +12,28 @@ export async function getQuizBySlug(slug: string): Promise<QuizDefinition | null
 
   if (quizError || !quiz) return null;
 
-  const quizData = quiz as any;
-
   // Get questions with options
   const { data: questions, error: questionsError } = await supabase
     .from('quiz_questions')
     .select('*, quiz_options(*)')
-    .eq('quiz_id', quizData.id)
+    .eq('quiz_id', quiz.id)
     .order('order_index');
 
   if (questionsError || !questions) throw new Error(`Failed to load questions: ${questionsError?.message || 'Unknown error'}`);
 
   // Transform the data to match our types
-  const questionsWithOptions: QuizQuestionWithOptions[] = (questions as any[]).map((q: any) => ({
+  type QuestionWithNestedOptions = QuizQuestion & { quiz_options: QuizOption[] | null };
+  const questionsWithOptions: QuizQuestionWithOptions[] = (questions as QuestionWithNestedOptions[]).map((q) => ({
     ...q,
-    options: (q.quiz_options || []).sort((a: any, b: any) => a.order_index - b.order_index),
+    options: (q.quiz_options || []).sort((a, b) => a.order_index - b.order_index),
   }));
 
   return {
-    ...quizData,
+    ...quiz,
     questions: questionsWithOptions,
-    config: quizData.config,
-    resultConfig: quizData.result_config,
-    offerMapping: quizData.offer_mapping,
+    config: (quiz.config || {}) as QuizConfig,
+    resultConfig: quiz.result_config as unknown as ResultConfig,
+    offerMapping: quiz.offer_mapping as unknown as OfferMapping,
   };
 }
 
@@ -45,18 +44,20 @@ export async function saveAnswer(sessionId: string, questionId: string, selected
     .select('id, score_value')
     .in('id', selectedOptionIds);
 
-  const optionsData = (options || []) as any[];
+  const optionsData = options || [];
   const answerScore = optionsData.reduce((sum, opt) => sum + (opt.score_value || 0), 0);
+
+  const answerData: QuizAnswerInsert = {
+    session_id: sessionId,
+    question_id: questionId,
+    selected_option_ids: selectedOptionIds,
+    answer_score: answerScore,
+    time_spent_seconds: timeSpent,
+  };
 
   const { error } = await supabase
     .from('quiz_answers')
-    .upsert({
-      session_id: sessionId,
-      question_id: questionId,
-      selected_option_ids: selectedOptionIds,
-      answer_score: answerScore,
-      time_spent_seconds: timeSpent,
-    } as any, {
+    .upsert(answerData, {
       onConflict: 'session_id,question_id'
     });
 
@@ -71,8 +72,8 @@ export async function getSessionAnswers(sessionId: string): Promise<QuizAnswerDa
 
   if (error) throw new Error(`Failed to load answers: ${error.message}`);
 
-  const answersData = (data || []) as any[];
-  return answersData.map(a => ({
+  const answersData = data || [];
+  return answersData.map((a) => ({
     questionId: a.question_id,
     selectedOptionIds: a.selected_option_ids,
     answerValue: a.answer_value || undefined,

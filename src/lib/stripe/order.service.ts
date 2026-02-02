@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import type { Order, OrderInsert } from '@/types';
+import type { Order, OrderInsert, OrderUpdate } from '@/types';
 
 export async function generateOrderNumber(): Promise<string> {
   const timestamp = Date.now().toString(36).toUpperCase();
@@ -33,15 +33,15 @@ export async function createOrder(data: {
 
   const { data: order, error } = await supabase
     .from('orders')
-    .insert(orderData as any)
+    .insert(orderData)
     .select()
     .single();
 
-  if (error) {
-    throw new Error(`Failed to create order: ${error.message}`);
+  if (error || !order) {
+    throw new Error(`Failed to create order: ${error?.message ?? 'No data returned'}`);
   }
 
-  return order as Order;
+  return order;
 }
 
 export async function updateOrderStatus(
@@ -55,7 +55,7 @@ export async function updateOrderStatus(
     cardBrand?: string;
   }
 ): Promise<void> {
-  const updates: any = {
+  const updates: OrderUpdate = {
     status,
   };
 
@@ -66,18 +66,16 @@ export async function updateOrderStatus(
   }
 
   if (paymentDetails) {
-    Object.assign(updates, {
-      stripe_charge_id: paymentDetails.chargeId,
-      stripe_customer_id: paymentDetails.customerId,
-      payment_method_type: paymentDetails.paymentMethodType,
-      card_last4: paymentDetails.cardLast4,
-      card_brand: paymentDetails.cardBrand,
-    });
+    updates.stripe_charge_id = paymentDetails.chargeId;
+    updates.stripe_customer_id = paymentDetails.customerId;
+    updates.payment_method_type = paymentDetails.paymentMethodType;
+    updates.card_last4 = paymentDetails.cardLast4;
+    updates.card_brand = paymentDetails.cardBrand;
   }
 
-  const { error } = await (supabase
+  const { error } = await supabase
     .from('orders')
-    .update as any)(updates)
+    .update(updates)
     .eq('stripe_payment_intent_id', paymentIntentId);
 
   if (error) {
@@ -92,8 +90,8 @@ export async function getOrderByPaymentIntentId(paymentIntentId: string): Promis
     .eq('stripe_payment_intent_id', paymentIntentId)
     .single();
 
-  if (error) return null;
-  return data as Order;
+  if (error || !data) return null;
+  return data;
 }
 
 export async function getOrderById(orderId: string): Promise<Order | null> {
@@ -103,6 +101,6 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
     .eq('id', orderId)
     .single();
 
-  if (error) return null;
-  return data as Order;
+  if (error || !data) return null;
+  return data;
 }

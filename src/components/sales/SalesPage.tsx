@@ -41,8 +41,8 @@ export function SalesPage() {
     return getPlanWithPricing(selectedPlanId, pricingTier);
   }, [selectedPlanId, pricingTier]);
 
-  // Get user email for checkout (from funnel data which may have email field)
-  const userEmail = (funnelData as any).email || '';
+  // Get user email for checkout (from funnel data)
+  const userEmail = funnelData.email || '';
 
   // If no quiz data, redirect back to quiz
   if (!completeData || !completeData.insights) {

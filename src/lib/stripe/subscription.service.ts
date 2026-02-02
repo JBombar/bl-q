@@ -7,36 +7,19 @@ import { stripe } from './stripe.config';
 import { supabase } from '@/lib/supabase/client';
 import { generateOrderNumber } from './order.service';
 import type Stripe from 'stripe';
+import type {
+  Customer,
+  Subscription,
+  CustomerInsert,
+  SubscriptionInsert,
+  SubscriptionUpdate,
+  OrderInsert,
+} from '@/types';
+import type { PricingTier, BillingInterval } from '@/config/pricing.config';
 
 // ============================================================================
 // TYPES
 // ============================================================================
-
-export interface Customer {
-  id: string;
-  email: string;
-  stripe_customer_id: string | null;
-  first_session_id: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Subscription {
-  id: string;
-  customer_id: string;
-  stripe_subscription_id: string;
-  status: string;
-  stripe_price_id: string;
-  billing_interval: string;
-  current_period_start: string;
-  current_period_end: string;
-  cancel_at_period_end: boolean;
-  canceled_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-import type { PricingTier, BillingInterval } from '@/config/pricing.config';
 
 export interface CreateSubscriptionParams {
   email: string;
@@ -73,8 +56,8 @@ export async function findCustomerByEmail(email: string): Promise<Customer | nul
     .eq('email', email.toLowerCase())
     .single();
 
-  if (error) return null;
-  return data as Customer;
+  if (error || !data) return null;
+  return data;
 }
 
 /**
@@ -87,8 +70,8 @@ export async function findCustomerByStripeId(stripeCustomerId: string): Promise<
     .eq('stripe_customer_id', stripeCustomerId)
     .single();
 
-  if (error) return null;
-  return data as Customer;
+  if (error || !data) return null;
+  return data;
 }
 
 /**
@@ -99,21 +82,23 @@ export async function createCustomer(data: {
   stripeCustomerId: string;
   firstSessionId?: string;
 }): Promise<Customer> {
+  const insertData: CustomerInsert = {
+    email: data.email.toLowerCase(),
+    stripe_customer_id: data.stripeCustomerId,
+    first_session_id: data.firstSessionId || null,
+  };
+
   const { data: customer, error } = await supabase
     .from('customers')
-    .insert({
-      email: data.email.toLowerCase(),
-      stripe_customer_id: data.stripeCustomerId,
-      first_session_id: data.firstSessionId || null,
-    } as any)
+    .insert(insertData)
     .select()
     .single();
 
-  if (error) {
-    throw new Error(`Failed to create customer: ${error.message}`);
+  if (error || !customer) {
+    throw new Error(`Failed to create customer: ${error?.message || 'No data returned'}`);
   }
 
-  return customer as Customer;
+  return customer;
 }
 
 /**
@@ -157,7 +142,7 @@ export async function findOrCreateCustomer(data: {
     // Update existing customer with Stripe ID
     await supabase
       .from('customers')
-      .update({ stripe_customer_id: stripeCustomer.id } as any)
+      .update({ stripe_customer_id: stripeCustomer.id })
       .eq('id', customer.id);
     customer.stripe_customer_id = stripeCustomer.id;
   }
@@ -221,6 +206,7 @@ export async function createSubscription(
       {
         price_data: {
           currency: 'czk',
+          // @ts-expect-error: product_data is supported by API but missing in types
           product_data: {
             name: 'Uvodni sleva',
           },
@@ -234,40 +220,42 @@ export async function createSubscription(
 
   // 3. Extract client secret from the payment intent
   const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
-  const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+  const paymentIntent = (invoice as any).payment_intent as Stripe.PaymentIntent;
 
   if (!paymentIntent?.client_secret) {
     throw new Error('Failed to get payment intent client secret');
   }
 
   // 4. Create subscription record in our database
+  const subscriptionInsertData: SubscriptionInsert = {
+    customer_id: customer.id,
+    stripe_subscription_id: stripeSubscription.id,
+    status: stripeSubscription.status,
+    stripe_price_id: stripePriceId,
+    billing_interval: billingInterval,
+    current_period_start: new Date((stripeSubscription as any).current_period_start * 1000).toISOString(),
+    current_period_end: new Date((stripeSubscription as any).current_period_end * 1000).toISOString(),
+    cancel_at_period_end: stripeSubscription.cancel_at_period_end,
+  };
+
   const { data: subscription, error: subscriptionError } = await supabase
     .from('subscriptions')
-    .insert({
-      customer_id: customer.id,
-      stripe_subscription_id: stripeSubscription.id,
-      status: stripeSubscription.status,
-      stripe_price_id: stripePriceId,
-      billing_interval: billingInterval,
-      current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
-      current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
-      cancel_at_period_end: stripeSubscription.cancel_at_period_end,
-    } as any)
+    .insert(subscriptionInsertData)
     .select()
     .single();
 
-  if (subscriptionError) {
+  if (subscriptionError || !subscription) {
     // Log error but don't fail - subscription exists in Stripe
     console.error('Failed to create subscription record:', subscriptionError);
-    throw new Error(`Failed to create subscription record: ${subscriptionError.message}`);
+    throw new Error(`Failed to create subscription record: ${subscriptionError?.message || 'No data returned'}`);
   }
 
   // 5. Create initial order record linked to subscription
   const orderNumber = await generateOrderNumber();
-  await supabase.from('orders').insert({
-    session_id: sessionId || null,
+  const orderInsertData: OrderInsert = {
+    session_id: sessionId || '', // Required field - use empty string if no session
     result_id: resultId || null,
-    subscription_id: (subscription as Subscription).id,
+    subscription_id: subscription.id,
     order_number: orderNumber,
     status: 'pending',
     product_id: stripePriceId,
@@ -277,10 +265,11 @@ export async function createSubscription(
     stripe_payment_intent_id: paymentIntent.id,
     stripe_customer_id: stripeCustomer.id,
     customer_email: email,
-  } as any);
+  };
+  await supabase.from('orders').insert(orderInsertData);
 
   return {
-    subscriptionId: (subscription as Subscription).id,
+    subscriptionId: subscription.id,
     stripeSubscriptionId: stripeSubscription.id,
     clientSecret: paymentIntent.client_secret,
     customerId: customer.id,
@@ -298,8 +287,8 @@ export async function getSubscriptionByStripeId(stripeSubscriptionId: string): P
     .eq('stripe_subscription_id', stripeSubscriptionId)
     .single();
 
-  if (error) return null;
-  return data as Subscription;
+  if (error || !data) return null;
+  return data;
 }
 
 /**
@@ -308,10 +297,10 @@ export async function getSubscriptionByStripeId(stripeSubscriptionId: string): P
 export async function updateSubscriptionFromWebhook(
   stripeSubscription: Stripe.Subscription
 ): Promise<void> {
-  const updates: Record<string, unknown> = {
+  const updates: SubscriptionUpdate = {
     status: stripeSubscription.status,
-    current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
-    current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+    current_period_start: new Date((stripeSubscription as any).current_period_start * 1000).toISOString(),
+    current_period_end: new Date((stripeSubscription as any).current_period_end * 1000).toISOString(),
     cancel_at_period_end: stripeSubscription.cancel_at_period_end,
     updated_at: new Date().toISOString(),
   };
@@ -322,7 +311,7 @@ export async function updateSubscriptionFromWebhook(
 
   const { error } = await supabase
     .from('subscriptions')
-    .update(updates as any)
+    .update(updates)
     .eq('stripe_subscription_id', stripeSubscription.id);
 
   if (error) {
@@ -339,7 +328,7 @@ export async function createOrderForSubscriptionInvoice(
   subscription: Subscription
 ): Promise<void> {
   const orderNumber = await generateOrderNumber();
-  const paymentIntent = invoice.payment_intent as string | Stripe.PaymentIntent | null;
+  const paymentIntent = (invoice as any).payment_intent as string | Stripe.PaymentIntent | null;
   const paymentIntentId = typeof paymentIntent === 'string' ? paymentIntent : paymentIntent?.id;
 
   // Get customer email
@@ -349,7 +338,8 @@ export async function createOrderForSubscriptionInvoice(
     .eq('id', subscription.customer_id)
     .single();
 
-  const { error } = await supabase.from('orders').insert({
+  const invoiceOrderInsertData: OrderInsert = {
+    session_id: '', // Subscription renewal orders do not have a quiz session
     subscription_id: subscription.id,
     order_number: orderNumber,
     status: invoice.status === 'paid' ? 'paid' : 'pending',
@@ -359,9 +349,11 @@ export async function createOrderForSubscriptionInvoice(
     currency: invoice.currency,
     stripe_payment_intent_id: paymentIntentId,
     stripe_customer_id: invoice.customer as string,
-    customer_email: (customer as { email: string } | null)?.email || invoice.customer_email,
+    customer_email: customer?.email || invoice.customer_email || null,
     paid_at: invoice.status === 'paid' ? new Date().toISOString() : null,
-  } as any);
+  };
+
+  const { error } = await supabase.from('orders').insert(invoiceOrderInsertData);
 
   if (error) {
     console.error('Failed to create order for invoice:', error);
@@ -380,10 +372,12 @@ export async function getCustomerActiveSubscriptions(customerId: string): Promis
     .in('status', ['active', 'trialing'])
     .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('Failed to get customer subscriptions:', error);
+  if (error || !data) {
+    if (error) {
+      console.error('Failed to get customer subscriptions:', error);
+    }
     return [];
   }
 
-  return data as Subscription[];
+  return data;
 }

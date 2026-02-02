@@ -22,6 +22,7 @@ import {
 } from '@/config/pricing.config';
 import { trackEvent, EVENT_TYPES } from '@/lib/services/analytics.service';
 import { supabase } from '@/lib/supabase/client';
+import type { QuizSessionUpdate } from '@/types/database.types';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -100,9 +101,10 @@ export async function POST(request: NextRequest) {
 
     // 7. Update session email if provided and session exists
     if (session && email) {
+      const updateData: QuizSessionUpdate = { email };
       await supabase
         .from('quiz_sessions')
-        .update({ email } as any)
+        .update(updateData)
         .eq('id', session.id);
     }
 
