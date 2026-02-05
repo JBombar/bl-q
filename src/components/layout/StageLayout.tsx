@@ -17,6 +17,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { OverlayImage } from '../quiz/OverlayImage';
 
@@ -45,6 +46,9 @@ interface StageLayoutProps {
   // Back button configuration
   showBackButton?: boolean;
   onBackClick?: () => void;
+
+  // Header logo configuration
+  showHeaderLogo?: boolean;
 
   // Overlay configuration
   overlayImage?: OverlayImageConfig;
@@ -106,6 +110,7 @@ export function StageLayout({
   onCtaClick,
   showBackButton = false,
   onBackClick,
+  showHeaderLogo = false,
   overlayImage,
   variant = 'question',
   bgClass, // NEW: Custom background class
@@ -140,8 +145,11 @@ export function StageLayout({
       )}
     >
       {/* HEADER ZONE - Fixed at top */}
-      {(shouldShowProgress || sectionLabel || showBackButton) && (
-        <header className="shrink-0 bg-white border-b border-gray-200 relative">
+      {(shouldShowProgress || sectionLabel || showBackButton || showHeaderLogo) && (
+        <header className={cn(
+          "shrink-0 bg-white relative",
+          !showHeaderLogo && "border-b border-gray-200"
+        )}>
           {/* Progress bar */}
           {shouldShowProgress && (
             <div className="absolute top-0 left-0 right-0 h-1 md:h-1.5 bg-gray-200">
@@ -152,7 +160,10 @@ export function StageLayout({
             </div>
           )}
 
-          <div className="px-4 py-2 flex items-center min-h-[44px]">
+          <div className={cn(
+            "px-4 flex items-center min-h-[44px]",
+            showHeaderLogo ? "pt-4 md:pt-5 pb-2" : "py-2"
+          )}>
             {/* Left: Back Button */}
             <div className="w-10 shrink-0 flex items-center justify-start">
               {showBackButton && (
@@ -166,11 +177,19 @@ export function StageLayout({
               )}
             </div>
 
-            {/* Center: Section Label */}
-            <div className="flex-1 text-center">
-              {sectionLabel && (
+            {/* Center: Logo or Section Label */}
+            <div className="flex-1 flex items-center justify-center">
+              {showHeaderLogo ? (
+                <Image
+                  src="/images/logo-no-arrow.svg"
+                  alt="BetterLady"
+                  width={128}
+                  height={20}
+                  priority
+                />
+              ) : sectionLabel ? (
                 <p className="text-xs md:text-sm font-medium text-gray-600">{sectionLabel}</p>
-              )}
+              ) : null}
             </div>
 
             {/* Right: Spacer for centering */}
@@ -215,7 +234,10 @@ export function StageLayout({
 
       {/* CTA ZONE - Fixed at bottom */}
       {showCTA && (
-        <footer className="shrink-0 bg-white border-t border-gray-200 p-4 md:p-4 shadow-2xl sticky bottom-0 z-10">
+        <footer className={cn(
+          "shrink-0 bg-white p-4 md:p-4 sticky bottom-0 z-10",
+          showHeaderLogo ? "shadow-none" : "border-t border-gray-200 shadow-2xl"
+        )}>
           <button
             onClick={onCtaClick}
             disabled={ctaDisabled}

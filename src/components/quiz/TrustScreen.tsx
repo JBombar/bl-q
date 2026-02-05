@@ -44,30 +44,17 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
       bgClass="bg-white"
       showBackButton={canGoBack}
       onBackClick={handleBack}
+      showHeaderLogo={true}
     >
-      {/* Header with logo */}
-      <div className="absolute top-2 md:top-4 left-0 right-0 z-10">
-        <div className="flex items-center justify-center">
-          {/* Logo - centered */}
-          <Image
-            src="/images/betterlady-logo.svg"
-            alt="Better Lady"
-            width={140}
-            height={32}
-            className="h-6 md:h-7 w-auto"
-          />
-        </div>
-      </div>
-
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col items-center justify-center h-full text-center px-6 pt-12"
+        className="flex flex-col items-center justify-center h-full text-center px-6"
       >
         {/* Title */}
         <h1
-          className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 text-[#2D5F4C]"
+          className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 pt-2 text-[#2D5F4C]"
           style={{ fontFamily: 'Figtree', lineHeight: '110%' }}
         >
           {question.question_text}
