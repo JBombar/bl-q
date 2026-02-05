@@ -50,14 +50,28 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2 }}
-        className="text-center w-full mx-auto"
+        className="text-center w-full mx-auto pt-4 md:pt-5"
       >
-        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 md:mb-4" style={{ fontFamily: 'Figtree' }}>
-          {question.question_text}
+        {/* BetterLady Logo */}
+        <Image
+          src="/images/logo-no-arrow.svg"
+          alt="BetterLady"
+          width={128}
+          height={20}
+          className="mx-auto mb-6 md:mb-8"
+          priority
+        />
+
+        <h1 className="text-[28px] leading-[110%] font-bold text-center text-dark font-figtree mb-3">
+          Je tvůj{' '}
+          <span className="text-[#2F6B4F]">
+            nervový<br />systém přehlcený
+          </span>
+          ?
         </h1>
-        {question.question_subtext && (
-          <p className="text-sm md:text-base lg:text-lg text-gray-700 mb-6 md:mb-8">{question.question_subtext}</p>
-        )}
+        <p className="text-base font-normal text-center text-gray leading-[140%] font-figtree mb-6 md:mb-8">
+          Vyber svůj věk a začni
+        </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8 mb-6 md:mb-8">
           {question.options.map((option, index) => (
