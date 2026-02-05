@@ -73,6 +73,21 @@ export interface QuizQuestionWithOptions extends QuizQuestion {
 }
 
 // ============================================================================
+// CATEGORY PROGRESS (for segmented progress bar)
+// ============================================================================
+
+export interface CategoryProgress {
+  /** Current category name (e.g., "Osobní profil") */
+  categoryName: string | null;
+  /** Total questions in this category */
+  totalInCategory: number;
+  /** 1-indexed position within category */
+  currentPositionInCategory: number;
+  /** True if section_label is null (special screens like age gate, trust, inserts) */
+  isSpecialScreen: boolean;
+}
+
+// ============================================================================
 // SESSION WITH PROGRESS
 // ============================================================================
 

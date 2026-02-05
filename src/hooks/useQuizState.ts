@@ -1,5 +1,70 @@
 import { create } from 'zustand';
-import type { QuizDefinition, QuizAnswerData } from '@/types';
+import type { QuizDefinition, QuizAnswerData, QuizQuestionWithOptions, CategoryProgress } from '@/types';
+
+// ============================================================================
+// CATEGORY PROGRESS UTILITY
+// ============================================================================
+
+/**
+ * Computes the user's progress within the current question category
+ * Used for the segmented progress bar display
+ */
+function computeCategoryProgress(
+  questions: QuizQuestionWithOptions[],
+  currentIndex: number
+): CategoryProgress {
+  const currentQuestion = questions[currentIndex];
+
+  // Handle edge case where question doesn't exist
+  if (!currentQuestion) {
+    return {
+      categoryName: null,
+      totalInCategory: 0,
+      currentPositionInCategory: 0,
+      isSpecialScreen: true,
+    };
+  }
+
+  const categoryName = currentQuestion.section_label ?? null;
+
+  // Special screens (null section_label) don't show category progress
+  if (!categoryName) {
+    return {
+      categoryName: null,
+      totalInCategory: 0,
+      currentPositionInCategory: 0,
+      isSpecialScreen: true,
+    };
+  }
+
+  // Filter questions belonging to the same category
+  const categoryQuestions = questions.filter(
+    (q) => q.section_label === categoryName
+  );
+
+  // Find position of current question within category (1-indexed)
+  const positionInCategory =
+    categoryQuestions.findIndex((q) => q.id === currentQuestion.id) + 1;
+
+  return {
+    categoryName,
+    totalInCategory: categoryQuestions.length,
+    currentPositionInCategory: positionInCategory,
+    isSpecialScreen: false,
+  };
+}
+
+// Default category progress for initial state
+const DEFAULT_CATEGORY_PROGRESS: CategoryProgress = {
+  categoryName: null,
+  totalInCategory: 0,
+  currentPositionInCategory: 0,
+  isSpecialScreen: true,
+};
+
+// ============================================================================
+// QUIZ STATE INTERFACE
+// ============================================================================
 
 interface QuizState {
   // State
@@ -9,6 +74,7 @@ interface QuizState {
   answers: QuizAnswerData[];
   isLoading: boolean;
   error: string | null;
+  categoryProgress: CategoryProgress;
 
   // Actions
   loadQuiz: (slug: string) => Promise<void>;
@@ -19,6 +85,10 @@ interface QuizState {
   reset: () => void;
 }
 
+// ============================================================================
+// ZUSTAND STORE
+// ============================================================================
+
 export const useQuizState = create<QuizState>((set, get) => ({
   sessionId: null,
   quiz: null,
@@ -26,6 +96,7 @@ export const useQuizState = create<QuizState>((set, get) => ({
   answers: [],
   isLoading: false,
   error: null,
+  categoryProgress: DEFAULT_CATEGORY_PROGRESS,
 
   loadQuiz: async (slug: string) => {
     set({ isLoading: true, error: null });
@@ -39,9 +110,14 @@ export const useQuizState = create<QuizState>((set, get) => ({
       if (!response.ok) throw new Error('Failed to load quiz');
 
       const data = await response.json();
+
+      // Compute initial category progress
+      const categoryProgress = computeCategoryProgress(data.quiz.questions, 0);
+
       set({
         sessionId: data.sessionId,
         quiz: data.quiz,
+        categoryProgress,
         isLoading: false,
       });
 
@@ -70,14 +146,26 @@ export const useQuizState = create<QuizState>((set, get) => ({
   nextQuestion: () => {
     const { currentQuestionIndex, quiz } = get();
     if (quiz && currentQuestionIndex < quiz.questions.length - 1) {
-      set({ currentQuestionIndex: currentQuestionIndex + 1 });
+      const newIndex = currentQuestionIndex + 1;
+      const categoryProgress = computeCategoryProgress(quiz.questions, newIndex);
+      set({
+        currentQuestionIndex: newIndex,
+        categoryProgress,
+      });
     }
   },
 
   previousQuestion: () => {
-    const { currentQuestionIndex } = get();
+    const { currentQuestionIndex, quiz } = get();
     if (currentQuestionIndex > 0) {
-      set({ currentQuestionIndex: currentQuestionIndex - 1 });
+      const newIndex = currentQuestionIndex - 1;
+      const categoryProgress = quiz
+        ? computeCategoryProgress(quiz.questions, newIndex)
+        : DEFAULT_CATEGORY_PROGRESS;
+      set({
+        currentQuestionIndex: newIndex,
+        categoryProgress,
+      });
     }
   },
 
@@ -125,6 +213,7 @@ export const useQuizState = create<QuizState>((set, get) => ({
       answers: [],
       isLoading: false,
       error: null,
+      categoryProgress: DEFAULT_CATEGORY_PROGRESS,
     });
     localStorage.removeItem('quiz_session');
   },

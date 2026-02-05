@@ -13,7 +13,7 @@ interface LikertScaleQuestionProps {
 }
 
 export function LikertScaleQuestion({ question, questionIndex, onComplete }: LikertScaleQuestionProps) {
-  const { selectAnswer, nextQuestion, previousQuestion, answers, quiz, currentQuestionIndex } = useQuizState();
+  const { selectAnswer, nextQuestion, previousQuestion, answers, quiz, currentQuestionIndex, categoryProgress } = useQuizState();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [startTime] = useState(Date.now());
 
@@ -47,18 +47,22 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
     }, 100);
   };
 
-  // Calculate progress
-  const totalQuestions = quiz?.questions.length || 1;
-  const progressPercent = ((questionIndex + 1) / totalQuestions) * 100;
   const canGoBack = currentQuestionIndex > 0;
+
+  // Use segmented progress for regular questions, not for special screens
+  const showSegmentedProgress = !categoryProgress.isSpecialScreen;
 
   return (
     <StageLayout
-      showProgress
-      progressPercent={progressPercent}
-      sectionLabel={question.section_label || undefined}
+      // Segmented progress bar (new)
+      showSegmentedProgress={showSegmentedProgress}
+      totalSegments={categoryProgress.totalInCategory}
+      completedSegments={categoryProgress.currentPositionInCategory}
+      categoryLabel={categoryProgress.categoryName || undefined}
+      // Back button
       showBackButton={canGoBack}
       onBackClick={handleBack}
+      // Overlay image
       overlayImage={question.image_url ? {
         src: question.image_url,
         alt: '',

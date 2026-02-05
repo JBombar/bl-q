@@ -13,6 +13,7 @@
  * - CSS-driven responsive behavior (no JS height calculations)
  * - Flexible background via bgClass prop
  * - Multiple variants: question, insert, gate, result
+ * - Segmented progress bar for category-scoped progress
  */
 
 import React from 'react';
@@ -20,6 +21,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { OverlayImage } from '../quiz/OverlayImage';
+import { SegmentedProgressBar } from '../quiz/SegmentedProgressBar';
 
 interface OverlayImageConfig {
   src: string;
@@ -32,10 +34,16 @@ interface OverlayImageConfig {
 interface StageLayoutProps {
   children: React.ReactNode;
 
-  // Header configuration
+  // Legacy progress bar configuration (continuous bar)
   showProgress?: boolean;
   progressPercent?: number;
   sectionLabel?: string;
+
+  // NEW: Segmented progress bar configuration
+  showSegmentedProgress?: boolean;
+  totalSegments?: number;
+  completedSegments?: number;
+  categoryLabel?: string;
 
   // CTA configuration
   showCTA?: boolean;
@@ -56,7 +64,7 @@ interface StageLayoutProps {
   // Layout variant
   variant?: 'question' | 'insert' | 'gate' | 'result';
 
-  // NEW: Custom background class (overrides variant default)
+  // Custom background class (overrides variant default)
   bgClass?: string;
 }
 
@@ -104,6 +112,10 @@ export function StageLayout({
   showProgress = false,
   progressPercent = 0,
   sectionLabel,
+  showSegmentedProgress = false,
+  totalSegments = 0,
+  completedSegments = 0,
+  categoryLabel,
   showCTA = false,
   ctaLabel = 'Pokračovat',
   ctaDisabled = false,
@@ -113,16 +125,27 @@ export function StageLayout({
   showHeaderLogo = false,
   overlayImage,
   variant = 'question',
-  bgClass, // NEW: Custom background class
+  bgClass,
 }: StageLayoutProps) {
   const router = useRouter();
   const config = VARIANT_CONFIGS[variant];
 
-  // Override showProgress if variant has default
-  const shouldShowProgress = config.showProgress && showProgress;
+  // Legacy: Override showProgress if variant has default
+  const shouldShowLegacyProgress = config.showProgress && showProgress && !showSegmentedProgress;
 
   // Use custom bgClass if provided, otherwise use variant default
   const backgroundClass = bgClass || config.bgClass;
+
+  // Determine which label to show: categoryLabel takes precedence over sectionLabel
+  const headerLabel = categoryLabel || sectionLabel;
+
+  // Should show header if any header element is needed
+  const shouldShowHeader =
+    shouldShowLegacyProgress ||
+    showSegmentedProgress ||
+    headerLabel ||
+    showBackButton ||
+    showHeaderLogo;
 
   // Universal back button handler with router fallback
   const handleBackClick = () => {
@@ -145,13 +168,15 @@ export function StageLayout({
       )}
     >
       {/* HEADER ZONE - Fixed at top */}
-      {(shouldShowProgress || sectionLabel || showBackButton || showHeaderLogo) && (
-        <header className={cn(
-          "shrink-0 bg-white relative",
-          !showHeaderLogo && "border-b border-gray-200"
-        )}>
-          {/* Progress bar */}
-          {shouldShowProgress && (
+      {shouldShowHeader && (
+        <header
+          className={cn(
+            'shrink-0 bg-white relative',
+            !showHeaderLogo && !showSegmentedProgress && 'border-b border-gray-200'
+          )}
+        >
+          {/* Legacy continuous progress bar */}
+          {shouldShowLegacyProgress && (
             <div className="absolute top-0 left-0 right-0 h-1 md:h-1.5 bg-gray-200">
               <div
                 className="absolute inset-y-0 left-0 bg-[#F9A201] transition-all duration-150"
@@ -160,10 +185,25 @@ export function StageLayout({
             </div>
           )}
 
-          <div className={cn(
-            "px-4 flex items-center min-h-[44px]",
-            showHeaderLogo ? "pt-4 md:pt-5 pb-2" : "py-2"
-          )}>
+          {/* NEW: Segmented progress bar */}
+          {showSegmentedProgress && totalSegments > 0 && (
+            <div className="px-4 pt-3 md:pt-4">
+              <SegmentedProgressBar
+                totalSegments={totalSegments}
+                completedSegments={completedSegments}
+                activeColor="#327455"
+                inactiveColor="#E5E7EB"
+                gapSize={4}
+              />
+            </div>
+          )}
+
+          <div
+            className={cn(
+              'px-4 flex items-center min-h-[44px]',
+              showHeaderLogo ? 'pt-4 md:pt-5 pb-2' : 'py-2'
+            )}
+          >
             {/* Left: Back Button */}
             <div className="w-10 shrink-0 flex items-center justify-start">
               {showBackButton && (
@@ -177,7 +217,7 @@ export function StageLayout({
               )}
             </div>
 
-            {/* Center: Logo or Section Label */}
+            {/* Center: Logo or Category/Section Label */}
             <div className="flex-1 flex items-center justify-center">
               {showHeaderLogo ? (
                 <Image
@@ -187,8 +227,15 @@ export function StageLayout({
                   height={20}
                   priority
                 />
-              ) : sectionLabel ? (
-                <p className="text-xs md:text-sm font-medium text-gray-600">{sectionLabel}</p>
+              ) : headerLabel ? (
+                <p
+                  className={cn(
+                    'text-xs md:text-sm font-medium',
+                    categoryLabel ? 'text-gray-700 font-semibold' : 'text-gray-600'
+                  )}
+                >
+                  {headerLabel}
+                </p>
               ) : null}
             </div>
 
@@ -234,10 +281,12 @@ export function StageLayout({
 
       {/* CTA ZONE - Fixed at bottom */}
       {showCTA && (
-        <footer className={cn(
-          "shrink-0 bg-white p-4 md:p-4 sticky bottom-0 z-10",
-          showHeaderLogo ? "shadow-none" : "border-t border-gray-200 shadow-2xl"
-        )}>
+        <footer
+          className={cn(
+            'shrink-0 bg-white p-4 md:p-4 sticky bottom-0 z-10',
+            showHeaderLogo ? 'shadow-none' : 'border-t border-gray-200 shadow-2xl'
+          )}
+        >
           <button
             onClick={onCtaClick}
             disabled={ctaDisabled}

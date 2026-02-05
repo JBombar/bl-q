@@ -45,7 +45,7 @@ export function QuizQuestion({ question, questionIndex, onComplete }: QuizQuesti
 
 // Default single choice component (original logic)
 function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuestionProps) {
-  const { selectAnswer, nextQuestion, previousQuestion, answers, quiz, currentQuestionIndex } = useQuizState();
+  const { selectAnswer, nextQuestion, previousQuestion, answers, quiz, currentQuestionIndex, categoryProgress } = useQuizState();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [startTime] = useState(Date.now());
 
@@ -79,18 +79,22 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
     }, 100);
   };
 
-  // Calculate progress
-  const totalQuestions = quiz?.questions.length || 1;
-  const progressPercent = ((questionIndex + 1) / totalQuestions) * 100;
   const canGoBack = currentQuestionIndex > 0;
+
+  // Use segmented progress for regular questions, not for special screens
+  const showSegmentedProgress = !categoryProgress.isSpecialScreen;
 
   return (
     <StageLayout
-      showProgress
-      progressPercent={progressPercent}
-      sectionLabel={question.section_label || undefined}
+      // Segmented progress bar (new)
+      showSegmentedProgress={showSegmentedProgress}
+      totalSegments={categoryProgress.totalInCategory}
+      completedSegments={categoryProgress.currentPositionInCategory}
+      categoryLabel={categoryProgress.categoryName || undefined}
+      // Back button
       showBackButton={canGoBack}
       onBackClick={handleBack}
+      // Overlay image
       overlayImage={question.image_url ? {
         src: question.image_url,
         alt: '',
