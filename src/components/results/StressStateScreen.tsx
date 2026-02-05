@@ -48,11 +48,12 @@ export function StressStateScreen({ insights, onContinue }: StressStateScreenPro
       onCtaClick={onContinue}
       showBackButton={true}
       onBackClick={handleBack}
+      showHeaderLogo={true}
     >
-      {/* Header with Better Lady logo and title */}
+      {/* Header title (logo now in StageLayout header) */}
       <ResultHeader
         title="Zde je aktuální stav tvého nervového systému"
-        showLogo
+        showLogo={false}
       />
 
       {/* Stress level badge + Woman image */}

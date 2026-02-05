@@ -45,23 +45,14 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
       variant="gate"
       showBackButton={canGoBack}
       onBackClick={handleBack}
+      showHeaderLogo={true}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2 }}
-        className="text-center w-full mx-auto pt-4 md:pt-5"
+        className="text-center w-full mx-auto"
       >
-        {/* BetterLady Logo */}
-        <Image
-          src="/images/logo-no-arrow.svg"
-          alt="BetterLady"
-          width={128}
-          height={20}
-          className="mx-auto mb-6 md:mb-8"
-          priority
-        />
-
         <h1 className="text-[28px] leading-[110%] font-bold text-center text-dark font-figtree mb-3">
           Je tvůj{' '}
           <span className="text-[#2F6B4F]">

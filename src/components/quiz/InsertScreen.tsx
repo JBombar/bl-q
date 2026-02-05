@@ -63,22 +63,8 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
         variant="gate"
         showBackButton={canGoBack}
         onBackClick={handleBack}
+        showHeaderLogo={true}
       >
-
-        {/* Header with logo */}
-        <div className="absolute top-2 md:top-4 left-0 right-0 z-10">
-          <div className="flex items-center justify-center">
-            {/* Logo - centered */}
-            <Image
-              src="/images/betterlady-logo.svg"
-              alt="Better Lady"
-              width={140}
-              height={32}
-              className="h-7 md:h-8 w-auto"
-            />
-          </div>
-        </div>
-
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -129,22 +115,8 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
       variant="insert"
       showBackButton={canGoBack}
       onBackClick={handleBack}
+      showHeaderLogo={true}
     >
-
-      {/* Header with logo */}
-      <div className="absolute top-2 md:top-4 left-0 right-0 z-10">
-        <div className="flex items-center justify-center">
-          {/* Logo - centered */}
-          <Image
-            src="/images/betterlady-logo.svg"
-            alt="Better Lady"
-            width={140}
-            height={32}
-            className="h-5 md:h-6 w-auto"
-          />
-        </div>
-      </div>
-
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
