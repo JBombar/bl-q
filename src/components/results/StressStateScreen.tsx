@@ -1,11 +1,9 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { StageLayout } from '@/components/layout';
 import {
-  ResultHeader,
   StressResultDisplay,
-  SegmentedStressSlider,
-  ResultDescriptionCard,
   InsightCardsSection,
 } from './shared';
 import type { QuizInsights } from '@/types/funnel.types';
@@ -18,8 +16,7 @@ interface StressStateScreenProps {
 
 /**
  * Screen A - Current Stress State
- * Rebuilt to match Better Lady design screenshot exactly
- * Shows stress level, woman image, segmented slider, alert card, and insight cards
+ * Shows heading, results card (stress level + diagram + gradient + alert), insight cards
  */
 export function StressStateScreen({ insights, onContinue }: StressStateScreenProps) {
   const {
@@ -31,18 +28,16 @@ export function StressStateScreen({ insights, onContinue }: StressStateScreenPro
     normalizedScore,
   } = insights;
 
-  // Get segment label (Nizka, Mirna, Stredni, Vysoka)
   const segmentLabel = STRESS_STAGE_CONFIG.segmentLabels[stressStage];
 
   const handleBack = () => {
-    // TODO: Implement back navigation if needed
     console.log('Back button clicked');
   };
 
   return (
     <StageLayout
       variant="result"
-      bgClass="bg-gray-50"
+      bgClass="bg-white"
       showCTA
       ctaLabel="Pokračovat"
       onCtaClick={onContinue}
@@ -50,35 +45,30 @@ export function StressStateScreen({ insights, onContinue }: StressStateScreenPro
       onBackClick={handleBack}
       showHeaderLogo={true}
     >
-      {/* Header title (logo now in StageLayout header) */}
-      <ResultHeader
-        title="Zde je aktuální stav tvého nervového systému"
-        showLogo={false}
-      />
+      {/* Main heading — 22px/24.2px bold, #292424, centered */}
+      <motion.h1
+        className="text-[22px] leading-[24.2px] font-bold text-[#292424] font-figtree text-center max-w-[338px] mx-auto mt-[22px] mb-[24px]"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        Zde je aktuální stav tvého nervového systému
+      </motion.h1>
 
-      {/* Stress level badge + Woman image */}
+      {/* Results Card — contains stress level, diagram, gradient bar, alert */}
       <StressResultDisplay
         stageImagePath={stageImagePath}
         stageTitle={stageTitle}
         segmentLabel={segmentLabel}
         stressStage={stressStage}
-      />
-
-      {/* 4-segment stress slider */}
-      <SegmentedStressSlider
         normalizedScore={normalizedScore}
-        stressStage={stressStage}
+        stageDescription={stageDescription}
       />
 
-      {/* Alert card with warning icon and description */}
-      <ResultDescriptionCard
-        title={stageTitle}
-        description={stageDescription}
-        stressStage={stressStage}
-      />
-
-      {/* Insight cards (2x2 grid) */}
-      <InsightCardsSection cards={insightCards} />
+      {/* Insight cards (2×2 grid) — 8px gap from results card */}
+      <div className="mt-[8px]">
+        <InsightCardsSection cards={insightCards} />
+      </div>
     </StageLayout>
   );
 }

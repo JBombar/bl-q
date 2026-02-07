@@ -16,7 +16,7 @@ interface InsightCardsSectionProps {
 export function InsightCardsSection({ title, cards }: InsightCardsSectionProps) {
   return (
     <motion.div
-      className="mb-3 px-4"
+      className="w-full max-w-[351px] mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.6 }}
