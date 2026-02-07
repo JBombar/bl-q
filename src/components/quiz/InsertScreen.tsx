@@ -112,7 +112,7 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
       showCTA
       ctaLabel="Pokračovat"
       onCtaClick={handleContinue}
-      variant="insert"
+      variant="gate"
       showBackButton={canGoBack}
       onBackClick={handleBack}
       showHeaderLogo={true}
@@ -121,52 +121,39 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col items-center justify-start h-full text-center px-4 pt-7 pb-2 md:pt-10 md:pb-3"
+        className="flex flex-col items-center justify-center h-full w-full"
       >
-        {/* Main illustration - sized to fit viewport */}
+        <div className="flex flex-col w-full max-w-[351px]">
+        {/* Featured image — 351px × 222px, rounded 10px */}
         {insertImageUrl && (
-          <div className="relative w-full max-w-[200px] md:max-w-[280px] mb-1 md:mb-2">
-            <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
-              <Image
-                src={insertImageUrl}
-                alt={question.question_text}
-                fill
-                sizes="(max-width: 768px) 200px, 280px"
-                className="object-contain"
-                priority
-              />
-            </div>
+          <div className="relative w-full h-[222px] rounded-[10px] overflow-hidden">
+            <Image
+              src={insertImageUrl}
+              alt={question.question_text}
+              fill
+              sizes="351px"
+              className="object-cover"
+              priority
+            />
           </div>
         )}
 
-        {/* Headline - green color matching Figma */}
-        <h2
-          className="text-xs md:text-sm lg:text-base font-bold mb-1 md:mb-2 max-w-lg px-2"
-          style={{
-            fontFamily: 'Figtree',
-            lineHeight: '115%',
-            color: '#2D5F4C' // Green color from screenshot
-          }}
-        >
+        {/* Heading — 18px/25.2px bold, #327455, left-aligned */}
+        <h2 className="mt-[16px] text-[18px] leading-[25.2px] font-bold text-[#327455] font-figtree text-left">
           {question.question_text}
         </h2>
 
-        {/* Body text - gray, readable */}
+        {/* Body text — 15px/21px regular, #292424, left-aligned */}
         {question.question_subtext && (
-          <div
-            className="text-gray-700 leading-relaxed text-[11px] md:text-xs max-w-lg px-2"
-            style={{
-              fontFamily: 'Figtree',
-              lineHeight: '130%'
-            }}
-          >
+          <div className="mt-[12px] text-[15px] leading-[21px] font-normal text-[#292424] font-figtree text-left">
             {question.question_subtext.split('\n\n').map((paragraph, idx) => (
-              <p key={idx} className={idx > 0 ? 'mt-1' : ''}>
+              <p key={idx} className={idx > 0 ? 'mt-[12px]' : ''}>
                 {paragraph}
               </p>
             ))}
           </div>
         )}
+        </div>
       </motion.div>
     </StageLayout>
   );
