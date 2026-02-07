@@ -143,10 +143,10 @@ export const TIME_COMMITMENT_OPTIONS: Array<{
   value: TimeCommitmentMinutes;
   label: string;
 }> = [
-  { value: 5, label: '5 min / denne' },
-  { value: 10, label: '10 min / denne' },
-  { value: 15, label: '15 min / denne' },
-  { value: 20, label: '20+ min / denne' },
+  { value: 5, label: '5 min / denně' },
+  { value: 10, label: '10 min / denně' },
+  { value: 15, label: '15 min / denně' },
+  { value: 20, label: '20+ min / denně' },
 ];
 
 /**
