@@ -33,6 +33,7 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
   const isValidationScreen = question.question_type === 'validation_info';
   const isEducationalInsert = question.question_type === 'education_insert';
   const canGoBack = currentQuestionIndex > 0;
+  const showExpertBadge = question.question_key === 'e07';
 
   // Map question_key to image paths for educational inserts
   const getInsertImageUrl = (questionKey: string): string => {
@@ -138,19 +139,51 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
           </div>
         )}
 
-        {/* Heading — 18px/25.2px bold, #327455, left-aligned */}
-        <h2 className="mt-[16px] text-[18px] leading-[25.2px] font-bold text-[#327455] font-figtree text-left">
+        {/* Heading */}
+        <h2 className={`mt-[16px] font-bold text-[#327455] font-figtree ${showExpertBadge ? 'text-[22px] leading-[28px] text-center' : 'text-[18px] leading-[25.2px] text-left'}`}>
           {question.question_text}
         </h2>
 
-        {/* Body text — 15px/21px regular, #292424, left-aligned */}
+        {/* Body text */}
         {question.question_subtext && (
-          <div className="mt-[12px] text-[15px] leading-[21px] font-normal text-[#292424] font-figtree text-left">
+          <div className={`mt-[12px] text-[15px] leading-[21px] text-[#292424] font-figtree ${showExpertBadge ? 'italic text-center' : 'font-normal text-left'}`}>
             {question.question_subtext.split('\n\n').map((paragraph, idx) => (
               <p key={idx} className={idx > 0 ? 'mt-[12px]' : ''}>
                 {paragraph}
               </p>
             ))}
+          </div>
+        )}
+
+        {/* Expert Badge — only on e07 */}
+        {showExpertBadge && (
+          <div className="mt-[16px] w-full h-[110px] rounded-[10px] border border-[#e6e6e6] bg-white overflow-hidden">
+            {/* Badge header */}
+            <div className="h-[31px] bg-[#327455]/[0.12] flex items-center justify-center">
+              <span className="text-[14px] leading-[14px] font-normal text-[#327455] font-figtree">
+                Obsah kontrolovaný odborníkem
+              </span>
+            </div>
+            {/* Expert info */}
+            <div className="flex items-center h-[79px] px-[12px] gap-[8px]">
+              {/* Expert badge icon */}
+              <Image
+                src="/icons/expert-badge.svg"
+                alt=""
+                width={47}
+                height={47}
+                className="w-[47px] h-[47px] shrink-0"
+              />
+              {/* Text block */}
+              <div className="flex flex-col">
+                <span className="text-[16px] leading-[20px] font-bold text-[#292424] font-figtree">
+                  Miroslav Macháček
+                </span>
+                <span className="text-[15px] leading-[18px] italic text-[#292424] font-figtree">
+                  Expert na stres a mentální zdraví
+                </span>
+              </div>
+            </div>
           </div>
         )}
         </div>
