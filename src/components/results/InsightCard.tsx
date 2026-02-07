@@ -22,7 +22,7 @@ interface InsightCardProps {
  * Icons from /public/icons/results_*.svg, cards expand to fit dynamic text
  */
 export function InsightCard({ card, index }: InsightCardProps) {
-  const iconSrc = iconPaths[card.icon] || iconPaths.target;
+  const iconSrc: string = iconPaths[card.icon] || '/icons/results_hlavni_vyzva.svg';
 
   return (
     <motion.div
