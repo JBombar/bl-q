@@ -74,7 +74,7 @@ const VARIANT_CONFIGS = {
     contentAlignment: 'flex flex-col items-center justify-start',
     contentMaxWidth: 'max-w-2xl',
     bgClass: 'bg-gray-50',
-    contentPadding: 'px-4 pt-6 pb-4 md:px-6 md:pt-18 md:pb-6',
+    contentPadding: 'px-3 pt-6 pb-4 md:px-6 md:pt-18 md:pb-6',
     hasSafePadding: true, // Add right padding when overlay present
     allowScroll: true,
   },
@@ -89,12 +89,12 @@ const VARIANT_CONFIGS = {
   },
   gate: {
     showProgress: false,
-    contentAlignment: 'items-center justify-center',
+    contentAlignment: 'flex flex-col items-center justify-start',
     contentMaxWidth: 'max-w-7xl',
     bgClass: 'bg-white',
-    contentPadding: 'px-6 py-4 md:px-8 md:py-6',
+    contentPadding: 'px-3 py-4 md:px-8 md:py-6',
     hasSafePadding: false,
-    allowScroll: false, // NO SCROLLING for gate screens
+    allowScroll: true, // Allow scroll so content isn't clipped on desktop
   },
   result: {
     showProgress: false,

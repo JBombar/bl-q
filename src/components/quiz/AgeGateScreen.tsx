@@ -74,7 +74,7 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleAgeSelect(option.id)}
-              className="bg-white rounded-xl md:rounded-2xl shadow-xl hover:shadow-2xl transition-all p-4 md:p-5 flex flex-col items-center"
+              className="rounded-xl md:rounded-2xl transition-all flex flex-col items-center"
             >
               {option.image_url && (
                 <div className="relative w-full aspect-3/4 rounded-lg md:rounded-xl overflow-hidden">

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuizState } from '@/hooks/useQuizState';
-import { QuizOption } from './QuizOption';
 import { StageLayout } from '@/components/layout';
 import { MultiChoiceQuestion } from './MultiChoiceQuestion';
 import { LikertScaleQuestion } from './LikertScaleQuestion';
@@ -11,6 +10,7 @@ import { AgeGateScreen } from './AgeGateScreen';
 import { TrustScreen } from './TrustScreen';
 import { InsertScreen } from './InsertScreen';
 import type { QuizQuestionWithOptions } from '@/types';
+import Image from 'next/image';
 
 interface QuizQuestionProps {
   question: QuizQuestionWithOptions;
@@ -86,15 +86,12 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
 
   return (
     <StageLayout
-      // Segmented progress bar (new)
       showSegmentedProgress={showSegmentedProgress}
       totalSegments={categoryProgress.totalInCategory}
       completedSegments={categoryProgress.currentPositionInCategory}
       categoryLabel={categoryProgress.categoryName || undefined}
-      // Back button
       showBackButton={canGoBack}
       onBackClick={handleBack}
-      // Overlay image
       overlayImage={question.image_url ? {
         src: question.image_url,
         alt: '',
@@ -103,6 +100,7 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
         maxHeightMobile: '50vh',
       } : undefined}
       variant="question"
+      bgClass="bg-white"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -111,24 +109,47 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.08 }}
-          className="w-full text-center"
+          className="w-full flex flex-col items-center"
         >
-          <h2 className="text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: 'Figtree', lineHeight: '110%' }}>
+          {/* Question — 18px/19.8px bold, #292424, max-w 244px, centered */}
+          <h2 className="text-[18px] leading-[19.8px] font-bold text-[#292424] font-figtree max-w-[244px] text-center">
             {question.question_text}
           </h2>
 
           {question.question_subtext && (
-            <p className="text-gray-600 mb-2 md:mb-3 text-xs md:text-sm">{question.question_subtext}</p>
+            <p className="mt-[8px] text-[14px] leading-[16.8px] font-normal text-[#292424] font-figtree text-center">
+              {question.question_subtext}
+            </p>
           )}
 
-          <div className="space-y-1.5 md:space-y-2 max-w-xl mx-auto">
+          {/* Option buttons — 351px × 48px, bg #f5f5f5, rounded 10px, 10px gap */}
+          <div className="mt-[24px] flex flex-col gap-[10px] max-w-[351px] w-full">
             {question.options.map((option) => (
-              <QuizOption
+              <motion.button
                 key={option.id}
-                option={option}
-                isSelected={selectedIds.includes(option.id)}
-                onSelect={() => handleSelect(option.id)}
-              />
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSelect(option.id)}
+                className={`
+                  w-full h-[48px] rounded-[10px] flex items-center px-[12px] gap-[8px] transition-all
+                  ${selectedIds.includes(option.id)
+                    ? 'bg-white border-2 border-[#327455]'
+                    : 'bg-[#f5f5f5] border-2 border-transparent'
+                  }
+                `}
+              >
+                {option.image_url && (
+                  <Image
+                    src={option.image_url}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="w-[24px] h-[24px] shrink-0"
+                  />
+                )}
+                <span className="text-[15px] leading-[15px] font-normal text-[#292424] font-figtree">
+                  {option.option_text}
+                </span>
+              </motion.button>
             ))}
           </div>
         </motion.div>

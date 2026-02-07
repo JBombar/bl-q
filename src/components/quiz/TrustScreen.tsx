@@ -40,7 +40,7 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
       showCTA={true}
       ctaLabel="Pokračovat"
       onCtaClick={handleContinue}
-      variant="insert"
+      variant="gate"
       bgClass="bg-white"
       showBackButton={canGoBack}
       onBackClick={handleBack}
@@ -50,37 +50,32 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col items-center justify-center h-full text-center px-6"
+        className="flex flex-col items-center text-center w-full"
       >
-        {/* Title */}
-        <h1
-          className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 pt-2 text-[#2D5F4C]"
-          style={{ fontFamily: 'Figtree', lineHeight: '110%' }}
-        >
+        {/* Primary heading — 28px/30.8px bold, #327455 */}
+        <h1 className="pt-[3px] text-[28px] leading-[30.8px] font-bold text-[#327455] font-figtree">
           {question.question_text}
         </h1>
-        
-        {/* Subtitle */}
+
+        {/* Secondary heading — 20px/22px semibold, #292424 */}
         {question.question_subtext && (
-          <p className="text-base md:text-lg text-gray-700 mb-8">
+          <p className="mt-[7px] text-[20px] leading-[22px] font-semibold text-[#292424] font-figtree">
             {question.question_subtext}
           </p>
         )}
 
-        {/* Image */}
+        {/* Trust image — 308px × 375px, object-cover */}
         {question.image_url && (
-          <div className="relative w-full max-w-[280px] md:max-w-[340px]">
-            <div className="relative w-full aspect-3/4">
-              <Image
-                src={question.image_url}
-                alt={question.question_text}
-                fill
-                sizes="(max-width: 768px) 280px, 340px"
-                className="object-contain"
-                quality={95}
-                priority
-              />
-            </div>
+          <div className="relative mt-[73px] w-[308px] h-[375px]">
+            <Image
+              src={question.image_url}
+              alt={question.question_text}
+              fill
+              sizes="308px"
+              className="object-cover"
+              quality={95}
+              priority
+            />
           </div>
         )}
       </motion.div>
