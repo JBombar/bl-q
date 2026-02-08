@@ -98,7 +98,7 @@ export function FaqAccordion({ faq, defaultExpanded = false }: FaqAccordionProps
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="bg-white px-6 py-5 pl-14">
+            <div className="bg-white px-5 py-5">
               <p className="text-[16px] text-[#140C0C] leading-[1.6em]">
                 {faq.answer}
               </p>

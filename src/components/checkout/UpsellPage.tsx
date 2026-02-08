@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Testimonials } from '@/components/sales/Testimonials';
+import { GuaranteeBox } from '@/components/sales/GuaranteeBox';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -73,13 +74,28 @@ const FAQ_ITEMS = [
 
 function ProgressIndicator() {
   return (
-    <div className="flex items-start justify-center gap-0 w-full max-w-[440px] mx-auto">
-      {STEPS.map((step, i) => (
-        <div key={step.label} className="flex items-start flex-1">
-          {/* Step */}
-          <div className="flex flex-col items-center gap-2 flex-1">
+    <div className="relative w-full max-w-[440px] mx-auto">
+      {/* Green line: first circle to third circle */}
+      <div className="absolute bottom-[15px] left-0 right-[25%] h-[2px] bg-[#327455]" />
+      {/* Gray line: third circle to last circle */}
+      <div className="absolute bottom-[15px] left-[75%] right-0 h-[2px] bg-[#d6d6d6]" />
+
+      {/* Steps */}
+      <div className="relative flex items-start justify-between">
+        {STEPS.map((step) => (
+          <div key={step.label} className="flex flex-col items-center gap-2 z-10">
+            {/* Label */}
+            <span
+              className={`text-[12px] leading-[12px] text-center whitespace-nowrap ${
+                step.state === 'active'
+                  ? 'font-bold text-[#292424]'
+                  : 'font-normal text-[#919191]'
+              }`}
+            >
+              {step.label}
+            </span>
             {/* Circle */}
-            <div className="relative w-8 h-8 flex items-center justify-center">
+            <div className="w-8 h-8 flex items-center justify-center">
               {step.state === 'completed' && (
                 <div className="w-8 h-8 rounded-full bg-[#327455] flex items-center justify-center">
                   <svg
@@ -100,41 +116,17 @@ function ProgressIndicator() {
                 </div>
               )}
               {step.state === 'active' && (
-                <div className="w-8 h-8 rounded-full border border-[#327455] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border border-[#327455] bg-white flex items-center justify-center">
                   <div className="w-[18px] h-[18px] rounded-full bg-[#327455]" />
                 </div>
               )}
               {step.state === 'incomplete' && (
-                <div className="w-8 h-8 rounded-full border border-[#d6d6d6]" />
+                <div className="w-8 h-8 rounded-full border border-[#d6d6d6] bg-white" />
               )}
             </div>
-            {/* Label */}
-            <span
-              className={`text-[12px] leading-[12px] text-center whitespace-nowrap ${
-                step.state === 'active'
-                  ? 'font-bold text-[#292424]'
-                  : 'font-normal text-[#919191]'
-              }`}
-            >
-              {step.label}
-            </span>
           </div>
-
-          {/* Connection line (between steps) */}
-          {i < STEPS.length - 1 && (
-            <div className="flex items-center h-8 -mx-1">
-              <div
-                className={`w-12 sm:w-16 h-px ${
-                  STEPS[i + 1]?.state === 'completed' ||
-                  STEPS[i + 1]?.state === 'active'
-                    ? 'bg-[#327455]'
-                    : 'bg-[#d6d6d6]'
-                }`}
-              />
-            </div>
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -477,61 +469,60 @@ function FaqItem({
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const iconColor = isExpanded ? '#FFFFFF' : '#292424';
+
   return (
-    <div
-      className={`w-full rounded-[10px] overflow-hidden cursor-pointer transition-colors ${
-        isExpanded ? 'bg-[#949ba1]' : 'bg-[#f5f5f5]'
-      }`}
-      onClick={onToggle}
-    >
-      {/* Question row */}
-      <div className="flex items-center gap-3 px-4 h-16">
-        {/* ? icon */}
-        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0">
-          <span className="text-[20px] font-bold text-[#949ba1]">?</span>
+    <div className="rounded-[10px] overflow-hidden font-figtree">
+      {/* Question Header */}
+      <button
+        onClick={onToggle}
+        className="w-full px-5 py-4 flex items-center gap-3 transition-colors text-left"
+        style={{ backgroundColor: isExpanded ? '#949BA1' : '#F5F5F5' }}
+      >
+        {/* Question Mark Icon */}
+        <div className="shrink-0">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke={iconColor} strokeWidth="2"/>
+            <path d="M9.5 9.5C9.5 8.12 10.62 7 12 7C13.38 7 14.5 8.12 14.5 9.5C14.5 10.88 13.38 12 12 12V13.5" stroke={iconColor} strokeWidth="2" strokeLinecap="round"/>
+            <circle cx="12" cy="16.5" r="1" fill={iconColor}/>
+          </svg>
         </div>
-        {/* Question text */}
-        <span
-          className={`text-[18px] font-bold ${
-            isExpanded ? 'text-white' : 'text-[#292424]'
-          }`}
+
+        {/* Question Text */}
+        <h3
+          className="flex-1 text-[18px] font-bold leading-[1.4em]"
+          style={{ color: isExpanded ? '#FFFFFF' : '#292424' }}
         >
           {question}
-        </span>
-        {/* Chevron */}
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className={`ml-auto shrink-0 transition-transform duration-300 ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-        >
-          <path
-            d="M5 8L10 13L15 8"
-            stroke={isExpanded ? 'white' : '#292424'}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+        </h3>
 
-      {/* Answer (animated) */}
-      <AnimatePresence initial={false}>
+        {/* Plus/Minus Icon */}
+        <div className="shrink-0">
+          {isExpanded ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19" stroke={iconColor} strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5V19" stroke={iconColor} strokeWidth="2" strokeLinecap="round"/>
+              <path d="M5 12H19" stroke={iconColor} strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          )}
+        </div>
+      </button>
+
+      {/* Answer Content */}
+      <AnimatePresence>
         {isExpanded && (
           <motion.div
-            key="answer"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4">
-              <p className="text-[16px] font-normal text-[#140c0c] leading-[22.4px]">
+            <div className="bg-white px-5 py-5">
+              <p className="text-[16px] text-[#140C0C] leading-[1.6em]">
                 {answer}
               </p>
             </div>
@@ -562,9 +553,7 @@ export function UpsellPage({ onAddToPlan, onSkip }: UpsellPageProps) {
         {/* ----------------------------------------------------------------- */}
         {/* 1. Header */}
         {/* ----------------------------------------------------------------- */}
-        <div className="flex items-center justify-between pt-6 sm:pt-8">
-          {/* Invisible spacer */}
-          <div className="w-[72px]" />
+        <div className="flex items-center justify-between pt-6 sm:pt-8 pb-4 border-b border-[#e4e4e4] -mx-[calc(50vw-50%)] px-[calc(50vw-50%)]">
           {/* Logo */}
           <Image
             src="/images/logo-no-arrow.svg"
@@ -830,22 +819,8 @@ export function UpsellPage({ onAddToPlan, onSkip }: UpsellPageProps) {
         {/* ----------------------------------------------------------------- */}
         {/* 16. Guarantee Section */}
         {/* ----------------------------------------------------------------- */}
-        <div className="w-full bg-[#fffaef] border border-[#f9a201] rounded-[10px] p-5 sm:p-6 mt-12 sm:mt-16 mb-8 relative">
-          {/* Badge icon placeholder */}
-          <div className="w-[74px] h-[78px] bg-[#f5f5f5] rounded-[10px] mx-auto -mt-14 flex items-center justify-center text-[#919191] text-[11px]">
-            Shield
-          </div>
-          <h3 className="text-[20px] font-bold text-[#140c0c] leading-[28px] text-center mt-3">
-            30 denní záruka vrácení peněz
-          </h3>
-          <p className="text-[16px] font-normal text-[#140c0c] leading-[22.4px] text-center mt-2">
-            Na tvůj plán se vztahuje 100% záruka vrácení peněz. Jsme si natolik
-            jistí, že ti program pomůže, že ti v případě nespokojenosti vrátíme
-            peníze.
-          </p>
-          <p className="text-[16px] font-normal text-[#327455] text-center mt-2 cursor-pointer hover:underline">
-            Zjistit více
-          </p>
+        <div className="mt-12 sm:mt-16 -mx-4">
+          <GuaranteeBox />
         </div>
       </motion.div>
     </div>
