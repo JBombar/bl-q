@@ -10,104 +10,95 @@ interface NameCaptureScreenProps {
 }
 
 /**
- * Screen E - Name Capture
- * Collects user's first name for personalization
+ * Screen E - Name Capture (Slide 10)
+ * Simple: heading + centered name input + CTA at bottom
  */
 export function NameCaptureScreen({ onSubmit, isSaving }: NameCaptureScreenProps) {
   const [firstName, setFirstName] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const validateName = (name: string): boolean => {
-    // At least 2 characters, letters only (including diacritics)
     const nameRegex = /^[\p{L}]{2,}$/u;
     return nameRegex.test(name.trim());
   };
 
+  const isValid = firstName.trim().length >= 2 && validateName(firstName);
+
   const handleSubmit = async () => {
     setError(null);
+    const trimmed = firstName.trim();
 
-    const trimmedName = firstName.trim();
-
-    if (!trimmedName) {
-      setError('Zadej prosim sve jmeno');
+    if (!trimmed) {
+      setError('Zadej prosím své jméno');
       return;
     }
 
-    if (trimmedName.length < 2) {
-      setError('Jmeno musi mit alespon 2 znaky');
+    if (!validateName(trimmed)) {
+      setError('Zadej prosím platné jméno');
       return;
     }
 
-    if (!validateName(trimmedName)) {
-      setError('Zadej prosim platne jmeno (pouze pismena)');
-      return;
-    }
-
-    await onSubmit(trimmedName);
+    await onSubmit(trimmed);
   };
 
   return (
     <StageLayout
       variant="result"
-      bgClass="bg-linear-to-b from-green-50 to-white"
+      bgClass="bg-white"
       showCTA
-      ctaLabel={isSaving ? 'Ukladam...' : 'Pokracovat'}
-      ctaDisabled={isSaving || !firstName.trim()}
+      ctaLabel={isSaving ? 'Ukládám...' : 'Pokračovat'}
+      ctaDisabled={isSaving || !isValid}
       onCtaClick={handleSubmit}
+      showBackButton={true}
+      onBackClick={() => {}}
+      showHeaderLogo={true}
     >
-      {/* Header */}
-      <div className="text-center mb-6 pt-12 md:pt-16 lg:pt-20">
-        <motion.h1
-          className="text-2xl font-bold text-gray-800 mb-3"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          Napis sve krestni jmeno
-        </motion.h1>
-        <motion.p
-          className="text-gray-600"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          Abychom ti mohli pripravit personalizovany plan
-        </motion.p>
-      </div>
+      {/* Main heading — 22px/24.2px bold, #292424, centered */}
+      <motion.h1
+        className="text-[22px] leading-[24.2px] font-bold text-[#292424] font-figtree text-center max-w-[338px] mx-auto mt-[22px]"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        Napiš své křestní jméno
+      </motion.h1>
 
-      {/* Form */}
+      {/* Name input — 351×48, #f5f5f5, rounded 10px, centered placeholder */}
       <motion.div
-        className="max-w-md mx-auto"
+        className="mt-[22px] max-w-[351px] mx-auto w-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.2 }}
       >
-        {/* Name input */}
-        <div>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => {
-              setFirstName(e.target.value);
-              setError(null);
-            }}
-            placeholder="Jmeno"
-            disabled={isSaving}
-            className={`w-full px-4 py-4 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F9A201] focus:border-[#F9A201] transition-colors ${
-              error ? 'border-red-300 bg-red-50' : 'border-gray-200'
-            } ${isSaving ? 'opacity-50' : ''}`}
-            autoComplete="given-name"
-            autoCapitalize="words"
-          />
-          {error && (
-            <motion.p
-              className="text-red-500 text-sm mt-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              {error}
-            </motion.p>
-          )}
-        </div>
+        <input
+          type="text"
+          value={firstName}
+          onChange={(e) => {
+            setFirstName(e.target.value);
+            setError(null);
+          }}
+          placeholder="Jméno"
+          disabled={isSaving}
+          className={`
+            w-full h-[48px] rounded-[10px] px-[12px]
+            text-[15px] leading-[15px] font-normal text-[#292424] font-figtree text-center
+            placeholder:text-[#919191] placeholder:text-[15px] placeholder:text-center
+            focus:outline-none focus:ring-2 focus:ring-[#327455]
+            ${error ? 'bg-red-50 ring-2 ring-red-300' : 'bg-[#f5f5f5]'}
+            ${isSaving ? 'opacity-50' : ''}
+          `}
+          autoComplete="given-name"
+          autoCapitalize="words"
+        />
+        {error && (
+          <motion.p
+            className="text-red-500 text-[12px] mt-[4px] font-figtree text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {error}
+          </motion.p>
+        )}
       </motion.div>
     </StageLayout>
   );

@@ -35,7 +35,7 @@ export function ProjectionGraph({ currentScore, targetScore }: ProjectionGraphPr
 
   // SVG viewBox dimensions
   const svgW = 351;
-  const svgH = 226;
+  const svgH = 212;
 
   // Graph plot area
   const plotLeft = 32;
