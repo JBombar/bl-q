@@ -9,7 +9,11 @@ import { MicroCommitmentScreen } from './MicroCommitmentScreen';
 import { EmailCaptureScreen } from './EmailCaptureScreen';
 import { NameCaptureScreen } from './NameCaptureScreen';
 import { ProjectionScreen } from './ProjectionScreen';
-import type { QuizCompleteResponse, FunnelScreen } from '@/types/funnel.types';
+import type { QuizCompleteResponse } from '@/types/funnel.types';
+
+// Stable key for the micro-commitment flow so it doesn't remount between C1/C2/C3
+const getAnimationKey = (screen: string) =>
+  screen === 'C1' || screen === 'C2' || screen === 'C3' ? 'micro-flow' : screen;
 
 interface PostQuizFlowProps {
   /** Initial data from /api/quiz/complete */
@@ -30,6 +34,7 @@ export function PostQuizFlow({ initialData, onComplete }: PostQuizFlowProps) {
     isSaving,
     initialize,
     goToNextScreen,
+    setScreen,
     saveTimeCommitment,
     saveMicroCommitment,
     saveEmail,
@@ -101,28 +106,12 @@ export function PostQuizFlow({ initialData, onComplete }: PostQuizFlowProps) {
         );
 
       case 'C1':
-        return (
-          <MicroCommitmentScreen
-            screenId="C1"
-            onAnswer={saveMicroCommitment}
-            isSaving={isSaving}
-          />
-        );
-
       case 'C2':
-        return (
-          <MicroCommitmentScreen
-            screenId="C2"
-            onAnswer={saveMicroCommitment}
-            isSaving={isSaving}
-          />
-        );
-
       case 'C3':
         return (
           <MicroCommitmentScreen
-            screenId="C3"
-            onAnswer={saveMicroCommitment}
+            onSave={saveMicroCommitment}
+            onComplete={() => setScreen('D')}
             isSaving={isSaving}
           />
         );
@@ -174,7 +163,7 @@ export function PostQuizFlow({ initialData, onComplete }: PostQuizFlowProps) {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={currentScreen}
+        key={getAnimationKey(currentScreen)}
         variants={screenVariants}
         initial="initial"
         animate="animate"

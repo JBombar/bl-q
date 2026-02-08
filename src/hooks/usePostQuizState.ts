@@ -164,8 +164,6 @@ export const usePostQuizState = create<PostQuizState>()(
         },
         isSaving: false,
       }));
-
-      get().goToNextScreen();
     } catch (error: any) {
       set({ error: error.message, isSaving: false });
       throw error;
