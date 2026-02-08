@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePostQuizState } from '@/hooks/usePostQuizState';
 import { calculateProjection } from '@/config/result-screens.config';
@@ -19,6 +19,7 @@ import { SalesPageFooter } from './SalesPageFooter';
 import { getAllPlansWithPricing, getPlanWithPricing } from '@/config/pricing.config';
 import { CTA_BUTTON_TEXT, getPricingDisclaimer } from '@/config/sales-page-content';
 import { CheckoutModal } from '../checkout/CheckoutModal';
+import { BonusModulesModal } from '../checkout/BonusModulesModal';
 
 /**
  * Main Sales/Offer Page Component
@@ -28,7 +29,7 @@ import { CheckoutModal } from '../checkout/CheckoutModal';
 export function SalesPage() {
   const router = useRouter();
   const { completeData, funnelData, pricingTier, selectedPlanId, setSelectedPlanId } = usePostQuizState();
-  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [modalStep, setModalStep] = useState<'none' | 'bonus' | 'checkout'>('none');
 
   // Get plans with pricing for current tier - memoized to avoid recalculation
   const plansWithPricing = useMemo(() => {
@@ -43,6 +44,18 @@ export function SalesPage() {
 
   // Get user email for checkout (from funnel data)
   const userEmail = funnelData.email || '';
+
+  // Body scroll lock when any modal is open
+  useEffect(() => {
+    if (modalStep !== 'none') {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [modalStep]);
 
   // If no quiz data, redirect back to quiz
   if (!completeData || !completeData.insights) {
@@ -75,21 +88,21 @@ export function SalesPage() {
   // Calculate projection
   const projection = calculateProjection(insights.normalizedScore, timeCommitmentMinutes);
 
-  // Handle plan selection - opens checkout modal
+  // Handle plan selection - opens bonus modules modal first
   const handlePlanSelect = (planId: string) => {
     setSelectedPlanId(planId);
-    setShowCheckoutModal(true);
+    setModalStep('bonus');
   };
 
   // Handle successful payment
   const handlePaymentSuccess = () => {
-    setShowCheckoutModal(false);
+    setModalStep('none');
     router.push('/payment-success');
   };
 
   // Handle modal cancel - pricing tier will be updated by the modal itself
   const handleModalCancel = () => {
-    setShowCheckoutModal(false);
+    setModalStep('none');
     // Note: pricing tier update happens in CheckoutModal's handleCancel
   };
 
@@ -172,8 +185,17 @@ export function SalesPage() {
       {/* Footer */}
       <SalesPageFooter />
 
-      {/* Checkout Modal */}
-      {showCheckoutModal && selectedPlanWithPricing && (
+      {/* Modal #1: Bonus Modules */}
+      {modalStep === 'bonus' && selectedPlanWithPricing && (
+        <BonusModulesModal
+          plan={selectedPlanWithPricing}
+          onContinue={() => setModalStep('checkout')}
+          onClose={() => setModalStep('none')}
+        />
+      )}
+
+      {/* Modal #2: Checkout */}
+      {modalStep === 'checkout' && selectedPlanWithPricing && (
         <CheckoutModal
           plan={selectedPlanWithPricing}
           email={userEmail}
