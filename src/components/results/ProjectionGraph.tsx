@@ -22,7 +22,7 @@ function getMonthLabels(): string[] {
   const now = new Date();
   return Array.from({ length: 4 }, (_, i) => {
     const m = (now.getMonth() + i) % 12;
-    return months[m];
+    return months[m] ?? '';
   });
 }
 
@@ -69,22 +69,22 @@ export function ProjectionGraph({ currentScore, targetScore }: ProjectionGraphPr
 
   // Data points as [x, y]
   const points = scores.map((s, i) => ({
-    x: xPositions[i],
+    x: xPositions[i]!,
     y: toY(s),
-    color: POINT_COLORS[i],
+    color: POINT_COLORS[i]!,
     score: Math.round(s),
   }));
 
   // Build smooth Catmull-Rom spline converted to cubic bezier segments
   // This ensures C1 tangent continuity at every point (no kinks)
-  const p = points;
+  const p = points as [typeof points[0], typeof points[0], typeof points[0], typeof points[0]];
   const catmullRomToBezier = () => {
     const segments: string[] = [`M ${p[0].x} ${p[0].y}`];
     for (let i = 0; i < p.length - 1; i++) {
-      const p0 = p[Math.max(i - 1, 0)];
-      const p1 = p[i];
-      const p2 = p[i + 1];
-      const p3 = p[Math.min(i + 2, p.length - 1)];
+      const p0 = p[Math.max(i - 1, 0) as 0 | 1 | 2 | 3];
+      const p1 = p[i as 0 | 1 | 2 | 3];
+      const p2 = p[Math.min(i + 1, 3) as 0 | 1 | 2 | 3];
+      const p3 = p[Math.min(i + 2, 3) as 0 | 1 | 2 | 3];
       // Catmull-Rom to cubic bezier control points
       const cp1x = p1.x + (p2.x - p0.x) / 6;
       const cp1y = p1.y + (p2.y - p0.y) / 6;
@@ -168,7 +168,7 @@ export function ProjectionGraph({ currentScore, targetScore }: ProjectionGraphPr
         {months.map((label, i) => (
           <text
             key={label}
-            x={xPositions[i]}
+            x={xPositions[i]!}
             y={plotBottom + 18}
             textAnchor="middle"
             fill="#919191"

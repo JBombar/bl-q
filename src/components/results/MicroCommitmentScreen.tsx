@@ -194,13 +194,13 @@ export function MicroCommitmentScreen({
   // ── Counter animation (increments 1-by-1) ─────────────────────
   useEffect(() => {
     if (!phase.startsWith('counting')) return;
-    const target = PHASE_TARGET[phase];
+    const target = PHASE_TARGET[phase] ?? 0;
 
     const interval = setInterval(() => {
       setCount((prev) => {
         if (prev >= target) {
           clearInterval(interval);
-          setPhase(NEXT_PHASE[phase]);
+          setPhase(NEXT_PHASE[phase] ?? 'complete');
           return target;
         }
         return prev + 1;
@@ -223,14 +223,16 @@ export function MicroCommitmentScreen({
       const idx = MODAL_INDEX[phase];
       if (idx === undefined) return;
       const config = screens[idx];
+      if (!config) return;
       await onSave(config.key, value);
-      setPhase(MODAL_NEXT[phase]);
+      setPhase(MODAL_NEXT[phase] ?? 'complete');
     },
     [phase, screens, onSave]
   );
 
   const showModal = phase.startsWith('modal_');
-  const modalQuestion = showModal ? screens[MODAL_INDEX[phase]]?.question : '';
+  const modalIdx = MODAL_INDEX[phase] ?? 0;
+  const modalQuestion = showModal ? screens[modalIdx]?.question ?? '' : '';
 
   const statusText =
     phase === 'complete'

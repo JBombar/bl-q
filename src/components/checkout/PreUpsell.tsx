@@ -57,7 +57,7 @@ function ProgressIndicator() {
             <div className="flex items-center h-8 -mx-1">
               <div
                 className={`w-12 sm:w-16 h-px ${
-                  STEPS[i + 1].state === 'completed' || STEPS[i + 1].state === 'active'
+                  STEPS[i + 1]?.state === 'completed' || STEPS[i + 1]?.state === 'active'
                     ? 'bg-[#327455]'
                     : 'bg-[#d6d6d6]'
                 }`}
