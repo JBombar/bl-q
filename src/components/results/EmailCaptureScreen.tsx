@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { StageLayout } from '@/components/layout';
 
 interface EmailCaptureScreenProps {
@@ -10,28 +11,30 @@ interface EmailCaptureScreenProps {
 }
 
 /**
- * Screen D - Email Capture
- * Collects user's email address
+ * Screen D - Email Capture (Slide 9)
+ * Figma-matched: heading, avatar stack, email input, privacy notice, CTA
  */
 export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenProps) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const validateEmail = (email: string): boolean => {
+  const validateEmail = (value: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(value);
   };
+
+  const isValid = validateEmail(email);
 
   const handleSubmit = async () => {
     setError(null);
 
     if (!email.trim()) {
-      setError('Zadej prosim svuj e-mail');
+      setError('Zadej prosím svůj e-mail');
       return;
     }
 
-    if (!validateEmail(email)) {
-      setError('Zadej prosim platnou e-mailovou adresu');
+    if (!isValid) {
+      setError('Zadej prosím platnou e-mailovou adresu');
       return;
     }
 
@@ -41,76 +44,112 @@ export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenPro
   return (
     <StageLayout
       variant="result"
-      bgClass="bg-linear-to-b from-pink-50 to-white"
+      bgClass="bg-white"
       showCTA
-      ctaLabel={isSaving ? 'Ukladam...' : 'Zobrazit me vysledky'}
-      ctaDisabled={isSaving || !email.trim()}
+      ctaLabel={isSaving ? 'Ukládám...' : 'Zobrazit mé výsledky'}
+      ctaDisabled={isSaving || !isValid}
       onCtaClick={handleSubmit}
+      showBackButton={true}
+      onBackClick={() => {}}
+      showHeaderLogo={true}
     >
-      {/* Header */}
-      <div className="text-center mb-6 pt-12 md:pt-16 lg:pt-20">
-        <motion.h1
-          className="text-2xl font-bold text-gray-800 mb-3"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          Zadej svuj e-mail a ziskej svuj Osobni plan pro vnitrni klid!
-        </motion.h1>
-      </div>
+      {/* Main heading — 22px/24.2px bold, #292424, centered, max-w 338px */}
+      <motion.h1
+        className="text-[22px] leading-[24.2px] font-bold text-[#292424] font-figtree text-center max-w-[338px] mx-auto mt-[22px]"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        Zadej svůj e-mail a získej svůj <span className="text-[#327455]">Osobní plán pro vnitřní klid!</span>
+      </motion.h1>
 
-      {/* Form */}
+      {/* Avatar group — 291px × 34px, 22px below heading */}
       <motion.div
-        className="max-w-md mx-auto"
+        className="flex items-center mt-[22px] max-w-[351px] mx-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        {/* Social proof */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          {/* Avatar stack */}
-          <div className="flex -space-x-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded-full bg-linear-to-br from-purple-400 to-pink-400 border-2 border-white"
-              />
-            ))}
-          </div>
-          <p className="text-sm text-gray-600 ml-2">
-            Pridej se k vice nez <strong>8 500</strong> studentkam Better Lady
-          </p>
-        </div>
-
-        {/* Email input */}
-        <div className="mb-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setError(null);
-            }}
-            placeholder="tvuj@email.cz"
-            disabled={isSaving}
-            className={`w-full px-4 py-4 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F9A201] focus:border-[#F9A201] transition-colors ${
-              error ? 'border-red-300 bg-red-50' : 'border-gray-200'
-            } ${isSaving ? 'opacity-50' : ''}`}
-            autoComplete="email"
-          />
-          {error && (
-            <motion.p
-              className="text-red-500 text-sm mt-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+        {/* Avatar stack — 4 overlapping 34px circles */}
+        <div className="flex shrink-0" style={{ width: 104 }}>
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="w-[34px] h-[34px] rounded-full border-2 border-white overflow-hidden shrink-0"
+              style={{ marginLeft: i === 1 ? 0 : -10 }}
             >
-              {error}
-            </motion.p>
-          )}
+              <Image
+                src={`/icons/email_screen_icon${i}.png`}
+                alt=""
+                width={34}
+                height={34}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
         </div>
 
-        {/* Privacy note */}
-        <p className="text-xs text-gray-500 text-center">
-          Tvoje udaje jsou v bezpeci. Zadny spam, jen uzitecne informace.
+        {/* Student text — 15px/16.5px bold, #292424 */}
+        <p className="ml-[8px] text-[15px] leading-[16.5px] font-bold text-[#292424] font-figtree max-w-[179px]">
+          Přidej se k více než 8 500 studentkám Better Lady
+        </p>
+      </motion.div>
+
+      {/* Email input — 351×48, #f5f5f5, rounded 10px, 26px below avatars */}
+      <motion.div
+        className="mt-[26px] max-w-[351px] mx-auto w-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setError(null);
+          }}
+          placeholder="Zadej svůj e-mail pro zaslání plánu"
+          disabled={isSaving}
+          className={`
+            w-full h-[48px] rounded-[10px] px-[12px]
+            text-[15px] leading-[15px] font-normal text-[#292424] font-figtree
+            placeholder:text-[#919191] placeholder:text-[15px]
+            focus:outline-none focus:ring-2 focus:ring-[#327455]
+            ${error ? 'bg-red-50 ring-2 ring-red-300' : 'bg-[#f5f5f5]'}
+            ${isSaving ? 'opacity-50' : ''}
+          `}
+          autoComplete="email"
+        />
+        {error && (
+          <motion.p
+            className="text-red-500 text-[12px] mt-[4px] font-figtree"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {error}
+          </motion.p>
+        )}
+      </motion.div>
+
+      {/* Privacy notice — 351×42, 22px below input */}
+      <motion.div
+        className="mt-[22px] flex items-start gap-[11px] max-w-[351px] mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        {/* Privacy icon — 24×24 */}
+        <Image
+          src="/icons/privacy_icon.svg"
+          alt=""
+          width={24}
+          height={24}
+          className="w-[24px] h-[24px] shrink-0"
+        />
+        {/* Privacy text — 12px/14.4px regular, #919191 */}
+        <p className="text-[12px] leading-[14.4px] font-normal text-[#919191] font-figtree max-w-[316px]">
+          Vážíme si tvého soukromí a chráníme tvé osobní údaje. Odkaz k tvému osobnímu plánu ti zašleme e-mailem, aby ses k němu mohla kdykoliv vrátit.
         </p>
       </motion.div>
     </StageLayout>
