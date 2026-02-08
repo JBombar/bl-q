@@ -7,7 +7,11 @@ import { COUNTDOWN_TIMER, CTA_BUTTON_TEXT } from '@/config/sales-page-content';
  * StickyHeader Component
  * Matches figma_design.md "Countdown Timer Banner" section
  */
-export function StickyHeader() {
+interface StickyHeaderProps {
+  onCtaClick?: () => void;
+}
+
+export function StickyHeader({ onCtaClick }: StickyHeaderProps) {
   const [timeLeft, setTimeLeft] = useState(COUNTDOWN_TIMER.durationSeconds);
   const [isExpired, setIsExpired] = useState(false);
 
@@ -55,7 +59,7 @@ export function StickyHeader() {
           </div>
 
           {/* Right side - CTA Button (ORANGE!) */}
-          <button className="bg-[#F9A201] hover:bg-[#E09201] active:scale-[0.98] text-white font-extrabold text-[16px] leading-[1em] uppercase py-4 px-8 rounded-[10px] shadow-cta transition-all">
+          <button onClick={onCtaClick} className="bg-[#F9A201] hover:bg-[#E09201] active:scale-[0.98] text-white font-extrabold text-[16px] leading-[1em] uppercase py-4 px-8 rounded-[10px] shadow-cta transition-all">
             {CTA_BUTTON_TEXT}
           </button>
         </div>

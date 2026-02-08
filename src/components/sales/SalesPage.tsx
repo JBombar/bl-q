@@ -20,6 +20,7 @@ import { getAllPlansWithPricing, getPlanWithPricing } from '@/config/pricing.con
 import { CTA_BUTTON_TEXT, getPricingDisclaimer } from '@/config/sales-page-content';
 import { CheckoutModal } from '../checkout/CheckoutModal';
 import { BonusModulesModal } from '../checkout/BonusModulesModal';
+import { SocialProofModal } from '../checkout/SocialProofModal';
 
 /**
  * Main Sales/Offer Page Component
@@ -28,8 +29,8 @@ import { BonusModulesModal } from '../checkout/BonusModulesModal';
  */
 export function SalesPage() {
   const router = useRouter();
-  const { completeData, funnelData, pricingTier, selectedPlanId, setSelectedPlanId } = usePostQuizState();
-  const [modalStep, setModalStep] = useState<'none' | 'bonus' | 'checkout'>('none');
+  const { completeData, funnelData, pricingTier, selectedPlanId, setSelectedPlanId, handleCheckoutCanceled } = usePostQuizState();
+  const [modalStep, setModalStep] = useState<'none' | 'bonus' | 'checkout' | 'socialproof'>('none');
 
   // Get plans with pricing for current tier - memoized to avoid recalculation
   const plansWithPricing = useMemo(() => {
@@ -100,10 +101,21 @@ export function SalesPage() {
     router.push('/payment-success');
   };
 
-  // Handle modal cancel - pricing tier will be updated by the modal itself
+  // Handle checkout cancel - show social proof modal (exit intent)
   const handleModalCancel = () => {
+    setModalStep('socialproof');
+  };
+
+  // Handle social proof "Pokračovat" - apply max discount and return to checkout
+  const handleSocialProofContinue = () => {
+    handleCheckoutCanceled();
+    setModalStep('checkout');
+  };
+
+  // Handle social proof close - close everything
+  const handleSocialProofClose = () => {
+    handleCheckoutCanceled();
     setModalStep('none');
-    // Note: pricing tier update happens in CheckoutModal's handleCancel
   };
 
   // Scroll to pricing section
@@ -117,7 +129,7 @@ export function SalesPage() {
   return (
     <div className="min-h-screen bg-white font-figtree">
       {/* Sticky Header */}
-      <StickyHeader />
+      <StickyHeader onCtaClick={scrollToPricing} />
 
       {/* Transformation Display - Two cards side-by-side */}
       <div className="py-8 bg-white">
@@ -201,6 +213,14 @@ export function SalesPage() {
           email={userEmail}
           onSuccess={handlePaymentSuccess}
           onCancel={handleModalCancel}
+        />
+      )}
+
+      {/* Modal #3: Social Proof (exit intent) */}
+      {modalStep === 'socialproof' && (
+        <SocialProofModal
+          onContinue={handleSocialProofContinue}
+          onClose={handleSocialProofClose}
         />
       )}
     </div>

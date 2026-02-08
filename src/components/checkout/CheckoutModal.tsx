@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { StripeCheckoutForm } from './StripeCheckoutForm';
@@ -28,14 +29,13 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get pricing tier and cancel handler from global state
-  const { pricingTier, handleCheckoutCanceled } = usePostQuizState();
+  // Get pricing tier from global state
+  const { pricingTier } = usePostQuizState();
 
-  // Handle checkout cancel - triggers MAX_DISCOUNT tier
+  // Handle checkout cancel - parent (SalesPage) manages pricing tier updates
   const handleCancel = useCallback(() => {
-    handleCheckoutCanceled();
     onCancel();
-  }, [handleCheckoutCanceled, onCancel]);
+  }, [onCancel]);
 
   // Create subscription on mount
   useEffect(() => {
@@ -102,13 +102,21 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4">
       {/* Backdrop */}
-      <div
+      <motion.div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={handleCancel}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.15 }}
       />
 
       {/* Modal Card */}
-      <div className="relative bg-white rounded-t-[16px] sm:rounded-[10px] shadow-2xl w-full max-w-[500px] max-h-[90vh] sm:max-h-[95vh] overflow-y-auto p-4 sm:p-6 font-figtree">
+      <motion.div
+        className="relative bg-white rounded-t-[16px] sm:rounded-[10px] shadow-2xl w-full max-w-[500px] max-h-[90vh] sm:max-h-[95vh] overflow-y-auto p-4 sm:p-6 font-figtree"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
 
         {/* 1. Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-5">
@@ -285,7 +293,7 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
             <span>Zabezpečená platba přes Stripe</span>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
