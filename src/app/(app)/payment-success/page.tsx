@@ -10,8 +10,7 @@ export default function PaymentSuccessPage() {
   const email = funnelData.email || '';
 
   const handleContinue = () => {
-    // TODO: Navigate to bonus/upsell step
-    router.push('/dashboard');
+    router.push('/offer-2');
   };
 
   return <PreUpsell email={email} onContinue={handleContinue} />;
