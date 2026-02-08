@@ -35,7 +35,7 @@ export function FaqSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
             >
-              <FaqAccordion faq={faq} defaultExpanded={index === 0} />
+              <FaqAccordion faq={faq} />
             </motion.div>
           ))}
         </div>

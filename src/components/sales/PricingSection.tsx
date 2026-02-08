@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PricingOption } from './PricingOption';
 import { useCountdownTimer } from '@/hooks/useCountdownTimer';
 import { usePostQuizState } from '@/hooks/usePostQuizState';
@@ -265,10 +265,19 @@ export function PricingSection({
           {CTA_BUTTON_TEXT}
         </motion.button>
 
-        {/* Dynamic Disclaimer text - updates based on selected plan */}
-        <p className="text-[12px] text-[#919191] text-center mt-4 leading-[1.4em]">
-          {disclaimerText}
-        </p>
+        {/* Dynamic Disclaimer text - animated crossfade on plan change */}
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={currentSelectedId}
+            className="text-[12px] text-[#919191] text-center mt-4 leading-[1.4em]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {disclaimerText}
+          </motion.p>
+        </AnimatePresence>
       </div>
     </div>
   );
