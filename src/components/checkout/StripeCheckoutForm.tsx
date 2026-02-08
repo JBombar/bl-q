@@ -13,9 +13,14 @@ interface StripeCheckoutFormProps {
   // Common
   onSuccess: () => void;
   onCancel: () => void;
+  // UI customization (optional)
+  buttonText?: string;
+  buttonClassName?: string;
+  hideCancel?: boolean;
+  hideSecurityText?: boolean;
 }
 
-export function StripeCheckoutForm({ subscriptionId, amount, orderId, onSuccess, onCancel }: StripeCheckoutFormProps) {
+export function StripeCheckoutForm({ subscriptionId, amount, orderId, onSuccess, onCancel, buttonText, buttonClassName, hideCancel, hideSecurityText }: StripeCheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -173,19 +178,23 @@ export function StripeCheckoutForm({ subscriptionId, amount, orderId, onSuccess,
         <button
           type="submit"
           disabled={!stripe || isProcessing}
-          className={`
-            w-full py-4 rounded-xl font-semibold text-lg transition-all
-            ${isProcessing || !stripe
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-[#327455] text-white hover:bg-[#2a5f47] shadow-lg hover:shadow-xl'
-            }
-          `}
+          className={
+            buttonClassName
+              ? `${buttonClassName} ${isProcessing || !stripe ? 'opacity-50 cursor-not-allowed' : ''}`
+              : `w-full py-4 rounded-xl font-semibold text-lg transition-all ${
+                  isProcessing || !stripe
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-[#327455] text-white hover:bg-[#2a5f47] shadow-lg hover:shadow-xl'
+                }`
+          }
         >
           {isProcessing ? (
             <span className="flex items-center justify-center">
               <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
               Zpracovávám...
             </span>
+          ) : buttonText ? (
+            buttonText
           ) : amount ? (
             `Zaplatit ${formatPrice(amount)} Kč`
           ) : (
@@ -193,19 +202,23 @@ export function StripeCheckoutForm({ subscriptionId, amount, orderId, onSuccess,
           )}
         </button>
 
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={isProcessing}
-          className="w-full py-3 text-gray-600 hover:text-gray-900 disabled:opacity-50"
-        >
-          Zrušit
-        </button>
+        {!hideCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isProcessing}
+            className="w-full py-3 text-gray-600 hover:text-gray-900 disabled:opacity-50"
+          >
+            Zrušit
+          </button>
+        )}
       </div>
 
-      <p className="mt-4 text-xs text-gray-500 text-center">
-        Vaše platba je zabezpečena přes Stripe. Vaše údaje o kartě nikdy nevidíme.
-      </p>
+      {!hideSecurityText && (
+        <p className="mt-4 text-xs text-gray-500 text-center">
+          Vaše platba je zabezpečena přes Stripe. Vaše údaje o kartě nikdy nevidíme.
+        </p>
+      )}
     </form>
   );
 }

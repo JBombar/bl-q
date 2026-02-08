@@ -55,7 +55,7 @@ export function BonusModulesModal({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -63,15 +63,15 @@ export function BonusModulesModal({
       />
 
       {/* Modal Card */}
-      <div className="relative bg-white rounded-[10px] shadow-2xl w-full max-w-[500px] max-h-[95vh] overflow-y-auto p-6 font-figtree">
+      <div className="relative bg-white rounded-t-[16px] sm:rounded-[10px] shadow-2xl w-full max-w-[500px] max-h-[90vh] sm:max-h-[95vh] overflow-y-auto p-4 sm:p-6 font-figtree">
         {/* Header Row */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[18px] font-bold text-[#292424]">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <h2 className="text-[16px] sm:text-[18px] font-bold text-[#292424]">
             Tvůj personalizovaný plán
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 bg-[#f6f6f6] rounded-[10px] flex items-center justify-center shrink-0"
+            className="w-8 h-8 bg-[#f6f6f6] rounded-[10px] flex items-center justify-center shrink-0 ml-2"
             aria-label="Zavřít"
           >
             <svg
@@ -92,23 +92,23 @@ export function BonusModulesModal({
         </div>
 
         {/* Combined Timer + Plan Card */}
-        <div className="rounded-[10px] overflow-hidden border border-[#327455] mb-4">
+        <div className="rounded-[10px] overflow-hidden border border-[#327455] mb-3 sm:mb-4">
           {/* Green Timer Top */}
           {!isExpired && (
-            <div className="bg-[#327455] h-9 flex items-center justify-between px-4">
-              <span className="text-[14px] text-white">
+            <div className="bg-[#327455] h-9 flex items-center justify-between px-3 sm:px-4">
+              <span className="text-[12px] sm:text-[14px] text-white">
                 <span className="font-bold">TVOJE SLEVA</span> PLATÍ DO
               </span>
-              <span className="text-[16px] font-bold text-white tabular-nums">
+              <span className="text-[14px] sm:text-[16px] font-bold text-white tabular-nums">
                 {formattedTime.minutes}:{formattedTime.seconds}
               </span>
             </div>
           )}
 
           {/* Plan Info Bottom */}
-          <div className="bg-[#e6eeeb] flex items-center gap-4 px-4 py-3">
+          <div className="bg-[#e6eeeb] flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3">
             {/* Plan Image */}
-            <div className="w-[70px] h-[50px] rounded-[8px] overflow-hidden shrink-0 bg-white">
+            <div className="w-[60px] h-[42px] sm:w-[70px] sm:h-[50px] rounded-[8px] overflow-hidden shrink-0 bg-white">
               <Image
                 src="/icons/sales_modal_1.png"
                 alt="Plán vnitřního klidu"
@@ -120,10 +120,10 @@ export function BonusModulesModal({
 
             {/* Plan Name */}
             <div className="shrink-0">
-              <div className="text-[16px] font-bold text-[#292424] leading-tight">
+              <div className="text-[14px] sm:text-[16px] font-bold text-[#292424] leading-tight">
                 Plán vnitřního
               </div>
-              <div className="text-[16px] font-bold text-[#292424] leading-tight">
+              <div className="text-[14px] sm:text-[16px] font-bold text-[#292424] leading-tight">
                 klidu
               </div>
             </div>
@@ -133,10 +133,10 @@ export function BonusModulesModal({
 
             {/* Duration + Access */}
             <div className="flex-1 min-w-0">
-              <div className="text-[16px] font-bold text-[#292424] leading-tight">
+              <div className="text-[14px] sm:text-[16px] font-bold text-[#292424] leading-tight">
                 {plan.name}
               </div>
-              <div className="text-[14px] font-normal text-[#636363] leading-tight">
+              <div className="text-[12px] sm:text-[14px] font-normal text-[#636363] leading-tight">
                 Plný přístup
               </div>
             </div>
@@ -144,7 +144,7 @@ export function BonusModulesModal({
         </div>
 
         {/* Personalized Message */}
-        <p className="text-[18px] font-bold text-[#292424] leading-[23.4px] mb-4">
+        <p className="text-[15px] sm:text-[18px] font-bold text-[#292424] leading-[20px] sm:leading-[23.4px] mb-3 sm:mb-4">
           {firstName ? `${firstName}, na` : 'Na'} základě tvého profilu jsme
           zdarma do tvého plánu přidali tyto moduly,{' '}
           <span className="text-[#327455]">jako podporu zdravého
@@ -152,21 +152,21 @@ export function BonusModulesModal({
         </p>
 
         {/* Bonus Modules List */}
-        <div className="space-y-2 mb-6">
+        <div className="space-y-2 mb-4 sm:mb-6">
           {BONUS_MODULES.map((module) => (
             <div key={module.id} className="flex items-baseline gap-1">
-              {/* Module name */}
-              <span className="text-[15px] font-normal text-[#919191] whitespace-nowrap shrink-0">
+              {/* Module name — truncates on mobile */}
+              <span className="text-[13px] sm:text-[15px] font-normal text-[#919191] truncate min-w-0">
                 {module.name}
               </span>
               {/* Dotted line fill */}
-              <div className="flex-1 border-b border-dotted border-[#919191] min-w-[20px] self-end mb-[3px]" />
+              <div className="flex-1 border-b border-dotted border-[#919191] min-w-[8px] sm:min-w-[20px] self-end mb-[3px]" />
               {/* Original price strikethrough */}
-              <span className="text-[15px] font-normal text-[#919191] line-through whitespace-nowrap shrink-0">
+              <span className="text-[13px] sm:text-[15px] font-normal text-[#919191] line-through whitespace-nowrap shrink-0">
                 {formatPrice(module.originalPriceCents)} Kč
               </span>
               {/* Free price */}
-              <span className="text-[16px] font-bold text-[#327455] whitespace-nowrap shrink-0 ml-1">
+              <span className="text-[14px] sm:text-[16px] font-bold text-[#327455] whitespace-nowrap shrink-0 ml-1">
                 0 Kč
               </span>
             </div>
@@ -176,7 +176,7 @@ export function BonusModulesModal({
         {/* CTA Button */}
         <button
           onClick={onContinue}
-          className="w-full h-14 bg-[#f9a201] hover:bg-[#e09201] active:scale-[0.98] text-white text-[16px] font-extrabold rounded-[10px] transition-all uppercase tracking-wide"
+          className="w-full h-12 sm:h-14 bg-[#f9a201] hover:bg-[#e09201] active:scale-[0.98] text-white text-[16px] font-extrabold rounded-[10px] transition-all uppercase tracking-wide"
         >
           Pokračovat
         </button>
