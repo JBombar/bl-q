@@ -291,7 +291,7 @@ export const CTA_BUTTON_TEXT = 'CHCI SVŮJ PLÁN';
 
 export const SECTION_HEADINGS = {
   problemsList: 'Jak může vypadat život bez Better Lady',
-  solutionsList: 'S čím vám Better Lady může pomoci',
+  solutionsList: 'S čím ti Better Lady může pomoci',
   testimonials: 'Pár slov od našich studentek',
   hero: 'Tvůj personalizovaný plán vnitřního klidu je připraven!',
   planHighlights: 'To nejdůležitější z tvého plánu',

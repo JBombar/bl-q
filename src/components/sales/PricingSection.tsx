@@ -135,7 +135,7 @@ export function PricingSection({
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h2 className="text-[24px] font-bold text-[#292424] leading-[1.2em] mb-6">
+          <h2 className="text-[28px] font-bold text-[#292424] leading-[28px] mb-6">
             Tvůj <span className="text-[#327455]">personalizovaný plán</span> vnitřního klidu je připraven!
           </h2>
 
@@ -180,7 +180,7 @@ export function PricingSection({
               {/* Promo applied message */}
               <div className="flex items-center gap-2 mb-3">
                 <TagIcon />
-                <span className="text-[14px] font-bold text-[#327455]">
+                <span className="text-[20px] font-bold text-[#292424]">
                   {getPromoText()}
                 </span>
               </div>
@@ -190,7 +190,7 @@ export function PricingSection({
                 {/* Promo code display */}
                 <div className="flex items-center gap-3 bg-white border border-[#EBEBEB] rounded-full px-4 py-2 flex-1">
                   <CheckIcon />
-                  <span className="text-[14px] font-medium text-[#292424]">
+                  <span className="text-[15px] font-normal text-[#292424]">
                     {pricingTier === 'MAX_DISCOUNT' ? 'MAXSLEVA' : 'SLEVA2024'}
                   </span>
                 </div>
@@ -200,11 +200,11 @@ export function PricingSection({
                   {!isExpired ? (
                     <>
                       <div className="flex items-center gap-1">
-                        <span className="text-[24px] font-bold text-[#292424]">{formattedTime.minutes}</span>
-                        <span className="text-[24px] font-bold text-[#292424]">:</span>
-                        <span className="text-[24px] font-bold text-[#292424]">{formattedTime.seconds}</span>
+                        <span className="text-[18px] font-extrabold text-[#327455]">{formattedTime.minutes}</span>
+                        <span className="text-[18px] font-extrabold text-[#327455]">:</span>
+                        <span className="text-[18px] font-extrabold text-[#327455]">{formattedTime.seconds}</span>
                       </div>
-                      <div className="flex gap-4 text-[10px] text-[#949BA1]">
+                      <div className="flex gap-4 text-[12px] text-[#292424]">
                         <span>{PROMO_CODE.timerLabels.minutes}</span>
                         <span>{PROMO_CODE.timerLabels.seconds}</span>
                       </div>
@@ -263,7 +263,7 @@ export function PricingSection({
         </motion.button>
 
         {/* Dynamic Disclaimer text - updates based on selected plan */}
-        <p className="text-[10px] text-[#949BA1] text-center mt-4 leading-[1.4em]">
+        <p className="text-[12px] text-[#919191] text-center mt-4 leading-[1.4em]">
           {disclaimerText}
         </p>
       </div>

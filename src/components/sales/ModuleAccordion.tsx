@@ -71,7 +71,7 @@ export function ModuleAccordion({ module, defaultExpanded = false }: ModuleAccor
         <div className="flex-1 min-w-0">
           {/* Module Badge */}
           <span
-            className="inline-block px-2 py-1 text-[12px] font-semibold text-[#327455] rounded-[6px] mb-2"
+            className="inline-block px-2 py-1 text-[14px] font-bold text-[#327455] rounded-[6px] mb-2"
             style={{ backgroundColor: '#E6EEEB' }}
           >
             MODUL {module.moduleNumber}
@@ -127,7 +127,7 @@ export function ModuleAccordion({ module, defaultExpanded = false }: ModuleAccor
                         />
 
                         {/* Lesson Text */}
-                        <p className="text-[14px] text-[#327455] leading-[1.5em]">
+                        <p className="text-[16px] text-[#327455] leading-[1.5em]">
                           <span className="font-bold">Lekce {lesson.number}.</span>{' '}
                           {lesson.title}
                         </p>
@@ -144,7 +144,7 @@ export function ModuleAccordion({ module, defaultExpanded = false }: ModuleAccor
                     border: '1.5px solid #327455',
                   }}
                 >
-                  <p className="text-[14px] text-[#292424] leading-[1.5em]">
+                  <p className="text-[16px] text-[#292424] leading-[1.5em]">
                     <span className="font-bold text-[#327455]">Cíl:</span>{' '}
                     {module.goal}
                   </p>

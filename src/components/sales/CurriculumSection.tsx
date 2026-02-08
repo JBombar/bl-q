@@ -31,7 +31,7 @@ export function CurriculumSection() {
       <div className="max-w-[500px] mx-auto">
         {/* Section Title */}
         <motion.h2
-          className="text-[24px] font-bold text-[#292424] leading-[1.2em] mb-8"
+          className="text-[28px] font-bold text-[#292424] leading-[28px] mb-8"
           initial={{ opacity: 0, y: -10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -61,15 +61,15 @@ export function CurriculumSection() {
                       background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
                     }}
                   >
-                    <span className="text-[24px] font-bold text-[#327455]">{section.number}</span>
+                    <span className="text-[28px] font-bold text-[#327455]">{section.number}</span>
                   </div>
 
                   {/* Title and Subtitle */}
                   <div>
-                    <h3 className="text-[20px] font-bold text-[#292424] leading-[1.2em] mb-1">
+                    <h3 className="text-[22px] font-bold text-[#292424] leading-[1.2em] mb-1">
                       {section.title}
                     </h3>
-                    <p className="text-[14px] text-[#949BA1] leading-[1.4em]">
+                    <p className="text-[16px] text-[#292424] leading-[1.4em]">
                       {section.subtitle}
                     </p>
                   </div>

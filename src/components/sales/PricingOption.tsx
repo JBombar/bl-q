@@ -42,7 +42,7 @@ export function PricingOption({
       {/* Recommended badge - positioned at top */}
       {plan.isRecommended && plan.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#327455] text-white text-[12px] font-bold rounded-full whitespace-nowrap">
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#327455] text-white text-[14px] font-bold rounded-full whitespace-nowrap">
             ★ {plan.badge}
           </span>
         </div>
@@ -71,7 +71,7 @@ export function PricingOption({
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-2 mb-1">
             {/* Plan name */}
-            <h3 className="font-bold text-[14px] text-[#292424] uppercase tracking-wide">
+            <h3 className="font-bold text-[18px] text-[#292424] uppercase tracking-wide">
               {plan.name}
             </h3>
           </div>
@@ -103,10 +103,10 @@ export function PricingOption({
 
           {/* Current per-day price in gray box */}
           <div className="bg-[#F6F6F6] rounded-[8px] px-3 py-1 inline-block">
-            <div className="text-[18px] font-bold text-[#292424]">
-              {pricePerDay} <span className="text-[12px] font-normal">Kč</span>
+            <div className="text-[26px] font-bold text-[#292424]">
+              {pricePerDay} <span className="text-[12px] font-bold">Kč</span>
             </div>
-            <div className="text-[10px] text-[#949BA1] text-center">/den</div>
+            <div className="text-[10px] text-[#292424] text-center">za den</div>
           </div>
         </div>
       </div>

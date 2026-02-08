@@ -32,19 +32,19 @@ export function GuaranteeBox() {
           />
 
           {/* Title */}
-          <h3 className="text-[20px] font-bold text-[#292424] leading-[1.3em] mb-3">
+          <h3 className="text-[20px] font-bold text-[#140c0c] leading-[1.3em] mb-3">
             {GUARANTEE.title}
           </h3>
 
           {/* Description */}
-          <p className="text-[14px] text-[#292424] leading-[1.6em] mb-4">
+          <p className="text-[16px] text-[#140c0c] leading-[1.6em] mb-4">
             {GUARANTEE.description}
           </p>
 
           {/* Link */}
           <a
             href="#"
-            className="text-[14px] text-[#327455] underline hover:no-underline transition-all"
+            className="text-[16px] text-[#327455] underline hover:no-underline transition-all"
           >
             Zjistit více
           </a>

@@ -72,7 +72,7 @@ export function FaqAccordion({ faq, defaultExpanded = false }: FaqAccordionProps
 
         {/* Question Text */}
         <h3
-          className="flex-1 text-[16px] font-semibold leading-[1.4em]"
+          className="flex-1 text-[18px] font-bold leading-[1.4em]"
           style={{ color: textColor }}
         >
           {faq.question}
@@ -99,7 +99,7 @@ export function FaqAccordion({ faq, defaultExpanded = false }: FaqAccordionProps
             className="overflow-hidden"
           >
             <div className="bg-white px-6 py-5 pl-14">
-              <p className="text-[15px] text-[#140C0C] leading-[1.6em]">
+              <p className="text-[16px] text-[#140C0C] leading-[1.6em]">
                 {faq.answer}
               </p>
             </div>

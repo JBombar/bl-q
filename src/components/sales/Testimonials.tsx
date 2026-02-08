@@ -75,7 +75,7 @@ export function Testimonials() {
       <div className="max-w-[500px] mx-auto px-6">
         {/* Section Header - Green title */}
         <div className="text-center mb-8">
-          <h2 className="text-[24px] font-bold text-[#327455] leading-[1.2em]">
+          <h2 className="text-[28px] font-bold text-[#292424] leading-[28px]">
             {SECTION_HEADINGS.testimonials}
           </h2>
         </div>
@@ -153,7 +153,7 @@ export function Testimonials() {
 
                     {/* Name and Stars */}
                     <div>
-                      <p className="font-bold text-[#292424] text-[16px] leading-tight mb-1">
+                      <p className="font-bold text-[#292424] text-[18px] leading-tight mb-1">
                         {testimonial.name}
                       </p>
                       <StarRating rating={testimonial.rating} />

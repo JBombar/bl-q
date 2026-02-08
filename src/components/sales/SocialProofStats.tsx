@@ -17,7 +17,7 @@ export function SocialProofStats() {
       <div className="max-w-[500px] mx-auto">
         {/* Main Title */}
         <motion.h2
-          className="text-[24px] font-bold text-[#327455] leading-[1.2em] text-center mb-8"
+          className="text-[28px] font-bold text-[#292424] leading-[28px] text-center mb-8"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

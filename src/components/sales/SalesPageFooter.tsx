@@ -10,21 +10,18 @@ export function SalesPageFooter() {
   return (
     <footer className="py-8 px-6 bg-white font-figtree border-t border-[#E4E4E4]">
       <div className="max-w-[500px] mx-auto">
-        {/* Links */}
-        <div className="flex flex-wrap justify-center gap-4 mb-4">
+        <p className="text-[15px] text-[#140c0c] text-center">
           {FOOTER.links.map((link, index) => (
-            <a
-              key={index}
-              href={link.href}
-              className="text-[14px] text-[#949BA1] hover:text-[#292424] transition-colors"
-            >
-              {link.label}
-            </a>
+            <span key={index}>
+              <a
+                href={link.href}
+                className="hover:underline transition-colors"
+              >
+                {link.label}
+              </a>
+              {' | '}
+            </span>
           ))}
-        </div>
-
-        {/* Copyright */}
-        <p className="text-[12px] text-[#949BA1] text-center">
           {FOOTER.copyright}
         </p>
       </div>

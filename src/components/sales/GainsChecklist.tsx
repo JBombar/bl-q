@@ -26,10 +26,7 @@ export function GainsChecklist() {
       <div className="max-w-[500px] mx-auto">
         {/* Card container with green gradient and border - #327455 border, mint gradient bg */}
         <motion.div
-          className="p-6 rounded-[10px] border border-[#327455]"
-          style={{
-            background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
-          }}
+          className="p-6 rounded-[10px] border border-[#327455] bg-[#e6eeeb]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
