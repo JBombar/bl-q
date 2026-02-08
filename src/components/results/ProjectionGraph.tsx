@@ -3,189 +3,257 @@
 import { motion } from 'framer-motion';
 
 interface ProjectionGraphProps {
-  /** Current stress score (0-60 display scale) */
   currentScore: number;
-  /** Target stress score after program (0-60 display scale) */
   targetScore: number;
-  /** Target date */
   targetDate: Date;
 }
 
+// Data point colors matching the stress gradient
+const POINT_COLORS = ['#e60000', '#ee9363', '#f9ea7c', '#c8f29d'];
+
 /**
- * SVG projection graph showing stress reduction over time
+ * Get 4 month labels starting from current month (3-letter uppercase)
  */
-export function ProjectionGraph({ currentScore, targetScore, targetDate }: ProjectionGraphProps) {
-  // Graph dimensions
-  const width = 320;
-  const height = 200;
-  const padding = { top: 20, right: 20, bottom: 40, left: 40 };
+function getMonthLabels(): string[] {
+  const months = [
+    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
+  ];
+  const now = new Date();
+  return Array.from({ length: 4 }, (_, i) => {
+    const m = (now.getMonth() + i) % 12;
+    return months[m];
+  });
+}
 
-  // Calculate graph area
-  const graphWidth = width - padding.left - padding.right;
-  const graphHeight = height - padding.top - padding.bottom;
+/**
+ * SVG projection graph — Figma Slide 7
+ * 351×226 container, 4 data points, curved line with gradient fill
+ */
+export function ProjectionGraph({ currentScore, targetScore }: ProjectionGraphProps) {
+  const months = getMonthLabels();
 
-  // Y-axis: 0-60 stress scale
-  const maxY = 60;
-  const yScale = (value: number) => padding.top + graphHeight - (value / maxY) * graphHeight;
+  // SVG viewBox dimensions
+  const svgW = 351;
+  const svgH = 226;
 
-  // X-axis: 3 months
-  const months = getMonthLabels(new Date(), targetDate);
-  const xScale = (index: number) => padding.left + (index / (months.length - 1)) * graphWidth;
+  // Graph plot area
+  const plotLeft = 32;
+  const plotRight = svgW - 42;
+  const plotTop = 40;
+  const plotBottom = svgH - 40;
+  const plotW = plotRight - plotLeft;
+  const plotH = plotBottom - plotTop;
 
-  // Calculate curve control points for smooth decay
-  const startX = xScale(0);
-  const startY = yScale(currentScore);
-  const endX = xScale(months.length - 1);
-  const endY = yScale(targetScore);
+  // Y-axis: 10 to 50
+  const yMin = 10;
+  const yMax = 50;
+  const yLabels = [50, 40, 30, 20, 10];
+  const toY = (val: number) => {
+    const clamped = Math.max(yMin, Math.min(yMax, val));
+    return plotTop + ((yMax - clamped) / (yMax - yMin)) * plotH;
+  };
 
-  // Cubic Bezier curve for smooth, natural decay with pronounced curve
-  const controlPoint1X = startX + graphWidth * 0.3;
-  const controlPoint1Y = startY - (startY - endY) * 0.1; // Slight dip at start
-  const controlPoint2X = startX + graphWidth * 0.7;
-  const controlPoint2Y = endY - (startY - endY) * 0.1; // Smooth approach to end
+  // X positions for 4 data points (evenly distributed)
+  const xPositions = Array.from({ length: 4 }, (_, i) =>
+    plotLeft + (i / 3) * plotW
+  );
 
-  const curvePath = `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
+  // Interpolate 4 scores along a curve: current → target
+  const scores = [
+    currentScore,
+    currentScore - (currentScore - targetScore) * 0.35,
+    currentScore - (currentScore - targetScore) * 0.7,
+    targetScore,
+  ];
 
-  // Area under curve
-  const areaPath = `${curvePath} L ${endX} ${yScale(0)} L ${startX} ${yScale(0)} Z`;
+  // Data points as [x, y]
+  const points = scores.map((s, i) => ({
+    x: xPositions[i],
+    y: toY(s),
+    color: POINT_COLORS[i],
+    score: Math.round(s),
+  }));
+
+  // Build smooth Catmull-Rom spline converted to cubic bezier segments
+  // This ensures C1 tangent continuity at every point (no kinks)
+  const p = points;
+  const catmullRomToBezier = () => {
+    const segments: string[] = [`M ${p[0].x} ${p[0].y}`];
+    for (let i = 0; i < p.length - 1; i++) {
+      const p0 = p[Math.max(i - 1, 0)];
+      const p1 = p[i];
+      const p2 = p[i + 1];
+      const p3 = p[Math.min(i + 2, p.length - 1)];
+      // Catmull-Rom to cubic bezier control points
+      const cp1x = p1.x + (p2.x - p0.x) / 6;
+      const cp1y = p1.y + (p2.y - p0.y) / 6;
+      const cp2x = p2.x - (p3.x - p1.x) / 6;
+      const cp2y = p2.y - (p3.y - p1.y) / 6;
+      segments.push(`C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`);
+    }
+    return segments.join(' ');
+  };
+  const curvePath = catmullRomToBezier();
+
+  // Area fill path (close to bottom)
+  const areaPath = `${curvePath} L ${p[3].x} ${plotBottom} L ${p[0].x} ${plotBottom} Z`;
 
   return (
-    <div className="w-full mx-auto bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
-        {/* Grid lines */}
-        {[0, 20, 40, 60].map((value) => (
-          <g key={value}>
-            <line
-              x1={padding.left}
-              y1={yScale(value)}
-              x2={width - padding.right}
-              y2={yScale(value)}
-              stroke="#e5e7eb"
-              strokeDasharray="4"
-            />
-            <text
-              x={padding.left - 8}
-              y={yScale(value)}
-              textAnchor="end"
-              dominantBaseline="middle"
-              className="text-xs fill-gray-400"
-            >
-              {value}
-            </text>
-          </g>
-        ))}
-
-        {/* Area fill */}
-        <motion.path
-          d={areaPath}
-          fill="url(#gradient)"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.3 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        />
-
-        {/* Gradient definition */}
+    <div className="w-full max-w-[351px] mx-auto">
+      <svg
+        viewBox={`0 0 ${svgW} ${svgH}`}
+        className="w-full h-auto"
+        style={{ fontFamily: 'Figtree, sans-serif' }}
+      >
         <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#F9A201" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#F9A201" stopOpacity="0" />
+          {/* Gradient fill under curve: red top → green bottom-right */}
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#e60000" stopOpacity="0.25" />
+            <stop offset="40%" stopColor="#ee9363" stopOpacity="0.18" />
+            <stop offset="70%" stopColor="#f9ea7c" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="#c8f29d" stopOpacity="0.06" />
           </linearGradient>
         </defs>
+
+        {/* Horizontal grid lines + Y-axis labels */}
+        {yLabels.map((val) => {
+          const y = toY(val);
+          return (
+            <g key={val}>
+              <line
+                x1={plotLeft}
+                y1={y}
+                x2={plotRight}
+                y2={y}
+                stroke="#e5e7eb"
+                strokeWidth="1"
+              />
+              <text
+                x={plotLeft - 6}
+                y={y}
+                textAnchor="end"
+                dominantBaseline="middle"
+                fill="#919191"
+                fontSize="10"
+              >
+                {val}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Area fill under curve */}
+        <motion.path
+          d={areaPath}
+          fill="url(#areaGrad)"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        />
 
         {/* Curve line */}
         <motion.path
           d={curvePath}
           fill="none"
-          stroke="#F9A201"
-          strokeWidth="3"
+          stroke="#bbb"
+          strokeWidth="2"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ delay: 0.3, duration: 1, ease: 'easeOut' }}
+          transition={{ delay: 0.2, duration: 0.8, ease: 'easeOut' }}
         />
 
-        {/* Start point - "Dnes" */}
-        <motion.g
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          <circle cx={startX} cy={startY} r="8" fill="#F9A201" />
-          <circle cx={startX} cy={startY} r="4" fill="white" />
-          <text
-            x={startX}
-            y={startY - 15}
-            textAnchor="middle"
-            className="text-xs font-medium fill-gray-700"
-          >
-            Dnes
-          </text>
-        </motion.g>
-
-        {/* End point - "Tvuj cil" */}
-        <motion.g
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.2 }}
-        >
-          <circle cx={endX} cy={endY} r="8" fill="#10b981" />
-          <circle cx={endX} cy={endY} r="4" fill="white" />
-          <text
-            x={endX}
-            y={endY - 15}
-            textAnchor="middle"
-            className="text-xs font-medium fill-gray-700"
-          >
-            Tvuj cil
-          </text>
-        </motion.g>
-
         {/* X-axis labels */}
-        {months.map((month, index) => (
+        {months.map((label, i) => (
           <text
-            key={month}
-            x={xScale(index)}
-            y={height - padding.bottom + 20}
+            key={label}
+            x={xPositions[i]}
+            y={plotBottom + 18}
             textAnchor="middle"
-            className="text-xs fill-gray-500"
+            fill="#919191"
+            fontSize="10"
           >
-            {month}
+            {label}
           </text>
         ))}
 
-        {/* Y-axis label */}
-        <text
-          x={padding.left - 30}
-          y={height / 2}
-          textAnchor="middle"
-          transform={`rotate(-90, ${padding.left - 30}, ${height / 2})`}
-          className="text-xs fill-gray-500"
+        {/* Legend badge "Dnes" — above first point */}
+        <motion.g
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
         >
-          Uroven stresu
-        </text>
+          <rect
+            x={p[0].x - 24}
+            y={p[0].y - 44}
+            width={48}
+            height={26}
+            rx={6}
+            fill="#ffd2d2"
+          />
+          <text
+            x={p[0].x}
+            y={p[0].y - 27}
+            textAnchor="middle"
+            fill="#292424"
+            fontSize="14"
+          >
+            Dnes
+          </text>
+          {/* Arrow pointing down */}
+          <polygon
+            points={`${p[0].x - 6},${p[0].y - 18} ${p[0].x + 6},${p[0].y - 18} ${p[0].x},${p[0].y - 12}`}
+            fill="#ffd2d2"
+          />
+        </motion.g>
+
+        {/* Legend badge "Tvůj cíl" — above last point */}
+        <motion.g
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+        >
+          <rect
+            x={p[3].x - 30}
+            y={p[3].y - 44}
+            width={60}
+            height={26}
+            rx={6}
+            fill="#e6eeeb"
+          />
+          <text
+            x={p[3].x}
+            y={p[3].y - 27}
+            textAnchor="middle"
+            fill="#292424"
+            fontSize="14"
+          >
+            Tvůj cíl
+          </text>
+          {/* Arrow pointing down */}
+          <polygon
+            points={`${p[3].x - 6},${p[3].y - 18} ${p[3].x + 6},${p[3].y - 18} ${p[3].x},${p[3].y - 12}`}
+            fill="#e6eeeb"
+          />
+        </motion.g>
+
+        {/* Data point circles — 13px diameter, white fill, colored stroke */}
+        {points.map((pt, i) => (
+          <motion.circle
+            key={i}
+            cx={pt.x}
+            cy={pt.y}
+            r={6.5}
+            fill="white"
+            stroke={pt.color}
+            strokeWidth={2.5}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 + i * 0.15 }}
+          />
+        ))}
       </svg>
     </div>
   );
-}
-
-/**
- * Get month labels for X-axis (current month + next 2)
- */
-function getMonthLabels(startDate: Date, endDate: Date): string[] {
-  const czechMonths = [
-    'LED', 'UNO', 'BRE', 'DUB', 'KVE', 'CER',
-    'CVC', 'SRP', 'ZAR', 'RIJ', 'LIS', 'PRO'
-  ];
-
-  const months: string[] = [];
-  const current = new Date(startDate);
-
-  // Add months from start to end (approximately 3 months)
-  for (let i = 0; i < 3; i++) {
-    const monthLabel = czechMonths[current.getMonth()] || 'N/A';
-    months.push(monthLabel);
-    current.setMonth(current.getMonth() + 1);
-  }
-
-  return months;
 }
