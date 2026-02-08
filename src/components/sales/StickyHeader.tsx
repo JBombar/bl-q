@@ -33,7 +33,7 @@ export function StickyHeader() {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-white">
+    <div className="sticky top-0 z-50 bg-white border-b border-[#E4E4E4]">
       <div className="max-w-[500px] mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Left side - Countdown info */}

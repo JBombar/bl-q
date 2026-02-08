@@ -140,12 +140,12 @@ export function PricingSection({
           </h2>
 
           {/* Plan Info Cards */}
-          <div className="bg-[#D2EBE0] border border-[#327455] rounded-[10px] p-6 mb-6">
+          <div className="mb-6">
             <div className="flex items-center justify-center gap-4">
               {PLAN_INFO_CARDS.map((card, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-3 p-3 bg-white/50 rounded-[10px]"
+                  className="flex items-center gap-3 p-3"
                 >
                   <div className="w-12 h-12 bg-[#327455] rounded-[10px] flex items-center justify-center shrink-0">
                     {card.icon === 'brain' ? <BrainIcon /> : <TargetIcon />}
@@ -176,35 +176,38 @@ export function PricingSection({
             transition={{ delay: 0.2 }}
           >
             {/* Content positioned inside the ticket shape */}
-            <div className="absolute inset-0 flex flex-col justify-center px-6 py-4">
-              {/* Promo applied message */}
-              <div className="flex items-center gap-2 mb-3">
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-8 sm:px-10 py-4">
+              {/* Promo applied message — centered */}
+              <div className="flex items-center gap-2 mb-2">
                 <TagIcon />
-                <span className="text-[20px] font-bold text-[#292424]">
+                <span className="text-[16px] sm:text-[20px] font-bold text-[#292424]">
                   {getPromoText()}
                 </span>
               </div>
 
-              {/* Bottom row: Promo code + Timer */}
-              <div className="flex items-center gap-3">
-                {/* Promo code display */}
-                <div className="flex items-center gap-3 bg-white border border-[#EBEBEB] rounded-full px-4 py-2 flex-1">
+              {/* Horizontal divider */}
+              <div className="w-full border-t border-[#327455]/30 mb-2" />
+
+              {/* Bottom row: Promo code pill + Timer box */}
+              <div className="flex items-center gap-2 sm:gap-3 w-full">
+                {/* Promo code pill */}
+                <div className="flex items-center gap-2 sm:gap-3 bg-white border border-[#EBEBEB] rounded-full px-3 sm:px-4 py-2 flex-1 min-w-0">
                   <CheckIcon />
-                  <span className="text-[15px] font-normal text-[#292424]">
+                  <span className="text-[13px] sm:text-[15px] font-normal text-[#292424] truncate">
                     {pricingTier === 'MAX_DISCOUNT' ? 'MAXSLEVA' : 'SLEVA2024'}
                   </span>
                 </div>
 
-                {/* Timer - show countdown or expired state */}
-                <div className="flex flex-col items-center">
+                {/* Timer — rounded box with green border */}
+                <div className="shrink-0 flex flex-col items-center bg-[#e6eeeb] border border-[#327455] rounded-[10px] px-3 sm:px-4 py-1.5 sm:py-2">
                   {!isExpired ? (
                     <>
                       <div className="flex items-center gap-1">
-                        <span className="text-[18px] font-extrabold text-[#327455]">{formattedTime.minutes}</span>
-                        <span className="text-[18px] font-extrabold text-[#327455]">:</span>
-                        <span className="text-[18px] font-extrabold text-[#327455]">{formattedTime.seconds}</span>
+                        <span className="text-[16px] sm:text-[18px] font-extrabold text-[#327455]">{formattedTime.minutes}</span>
+                        <span className="text-[16px] sm:text-[18px] font-extrabold text-[#327455]">:</span>
+                        <span className="text-[16px] sm:text-[18px] font-extrabold text-[#327455]">{formattedTime.seconds}</span>
                       </div>
-                      <div className="flex gap-4 text-[12px] text-[#292424]">
+                      <div className="flex gap-3 text-[10px] sm:text-[12px] text-[#292424]">
                         <span>{PROMO_CODE.timerLabels.minutes}</span>
                         <span>{PROMO_CODE.timerLabels.seconds}</span>
                       </div>
