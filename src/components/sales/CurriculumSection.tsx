@@ -54,14 +54,9 @@ export function CurriculumSection() {
               >
                 {/* Section Header */}
                 <div className="flex items-start gap-4 mb-4">
-                  {/* Number Badge */}
-                  <div
-                    className="w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0"
-                    style={{
-                      background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
-                    }}
-                  >
-                    <span className="text-[28px] font-bold text-[#327455]">{section.number}</span>
+                  {/* Number Badge — flat green bg, no gradient */}
+                  <div className="w-14 h-14 rounded-[10px] bg-[#e6eeeb] flex items-center justify-center shrink-0">
+                    <span className="text-[32px] font-bold text-[#327455]">{section.number}</span>
                   </div>
 
                   {/* Title and Subtitle */}
@@ -75,29 +70,24 @@ export function CurriculumSection() {
                   </div>
                 </div>
 
-                {/* Description (for sections 2, 3, 4) */}
-                {section.description && (
-                  <p className="text-[16px] text-[#292424] leading-[1.5em] mb-4 ml-16">
-                    {section.description}
-                  </p>
-                )}
-
-                {/* Image Section (for sections 2, 3, 4) */}
+                {/* Image Section — full width with light gray background */}
                 {sectionImage && (
-                  <div
-                    className="rounded-[10px] flex items-center justify-center p-8 ml-16"
-                    style={{
-                      background: 'linear-gradient(180deg, rgba(50, 116, 85, 0.12) 0%, rgba(50, 116, 85, 0.03) 100%)'
-                    }}
-                  >
+                  <div className="rounded-[10px] bg-[#f6f6f6] flex items-center justify-center p-8 mb-4">
                     <Image
                       src={sectionImage.src}
                       alt={sectionImage.alt}
-                      width={400}
-                      height={300}
+                      width={500}
+                      height={375}
                       className="w-full h-auto max-w-full"
                     />
                   </div>
+                )}
+
+                {/* Description — full width, no indent, below image */}
+                {section.description && (
+                  <p className="text-[16px] text-[#292424] leading-[1.5em]">
+                    {section.description}
+                  </p>
                 )}
 
                 {/* Modules (only for section 1) */}
