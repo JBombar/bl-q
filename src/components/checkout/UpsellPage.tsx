@@ -36,13 +36,15 @@ const MENTORS = [
     id: 'miroslav',
     name: 'Miroslav Macháček',
     title: 'Expert na stres',
-    bio: 'Pomáhá ženám eliminovat stres a znovu najít vnitřní klid. Ukazuje, jak si pomocí dechu, jednoduchých technik a otužování přirozeně zklidnit nervový systém.',
+    bio: 'Pomáhá ženám eliminovat stres a znovu najít vnitřní klid. Ukazuje, jak si pomocí dechu, jednoduchých technik a otužování přirozeně zklidnit nervový systém a zvládat tlak každodenního života. Nečekej žádné ezo ani složité rituály – Mirek všechno vysvětluje lidsky, srozumitelně a tak, aby sis to mohla hned vyzkoušet doma. Jeho přístup pomohl už stovkám žen konečně si vydechnout.',
+    image: '/images/upsell-page/mentor_miroslav.png',
   },
   {
     id: 'dominik',
     name: 'Dominik Fujtík',
     title: 'Expert na hubnutí',
     bio: 'Pomáhá ženám pochopit, jak jejich tělo funguje, proč se jim nedaří hubnout i když se snaží, a co s tím dělat.',
+    image: null,
   },
 ];
 
@@ -218,53 +220,68 @@ function PricingCard({
 }) {
   return (
     <div className="w-full bg-[#e6eeeb] rounded-[16px] overflow-hidden mt-8">
-      {/* Header Badge */}
-      <div className="bg-[#327455] text-white text-[14px] font-bold text-center py-2 px-4">
-        Skvělý doplněk na tvé cestě ke klidu.
-      </div>
-
       {/* Padded content */}
       <div className="p-5 sm:p-6">
-        {/* Plan label */}
-        <p className="text-[18px] font-bold text-[#292424] mt-4">
-          4-TÝDENNÍ PLÁN
-        </p>
+        {/* Heading */}
+        <h3 className="text-[22px] sm:text-[24px] font-bold text-[#292424] text-center">
+          Vyzkoušej to s 35% slevou!
+        </h3>
 
-        {/* Pricing row */}
-        <div className="flex items-center gap-3 mt-3">
-          <span className="text-[16px] font-normal text-[#919191] line-through">
-            1395 Kč
+        {/* Plan label + pricing row */}
+        <div className="flex items-center justify-between mt-5">
+          <span className="text-[18px] font-bold text-[#292424]">
+            4-TÝDENNÍ PLÁN
           </span>
-          <div className="bg-[#ffd2d2] border border-[#e60000] rounded-[8px] px-3 py-1 flex items-center gap-1.5">
-            <DiscountTagIcon />
-            <span className="text-[18px] font-bold text-[#e60000]">
-              895 Kč
+          <div className="flex items-center gap-2">
+            <span className="text-[16px] font-normal text-[#919191] line-through">
+              1395 Kč
+            </span>
+            <div className="bg-[#ffd2d2] border border-[#e60000] rounded-[8px] px-2.5 py-1 flex items-center gap-1">
+              <span className="text-[14px]">🔥</span>
+              <span className="text-[18px] font-bold text-[#e60000]">
+                895 Kč
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Benefits card with badge on bottom edge */}
+        <div className="relative mt-4 pb-4">
+          <div className="bg-white rounded-[10px] border border-[#e4e4e4]">
+            {/* Benefits header */}
+            <p className="text-[15px] font-bold text-[#292424] text-center py-3">
+              Zdarma k tvému předplatnému
+            </p>
+            {/* Benefits list */}
+            <div className="px-4 pb-7 flex flex-col gap-2.5">
+              {BENEFITS.map((b) => (
+                <div key={b.name} className="flex items-baseline gap-1">
+                  <span className="text-[14px] sm:text-[15px] font-normal text-[#919191] truncate min-w-0">
+                    {b.name}
+                  </span>
+                  <div className="flex-1 border-b border-dotted border-[#919191] min-w-[8px] sm:min-w-[20px] self-end mb-[3px]" />
+                  <span className="text-[15px] sm:text-[16px] font-bold text-[#292424] whitespace-nowrap shrink-0">
+                    0 Kč
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* +Další dárky badge — straddles the bottom border */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10">
+            <span className="bg-[#327455] text-white text-[14px] font-bold rounded-full px-5 py-2 whitespace-nowrap shadow-sm">
+              +Další dárky
             </span>
           </div>
         </div>
 
-        {/* Benefits list */}
-        <div className="mt-4 flex flex-col gap-2.5">
-          {BENEFITS.map((b) => (
-            <BenefitRow
-              key={b.name}
-              name={b.name}
-              originalPrice={b.originalPrice}
-            />
-          ))}
-        </div>
-
-        {/* +Další dárky badge */}
-        <span className="bg-[#327455] text-white text-[14px] font-bold rounded-full px-4 py-1.5 inline-block mt-3">
-          +Další dárky
-        </span>
-
         {/* Legal disclaimer */}
         <p className="text-[12px] font-normal text-[#919191] leading-[15.6px] mt-4">
           Kliknutím na &bdquo;PŘIDAT DO MÉHO PLÁNU&ldquo; souhlasíš s
-          automatickým obnovením předplatného pomocí platebních údajů, které jsi
-          zadala dříve. První měsíc stojí 895 Kč, poté 1395 Kč/měsíčně.
-          Předplatné můžeš kdykoliv zrušit.
+          automatickým obnovením předplatného pomocí platebních údajů, které
+          jsi zadala dříve. První měsíc stojí 895 Kč, poté 1395 Kč/měsíčně.
+          Předplatné můžeš kdykoliv zrušit v aplikaci nebo e-mailem na
+          podpora@betterlady.cz.
         </p>
 
         {/* Primary CTA */}
@@ -278,7 +295,7 @@ function PricingCard({
         {/* Secondary CTA */}
         <button
           onClick={onSkip}
-          className="w-full text-center text-[16px] font-normal text-[#919191] mt-3 cursor-pointer hover:text-[#292424] transition-colors"
+          className="w-full text-center text-[16px] font-normal text-[#919191] underline mt-3 cursor-pointer hover:text-[#292424] transition-colors"
         >
           Pokračovat bez osobní podpory
         </button>
@@ -309,26 +326,33 @@ function MentorCard({
   return (
     <div
       onClick={onSelect}
-      className={`w-full rounded-[16px] overflow-hidden cursor-pointer transition-all ${
-        isSelected
-          ? 'border-[#327455] border-2'
-          : 'border border-[#e4e4e4]'
-      }`}
+      className="w-full rounded-[16px] overflow-hidden cursor-pointer transition-all"
     >
       {/* Hero image area */}
-      <div className="w-full h-[280px] sm:h-[338px] bg-[#f5f5f5] relative flex items-center justify-center text-[#919191]">
-        Mentor Photo
-        {/* Badge overlay */}
-        <div className="absolute bottom-4 left-4 right-4 bg-white/64 backdrop-blur-sm rounded-[10px] p-3">
-          <StarRating />
-          <p className="text-[16px] font-normal text-[#292424] mt-1">
-            {mentor.name} &middot; {mentor.title}
-          </p>
-        </div>
+      <div className="w-full h-[280px] sm:h-[338px] bg-[#f5f5f5] relative flex items-center justify-center text-[#919191] rounded-[16px] overflow-hidden">
+        {mentor.image ? (
+          <Image
+            src={mentor.image}
+            alt={mentor.name}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          'Mentor Photo'
+        )}
+        {/* Badge overlay — only show for mentors without image */}
+        {!mentor.image && (
+          <div className="absolute bottom-4 left-4 right-4 bg-white/64 backdrop-blur-sm rounded-[10px] p-3">
+            <StarRating />
+            <p className="text-[16px] font-normal text-[#292424] mt-1">
+              {mentor.name} &middot; {mentor.title}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Bio section */}
-      <div className="p-4 sm:p-5">
+      <div className="pt-4">
         <p className="text-[16px] font-normal text-[#292424] leading-[24px]">
           {mentor.bio}
         </p>
@@ -445,11 +469,11 @@ function ComparisonGraph() {
 function BenefitSection({
   heading,
   text,
-  placeholder,
+  image,
 }: {
   heading: string;
   text: string;
-  placeholder: string;
+  image: string;
 }) {
   return (
     <div className="w-full mt-8">
@@ -459,8 +483,14 @@ function BenefitSection({
           {text}
         </p>
       </div>
-      <div className="w-full h-[400px] sm:h-[472px] bg-linear-to-b from-[#f5f5f5] to-white rounded-[16px] flex items-center justify-center text-[#919191] mt-3">
-        {placeholder}
+      <div className="w-full rounded-[16px] overflow-hidden mt-3">
+        <Image
+          src={image}
+          alt={heading}
+          width={500}
+          height={472}
+          className="w-full h-auto"
+        />
       </div>
     </div>
   );
@@ -741,14 +771,54 @@ export function UpsellPage({ onAddToPlan, onSkip }: UpsellPageProps) {
         </h2>
 
         {/* ----------------------------------------------------------------- */}
+        {/* 10b. Value List */}
+        {/* ----------------------------------------------------------------- */}
+        <div className="flex flex-col gap-3 mt-6">
+          <div className="flex items-center gap-3 bg-[#f5f5f5] rounded-[12px] h-[72px] px-3">
+            <div className="w-12 h-12 bg-[#e6e6e6] rounded-[10px] flex items-center justify-center shrink-0">
+              <Image src="/icons/icon-magnify-glass.svg" alt="" width={36} height={36} />
+            </div>
+            <span className="text-[15px] font-normal text-[#292424] leading-[21px]">
+              Spoznej samu sebe s Better Lady
+            </span>
+          </div>
+          <div className="flex items-center gap-3 bg-[#f5f5f5] rounded-[12px] h-[72px] px-3">
+            <div className="w-12 h-12 bg-[#e6e6e6] rounded-[10px] flex items-center justify-center shrink-0">
+              <Image src="/icons/icon-chat.svg" alt="" width={36} height={36} />
+            </div>
+            <span className="text-[15px] font-normal text-[#292424] leading-[21px]">
+              Konzultace s tvými mentory
+            </span>
+          </div>
+          <div className="flex items-center gap-3 bg-[#f5f5f5] rounded-[12px] h-[72px] px-3">
+            <div className="w-12 h-12 bg-[#e6e6e6] rounded-[10px] flex items-center justify-center shrink-0">
+              <Image src="/icons/icon-growth.svg" alt="" width={36} height={36} />
+            </div>
+            <span className="text-[15px] font-normal text-[#292424] leading-[21px]">
+              Sleduj svůj pokrok v přehledných plánech
+            </span>
+          </div>
+        </div>
+
+        {/* ----------------------------------------------------------------- */}
         {/* 11. Comparison Graph */}
         {/* ----------------------------------------------------------------- */}
         <h3 className="text-[20px] sm:text-[22px] font-bold text-[#292424] text-center mt-6">
           Tvůj klíč k lepším výsledkům
         </h3>
         <div className="mt-4">
-          <ComparisonGraph />
+          <Image
+            src="/images/upsell-page/results_graph.png"
+            alt="Tvůj klíč k lepším výsledkům"
+            width={500}
+            height={258}
+            className="w-full h-auto"
+          />
         </div>
+
+        <h2 className="text-[24px] sm:text-[28px] font-bold text-[#292424] text-center mt-12 sm:mt-16">
+          Proč vyzkoušet Osobní mentoring?
+        </h2>
 
         {/* ----------------------------------------------------------------- */}
         {/* 12. Three Benefit Sections */}
@@ -756,17 +826,17 @@ export function UpsellPage({ onAddToPlan, onSkip }: UpsellPageProps) {
         <BenefitSection
           heading="Skutečné konzultace s mentorem"
           text="Získej přímou podporu od svého mentora. Zapomeň na AI, tohle je skutečné vedení od odborníků."
-          placeholder="Consultation Mockup"
+          image="/images/upsell-page/consultation_mockup1.png"
         />
         <BenefitSection
           heading="Podpora, na kterou se můžeš spolehnout"
           text="Kdykoliv potřebuješ poradit, je tu pro tebe tvůj osobní mentor. Garantujeme maximální diskrétnost – tvé soukromí je u nás na prvním místě."
-          placeholder="Support Circles"
+          image="/images/upsell-page/support_circles.png"
         />
         <BenefitSection
           heading="Přehledně sleduj svůj pokrok"
           text="Díky osobnímu vedení už z cesty nesejdeš. Sleduj, jak se tvé úsilí mění v reálné výsledky den za dnem."
-          placeholder="Progress Tracking"
+          image="/images/upsell-page/progress_tracking.png"
         />
 
         {/* ----------------------------------------------------------------- */}
