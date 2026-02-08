@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { Testimonials } from '@/components/sales/Testimonials';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -45,35 +46,6 @@ const MENTORS = [
     title: 'Expert na hubnutí',
     bio: 'Pomáhá ženám pochopit, jak jejich tělo funguje, proč se jim nedaří hubnout i když se snaží, a co s tím dělat.',
     image: null,
-  },
-];
-
-const PROBLEM_TAGS = [
-  'Nedostatek energie',
-  'Pochyby o sobě',
-  'Pocit zahlcení',
-  'Ztráta motivace',
-  'Soustředění',
-  'Každodenní starosti',
-  'Vyhoření v práci',
-  'Rozpory v rodině',
-];
-
-const TESTIMONIALS = [
-  {
-    name: 'Alena',
-    quote:
-      'Díky Mirku, že jsi mi dal možnost zúčastnit se tohoto programu. Cítím se mnohem klidnější a vyrovnanější. Dechová cvičení mi opravdu pomáhají zvládat stresové situace.',
-  },
-  {
-    name: 'Šárka',
-    quote:
-      'Skončila jsem školu a nastoupila do svojí první práce. Stres byl obrovský. Díky mentorovi jsem se naučila, jak si udržet klid i v náročných situacích.',
-  },
-  {
-    name: 'Eva',
-    quote:
-      'Myslela jsem si, že dechová cvičení jsou spíš pro mladé. Ale po měsíci s mentorem musím říct, že se cítím lépe než za posledních 10 let.',
   },
 ];
 
@@ -477,48 +449,19 @@ function BenefitSection({
 }) {
   return (
     <div className="w-full mt-8">
-      <div className="bg-[#f5f5f5] rounded-[12px] p-4 sm:p-5">
+      <div className="bg-[#f5f5f5] rounded-t-[16px] p-4 sm:p-5">
         <h3 className="text-[20px] font-bold text-[#292424]">{heading}</h3>
         <p className="text-[15px] font-normal text-[#292424] leading-[21px] mt-2">
           {text}
         </p>
       </div>
-      <div className="w-full rounded-[16px] overflow-hidden mt-3">
-        <Image
-          src={image}
-          alt={heading}
-          width={500}
-          height={472}
-          className="w-full h-auto"
-        />
-      </div>
-    </div>
-  );
-}
-
-function TestimonialCard({
-  name,
-  quote,
-}: {
-  name: string;
-  quote: string;
-}) {
-  return (
-    <div className="w-full border border-[#e4e4e4] rounded-[10px] p-5">
-      {/* Top row */}
-      <div className="flex items-center gap-3">
-        {/* Avatar placeholder */}
-        <div className="w-12 h-12 rounded-full bg-[#f5f5f5] shrink-0" />
-        <span className="text-[18px] font-bold text-[#292424]">{name}</span>
-      </div>
-      {/* Star rating */}
-      <div className="mt-1">
-        <StarRating />
-      </div>
-      {/* Quote */}
-      <p className="text-[16px] font-normal text-[#292424] leading-[22.4px] mt-3">
-        {quote}
-      </p>
+      <Image
+        src={image}
+        alt={heading}
+        width={500}
+        height={472}
+        className="w-full h-auto"
+      />
     </div>
   );
 }
@@ -847,31 +790,21 @@ export function UpsellPage({ onAddToPlan, onSkip }: UpsellPageProps) {
           <br />
           Tvoji mentoři jsou tu pro tebe.
         </h2>
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-6">
-          {PROBLEM_TAGS.map((tag) => (
-            <div
-              key={tag}
-              className="bg-white border border-[#e4e4e4] rounded-[10px] h-[45px] px-3 flex items-center gap-2"
-            >
-              {/* Icon placeholder */}
-              <div className="bg-[#e4e4e4] rounded-full w-5 h-5 shrink-0" />
-              <span className="text-[15px] font-normal text-[#292424]">
-                {tag}
-              </span>
-            </div>
-          ))}
+        <div className="mt-6">
+          <Image
+            src="/images/upsell-page/worries.png"
+            alt="Co máš právě na srdci?"
+            width={500}
+            height={400}
+            className="w-full h-auto"
+          />
         </div>
 
         {/* ----------------------------------------------------------------- */}
         {/* 14. Testimonials Section */}
         {/* ----------------------------------------------------------------- */}
-        <h2 className="text-[24px] sm:text-[28px] font-bold text-[#292424] text-center mt-12 sm:mt-16">
-          Recenze
-        </h2>
-        <div className="flex flex-col gap-4 mt-6">
-          {TESTIMONIALS.map((t) => (
-            <TestimonialCard key={t.name} name={t.name} quote={t.quote} />
-          ))}
+        <div className="mt-12 sm:mt-16 -mx-4">
+          <Testimonials />
         </div>
 
         {/* ----------------------------------------------------------------- */}
