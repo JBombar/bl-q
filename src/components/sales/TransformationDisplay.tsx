@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import type { StressStage } from '@/types/funnel.types';
 import {
   CURRENT_STATE,
@@ -15,6 +16,8 @@ export interface TransformationDisplayProps {
   targetScore: number;
   stageTitle: string;
   firstName: string;
+  beforeImageUrl: string;
+  afterImageUrl: string;
 }
 
 /**
@@ -177,6 +180,8 @@ export function TransformationDisplay({
   targetScore,
   stageTitle,
   firstName,
+  beforeImageUrl,
+  afterImageUrl,
 }: TransformationDisplayProps) {
   return (
     <div className="w-full font-figtree">
@@ -195,9 +200,15 @@ export function TransformationDisplay({
               <StatusBadge variant="today">{STATUS_BADGES.today}</StatusBadge>
             </div>
 
-            {/* Stressed Woman Image Placeholder */}
-            <div className="relative mb-2 sm:mb-4 aspect-[3/4] bg-[#F6F6F6] rounded-[10px] overflow-hidden flex items-center justify-center">
-              <span className="text-[#949BA1] text-[12px] sm:text-[14px]">Stressed image</span>
+            {/* Before: User's stress stage image */}
+            <div className="relative mb-2 sm:mb-4 aspect-[3/4] rounded-[10px] overflow-hidden">
+              <Image
+                src={beforeImageUrl}
+                alt="Current stress level"
+                fill
+                className="object-cover"
+                sizes="(max-width: 500px) 45vw, 225px"
+              />
             </div>
 
             {/* Stats Card - Before */}
@@ -231,9 +242,15 @@ export function TransformationDisplay({
               <StatusBadge variant="goal">{STATUS_BADGES.goal}</StatusBadge>
             </div>
 
-            {/* Calm Woman Image Placeholder */}
-            <div className="relative mb-2 sm:mb-4 aspect-[3/4] bg-[#E6EEEB] rounded-[10px] overflow-hidden flex items-center justify-center">
-              <span className="text-[#949BA1] text-[12px] sm:text-[14px]">Calm image</span>
+            {/* After: Goal state image (lowest stress) */}
+            <div className="relative mb-2 sm:mb-4 aspect-[3/4] rounded-[10px] overflow-hidden">
+              <Image
+                src={afterImageUrl}
+                alt="Goal stress level"
+                fill
+                className="object-cover"
+                sizes="(max-width: 500px) 45vw, 225px"
+              />
             </div>
 
             {/* Stats Card - After */}

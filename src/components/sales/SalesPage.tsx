@@ -139,6 +139,8 @@ export function SalesPage() {
           currentScore={projection.displayCurrentScore}
           targetScore={projection.displayTargetScore}
           stageTitle={insights.stageTitle}
+          beforeImageUrl={insights.stageImagePath || '/images/stress_calc/stres4.png'}
+          afterImageUrl="/images/stress_calc/stres1.png"
         />
       </div>
 
