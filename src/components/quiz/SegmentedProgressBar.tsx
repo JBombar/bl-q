@@ -4,10 +4,10 @@ import { memo } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SegmentedProgressBarProps {
-  /** Total number of segments (questions in category) */
+  /** Total questions in the current category */
   totalSegments: number;
 
-  /** Number of completed segments (1-indexed current position) */
+  /** 1-indexed current position within category */
   completedSegments: number;
 
   /** Whether to show the progress bar at all */
@@ -26,16 +26,18 @@ interface SegmentedProgressBarProps {
   className?: string;
 }
 
+const FIXED_SEGMENT_COUNT = 5;
+
 /**
- * SegmentedProgressBar - Category-scoped progress indicator
+ * SegmentedProgressBar - Percentage-based progress indicator
  *
- * Displays a series of horizontal segments where completed segments
- * are filled with the active color. Used to show progress within
- * a quiz category/section.
+ * Displays five fixed horizontal segments that fill proportionally
+ * based on the user's progress through a quiz category.
+ * Uses totalSegments and completedSegments to calculate fill percentage.
  *
  * @example
- * // 4 total questions, currently on question 2
- * <SegmentedProgressBar totalSegments={4} completedSegments={2} />
+ * // Category with 10 questions, currently on question 3 (30% fill)
+ * <SegmentedProgressBar totalSegments={10} completedSegments={3} />
  */
 export const SegmentedProgressBar = memo(function SegmentedProgressBar({
   totalSegments,
@@ -51,31 +53,42 @@ export const SegmentedProgressBar = memo(function SegmentedProgressBar({
     return null;
   }
 
+  const fillPercent = Math.min((completedSegments / totalSegments) * 100, 100);
+
   return (
     <div
-      className={cn('flex w-full', className)}
+      className={cn('relative flex w-full', className)}
       style={{ gap: `${gapSize}px` }}
       role="progressbar"
-      aria-valuenow={completedSegments}
-      aria-valuemin={1}
-      aria-valuemax={totalSegments}
-      aria-label={`Progress: ${completedSegments} of ${totalSegments}`}
+      aria-valuenow={Math.round(fillPercent)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={`Progress: ${completedSegments} of ${totalSegments} questions`}
     >
-      {Array.from({ length: totalSegments }, (_, index) => {
-        const segmentNumber = index + 1;
-        const isCompleted = segmentNumber <= completedSegments;
+      {/* Background: 5 fixed gray segments */}
+      {Array.from({ length: FIXED_SEGMENT_COUNT }, (_, index) => (
+        <div
+          key={`bg-${index}`}
+          className="h-1 md:h-1.5 rounded-full flex-1"
+          style={{ backgroundColor: inactiveColor }}
+          aria-hidden="true"
+        />
+      ))}
 
-        return (
-          <div
-            key={index}
-            className="h-1 md:h-1.5 rounded-full flex-1 transition-colors duration-200"
-            style={{
-              backgroundColor: isCompleted ? activeColor : inactiveColor,
-            }}
-            aria-hidden="true"
-          />
-        );
-      })}
+      {/* Overlay: single seamless fill bar clipped to fillPercent width */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          width: `${fillPercent}%`,
+          transition: 'width 300ms ease-out',
+        }}
+        aria-hidden="true"
+      >
+        <div
+          className="h-1 md:h-1.5 rounded-full w-full"
+          style={{ backgroundColor: activeColor }}
+        />
+      </div>
     </div>
   );
 });
