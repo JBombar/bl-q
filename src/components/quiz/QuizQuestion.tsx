@@ -24,7 +24,7 @@ export function QuizQuestion({ question, questionIndex, onComplete }: QuizQuesti
     case 'multiple_choice':
       return <MultiChoiceQuestion question={question} questionIndex={questionIndex} onComplete={onComplete} />;
 
-    case 'likert_1_4':
+    case 'likert_1_5':
       return <LikertScaleQuestion question={question} questionIndex={questionIndex} onComplete={onComplete} />;
 
     case 'age_select':

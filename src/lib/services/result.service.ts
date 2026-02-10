@@ -8,18 +8,12 @@ interface AnswerQueryResult {
   selected_option_ids: string[];
 }
 
-interface QuestionQueryResult {
-  id: string;
-  question_type: string;
-  weight: number | null;
-}
-
 // Question types that contribute to scoring
 const SCORING_QUESTION_TYPES = [
   'single_choice',
   'multiple_choice',
   'scale',
-  'likert_1_4'
+  'likert_1_5'
 ];
 
 interface CalculateResultParams {
@@ -75,30 +69,34 @@ export async function calculateResult(params: CalculateResultParams): Promise<Qu
 
   const answersData: AnswerQueryResult[] = answers || [];
 
-  // Get all scoring questions with their weights
+  // Get all scoring questions with their weights and options (for dynamic max score)
   const { data: questions, error: questionsError } = await supabase
     .from('quiz_questions')
-    .select('id, question_type, weight')
+    .select('id, question_type, weight, quiz_options(score_value)')
     .eq('quiz_id', quizId)
     .in('question_type', SCORING_QUESTION_TYPES);
 
   if (questionsError) throw new Error(`Failed to load questions: ${questionsError.message}`);
 
-  const questionsData: QuestionQueryResult[] = questions || [];
+  const questionsData = questions || [];
 
-  // Build question weight map
+  // Build question weight map AND calculate dynamic maxPossibleScore
   const questionWeights = new Map<string, number>();
-  questionsData.forEach(q => {
-    questionWeights.set(q.id, q.weight ?? 1.0);
-  });
-
-  // Calculate max possible score (assuming max 3 per question * weight)
-  const MAX_OPTION_SCORE = 3;
   let maxPossibleScore = 0;
   let totalWeightApplied = 0;
+
   questionsData.forEach(q => {
     const weight = q.weight ?? 1.0;
-    maxPossibleScore += MAX_OPTION_SCORE * weight;
+    questionWeights.set(q.id, weight);
+
+    // Find the maximum score_value among this question's options
+    const maxOptionScore = (q.quiz_options || []).reduce(
+      (max: number, opt: { score_value: number | null }) =>
+        Math.max(max, opt.score_value ?? 0),
+      0
+    );
+
+    maxPossibleScore += maxOptionScore * weight;
     totalWeightApplied += weight;
   });
 

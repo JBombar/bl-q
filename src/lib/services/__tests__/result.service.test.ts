@@ -58,8 +58,8 @@ describe('Result Calculation Service', () => {
         { question_id: 'q2', answer_score: 2, selected_option_ids: ['opt2'] },
       ];
       const mockQuestions = [
-        { id: 'q1', question_type: 'single_choice', weight: 1.0 },
-        { id: 'q2', question_type: 'single_choice', weight: 1.0 },
+        { id: 'q1', question_type: 'single_choice', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }] },
+        { id: 'q2', question_type: 'single_choice', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }] },
       ];
 
       createMockChain(mockAnswers, mockQuestions, {
@@ -106,8 +106,8 @@ describe('Result Calculation Service', () => {
         { question_id: 'q2', answer_score: 3, selected_option_ids: ['opt2'] },
       ];
       const mockQuestions = [
-        { id: 'q1', question_type: 'single_choice', weight: 2.0 },
-        { id: 'q2', question_type: 'single_choice', weight: 0.5 },
+        { id: 'q1', question_type: 'single_choice', weight: 2.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }] },
+        { id: 'q2', question_type: 'single_choice', weight: 0.5, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }] },
       ];
 
       createMockChain(mockAnswers, mockQuestions, {
@@ -140,7 +140,7 @@ describe('Result Calculation Service', () => {
     test('calculates high stress segment when score exceeds ranges', async () => {
       // High scores that exceed all ranges - should fall into highest segment
       const mockAnswers = Array(20).fill({ question_id: 'q1', answer_score: 3, selected_option_ids: ['opt'] });
-      const mockQuestions = Array(20).fill({ id: 'q1', question_type: 'single_choice', weight: 1.0 })
+      const mockQuestions = Array(20).fill({ id: 'q1', question_type: 'single_choice', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }] })
         .map((q, i) => ({ ...q, id: `q${i}` }));
 
       createMockChain(mockAnswers, mockQuestions, {
@@ -176,8 +176,8 @@ describe('Result Calculation Service', () => {
       ];
       // Only scoring questions returned
       const mockQuestions = [
-        { id: 'q1', question_type: 'single_choice', weight: 1.0 },
-        { id: 'q3', question_type: 'likert_1_4', weight: 1.0 },
+        { id: 'q1', question_type: 'single_choice', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }] },
+        { id: 'q3', question_type: 'likert_1_5', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }, { score_value: 4 }] },
       ];
 
       createMockChain(mockAnswers, mockQuestions, {
@@ -252,7 +252,7 @@ describe('Result Calculation Service', () => {
 
     test('falls back to first offer if result value not in mapping', async () => {
       const mockAnswers = [{ question_id: 'q1', answer_score: 1, selected_option_ids: ['opt1'] }];
-      const mockQuestions = [{ id: 'q1', question_type: 'single_choice', weight: 1.0 }];
+      const mockQuestions = [{ id: 'q1', question_type: 'single_choice', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }] }];
 
       createMockChain(mockAnswers, mockQuestions, {
         result_value: 'low',
@@ -273,6 +273,109 @@ describe('Result Calculation Service', () => {
       });
 
       expect(result.recommended_product_id).toBe('prod_default');
+    });
+
+    test('handles likert_1_5 questions with max score of 4', async () => {
+      // A single likert_1_5 question with options 0-4, answered with max score 4
+      // maxPossibleScore = 4 * 1.0 = 4, weightedScore = 4, normalized = 100
+      const mockAnswers = [
+        { question_id: 'q1', answer_score: 4, selected_option_ids: ['opt5'] },
+      ];
+      const mockQuestions = [
+        { id: 'q1', question_type: 'likert_1_5', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }, { score_value: 4 }] },
+      ];
+
+      createMockChain(mockAnswers, mockQuestions, {
+        id: 'result-likert5',
+        result_value: 'high',
+        result_score: 4,
+        result_label: 'High',
+        calculation_details: {
+          rawScore: 4,
+          weightedScore: 4,
+          scoringQuestionsAnswered: 1,
+          totalScoringQuestions: 1,
+          totalWeightApplied: 1,
+          maxPossibleScore: 4,
+          normalizedScore: 100,
+          version: '1.0.0',
+        },
+      });
+
+      const result = await calculateResult({
+        sessionId: 'session-likert5',
+        quizId: 'quiz-1',
+        resultType: 'segment',
+        resultConfig: {
+          segments: [
+            { id: 'low', label: 'Low', minScore: 0, maxScore: 1 },
+            { id: 'high', label: 'High', minScore: 2, maxScore: 10 },
+          ],
+        },
+        offerMapping: {},
+      });
+
+      // maxPossibleScore should be 4 (from options), not hardcoded 3
+      expect(result.result_score).toBe(4);
+      expect(result.calculation_details).toMatchObject({
+        maxPossibleScore: 4,
+        normalizedScore: 100,
+      });
+    });
+
+    test('calculates dynamic maxPossibleScore from option data', async () => {
+      // 3 questions with DIFFERENT max scores:
+      // q1: max option = 3, weight = 1.0 -> contributes 3
+      // q2: max option = 1, weight = 1.0 -> contributes 1
+      // q3: max option = 4, weight = 1.0 -> contributes 4
+      // maxPossibleScore = 3 + 1 + 4 = 8 (NOT 3 * 3 = 9)
+      const mockAnswers = [
+        { question_id: 'q1', answer_score: 3, selected_option_ids: ['opt1'] },
+        { question_id: 'q2', answer_score: 1, selected_option_ids: ['opt2'] },
+        { question_id: 'q3', answer_score: 4, selected_option_ids: ['opt3'] },
+      ];
+      const mockQuestions = [
+        { id: 'q1', question_type: 'single_choice', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }] },
+        { id: 'q2', question_type: 'single_choice', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }] },
+        { id: 'q3', question_type: 'likert_1_5', weight: 1.0, quiz_options: [{ score_value: 0 }, { score_value: 1 }, { score_value: 2 }, { score_value: 3 }, { score_value: 4 }] },
+      ];
+
+      createMockChain(mockAnswers, mockQuestions, {
+        id: 'result-dynamic',
+        result_value: 'high',
+        result_score: 8,
+        result_label: 'High',
+        calculation_details: {
+          rawScore: 8,
+          weightedScore: 8,
+          scoringQuestionsAnswered: 3,
+          totalScoringQuestions: 3,
+          totalWeightApplied: 3,
+          maxPossibleScore: 8,
+          normalizedScore: 100,
+          version: '1.0.0',
+        },
+      });
+
+      const result = await calculateResult({
+        sessionId: 'session-dynamic',
+        quizId: 'quiz-1',
+        resultType: 'segment',
+        resultConfig: {
+          segments: [
+            { id: 'low', label: 'Low', minScore: 0, maxScore: 3 },
+            { id: 'high', label: 'High', minScore: 4, maxScore: 20 },
+          ],
+        },
+        offerMapping: {},
+      });
+
+      // maxPossibleScore = 3 + 1 + 4 = 8, NOT count * hardcoded_max
+      expect(result.result_score).toBe(8);
+      expect(result.calculation_details).toMatchObject({
+        maxPossibleScore: 8,
+        normalizedScore: 100,
+      });
     });
   });
 

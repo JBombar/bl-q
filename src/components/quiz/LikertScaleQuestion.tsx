@@ -88,10 +88,13 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
           <p className="text-gray-700 mb-3 md:mb-4 text-xs md:text-sm lg:text-base italic">{question.question_subtext}</p>
         )}
 
-        <div className="grid grid-cols-4 gap-2 md:gap-2.5 mb-3 md:mb-4 max-w-md mx-auto">
+        <div className={`grid ${question.options.length === 5 ? 'grid-cols-5 gap-1.5 md:gap-2' : 'grid-cols-4 gap-2 md:gap-2.5'} mb-3 md:mb-4 max-w-md mx-auto`}>
           {question.options.map((option, index) => {
             const isSelected = selectedId === option.id;
             const scaleNumber = index + 1;
+            const fontClass = question.options.length === 5
+              ? 'text-lg md:text-xl lg:text-2xl'
+              : 'text-xl md:text-2xl lg:text-3xl';
 
             return (
               <motion.button
@@ -100,7 +103,7 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleSelect(option.id)}
                 className={`
-                  aspect-square rounded-lg md:rounded-xl flex items-center justify-center text-xl md:text-2xl lg:text-3xl font-bold transition-all
+                  aspect-square rounded-lg md:rounded-xl flex items-center justify-center ${fontClass} font-bold transition-all
                   ${isSelected
                     ? 'bg-[#F9A201] text-white shadow-lg scale-105'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

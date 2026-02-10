@@ -25,7 +25,7 @@ WITH quiz_insert AS (
       "segments": [
         {"id": "low", "label": "Nízký stres (0-20)", "description": "Tvůj stres je pod kontrolou.", "minScore": 0, "maxScore": 20},
         {"id": "medium", "label": "Střední stres (21-40)", "description": "Máš mírné známky stresu.", "minScore": 21, "maxScore": 40},
-        {"id": "high", "label": "Vysoký stres (41-60)", "description": "Tvůj stres potřebuje pozornost.", "minScore": 41, "maxScore": 60}
+        {"id": "high", "label": "Vysoký stres (41-70)", "description": "Tvůj stres potřebuje pozornost.", "minScore": 41, "maxScore": 70}
       ]
     }'::jsonb,
     '{
@@ -125,7 +125,7 @@ q03_opts AS (
 -- Screen 5: Q04 (likert scale with image)
 q04 AS (
   INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, section_label, question_text, question_subtext, scale_left_label, scale_right_label, image_url)
-  SELECT id, 5, 'likert_1_4', 'q04', 'Osobní profil', 'Souhlasíš s následujícím tvrzením?', '„Mám pocit, že stres mi brání v dosažení mého skutečného potenciálu."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím', '/quiz-assets/questions/q4_woman.webp'
+  SELECT id, 5, 'likert_1_5', 'q04', 'Osobní profil', 'Souhlasíš s následujícím tvrzením?', '„Mám pocit, že stres mi brání v dosažení mého skutečného potenciálu."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím', '/quiz-assets/questions/q4_woman.webp'
   FROM quiz_insert
   RETURNING id
 ),
@@ -135,6 +135,7 @@ q04_opts AS (
   UNION ALL SELECT id, 1, '2', 'scale_2', 1 FROM q04
   UNION ALL SELECT id, 2, '3', 'scale_3', 2 FROM q04
   UNION ALL SELECT id, 3, '4', 'scale_4', 3 FROM q04
+  UNION ALL SELECT id, 4, '5', 'scale_5', 4 FROM q04
   RETURNING id
 ),
 
@@ -333,7 +334,7 @@ e03 AS (
 -- Screen 18: Q14 (likert)
 q14 AS (
   INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, section_label, question_text, question_subtext, scale_left_label, scale_right_label)
-  SELECT id, 18, 'likert_1_4', 'q14', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Je pro mě těžké vyjadřovat své emoce."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
+  SELECT id, 18, 'likert_1_5', 'q14', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Je pro mě těžké vyjadřovat své emoce."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
   FROM quiz_insert
   RETURNING id
 ),
@@ -343,13 +344,14 @@ q14_opts AS (
   UNION ALL SELECT id, 1, '2', 'scale_2', 1 FROM q14
   UNION ALL SELECT id, 2, '3', 'scale_3', 2 FROM q14
   UNION ALL SELECT id, 3, '4', 'scale_4', 3 FROM q14
+  UNION ALL SELECT id, 4, '5', 'scale_5', 4 FROM q14
   RETURNING id
 ),
 
 -- Screen 19: Q15 (likert)
 q15 AS (
   INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, section_label, question_text, question_subtext, scale_left_label, scale_right_label)
-  SELECT id, 19, 'likert_1_4', 'q15', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Cítím se zahlcená množstvím úkolů, které musím zvládnout."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
+  SELECT id, 19, 'likert_1_5', 'q15', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Cítím se zahlcená množstvím úkolů, které musím zvládnout."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
   FROM quiz_insert
   RETURNING id
 ),
@@ -359,13 +361,14 @@ q15_opts AS (
   UNION ALL SELECT id, 1, '2', 'scale_2', 1 FROM q15
   UNION ALL SELECT id, 2, '3', 'scale_3', 2 FROM q15
   UNION ALL SELECT id, 3, '4', 'scale_4', 3 FROM q15
+  UNION ALL SELECT id, 4, '5', 'scale_5', 4 FROM q15
   RETURNING id
 ),
 
 -- Screen 20: Q16 (likert)
 q16 AS (
   INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, section_label, question_text, question_subtext, scale_left_label, scale_right_label)
-  SELECT id, 20, 'likert_1_4', 'q16', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Bývá pro mě těžké udělat těžké rozhodnutí."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
+  SELECT id, 20, 'likert_1_5', 'q16', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Bývá pro mě těžké udělat těžké rozhodnutí."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
   FROM quiz_insert
   RETURNING id
 ),
@@ -375,13 +378,14 @@ q16_opts AS (
   UNION ALL SELECT id, 1, '2', 'scale_2', 1 FROM q16
   UNION ALL SELECT id, 2, '3', 'scale_3', 2 FROM q16
   UNION ALL SELECT id, 3, '4', 'scale_4', 3 FROM q16
+  UNION ALL SELECT id, 4, '5', 'scale_5', 4 FROM q16
   RETURNING id
 ),
 
 -- Screen 21: Q17 (likert)
 q17 AS (
   INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, section_label, question_text, question_subtext, scale_left_label, scale_right_label)
-  SELECT id, 21, 'likert_1_4', 'q17', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Odskládám své ambice na stránku, že udělám chybu nebo selžu."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
+  SELECT id, 21, 'likert_1_5', 'q17', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Odskládám své ambice na stránku, že udělám chybu nebo selžu."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
   FROM quiz_insert
   RETURNING id
 ),
@@ -391,6 +395,7 @@ q17_opts AS (
   UNION ALL SELECT id, 1, '2', 'scale_2', 1 FROM q17
   UNION ALL SELECT id, 2, '3', 'scale_3', 2 FROM q17
   UNION ALL SELECT id, 3, '4', 'scale_4', 3 FROM q17
+  UNION ALL SELECT id, 4, '5', 'scale_5', 4 FROM q17
   RETURNING id
 ),
 
@@ -423,7 +428,7 @@ q18_opts AS (
 -- Screen 24: Q19 (likert)
 q19 AS (
   INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, section_label, question_text, question_subtext, scale_left_label, scale_right_label)
-  SELECT id, 24, 'likert_1_4', 'q19', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Při rozhovoru s novými lidmi se cítím nervózní."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
+  SELECT id, 24, 'likert_1_5', 'q19', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Při rozhovoru s novými lidmi se cítím nervózní."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
   FROM quiz_insert
   RETURNING id
 ),
@@ -433,13 +438,14 @@ q19_opts AS (
   UNION ALL SELECT id, 1, '2', 'scale_2', 1 FROM q19
   UNION ALL SELECT id, 2, '3', 'scale_3', 2 FROM q19
   UNION ALL SELECT id, 3, '4', 'scale_4', 3 FROM q19
+  UNION ALL SELECT id, 4, '5', 'scale_5', 4 FROM q19
   RETURNING id
 ),
 
 -- Screen 25: Q20 (likert) - using placeholder statement
 q20 AS (
   INSERT INTO quiz_questions (quiz_id, order_index, question_type, question_key, section_label, question_text, question_subtext, scale_left_label, scale_right_label)
-  SELECT id, 25, 'likert_1_4', 'q20', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Upřednostňuji potřeby ostatních na úkor svých vlastních."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
+  SELECT id, 25, 'likert_1_5', 'q20', 'Mentální vzorce', 'Souhlasíš s následujícím tvrzením?', '„Upřednostňuji potřeby ostatních na úkor svých vlastních."', 'Rozhodně nesouhlasím', 'Rozhodně souhlasím'
   FROM quiz_insert
   RETURNING id
 ),
@@ -449,6 +455,7 @@ q20_opts AS (
   UNION ALL SELECT id, 1, '2', 'scale_2', 1 FROM q20
   UNION ALL SELECT id, 2, '3', 'scale_3', 2 FROM q20
   UNION ALL SELECT id, 3, '4', 'scale_4', 3 FROM q20
+  UNION ALL SELECT id, 4, '5', 'scale_5', 4 FROM q20
   RETURNING id
 ),
 
