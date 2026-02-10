@@ -196,6 +196,10 @@ export function extractFunnelState(
     funnelState.microCommitments = userMetadata.microCommitments as FunnelMetadata['microCommitments'];
   }
 
+  if (typeof userMetadata.email === 'string') {
+    funnelState.email = userMetadata.email;
+  }
+
   if (typeof userMetadata.firstName === 'string') {
     funnelState.firstName = userMetadata.firstName;
   }

@@ -63,6 +63,10 @@ export async function POST(request: NextRequest) {
       } as FunnelMetadata['microCommitments'];
     }
 
+    if (data.email) {
+      metadataUpdate.email = data.email;
+    }
+
     if (data.firstName) {
       metadataUpdate.firstName = data.firstName;
     }

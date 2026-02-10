@@ -132,13 +132,25 @@ export async function findOrCreateCustomer(data: {
     },
   });
 
-  // Create customer in our database
+  // Create customer in our database (use upsert to handle concurrent requests)
   if (!customer) {
-    customer = await createCustomer({
-      email,
-      stripeCustomerId: stripeCustomer.id,
-      firstSessionId: data.sessionId,
-    });
+    const { data: upsertedCustomer, error: upsertError } = await supabase
+      .from('customers')
+      .upsert(
+        {
+          email,
+          stripe_customer_id: stripeCustomer.id,
+          first_session_id: data.sessionId || null,
+        },
+        { onConflict: 'email' }
+      )
+      .select()
+      .single();
+
+    if (upsertError || !upsertedCustomer) {
+      throw new Error(`Failed to create customer: ${upsertError?.message || 'No data returned'}`);
+    }
+    customer = upsertedCustomer;
   } else {
     // Update existing customer with Stripe ID
     await supabase
@@ -195,13 +207,39 @@ export async function createSubscription(
     sessionId,
   });
 
-  // 2. Create subscription schedule with two phases
+  // 2. Validate Stripe price IDs before making the API call
+  if (introStripePriceId.includes('placeholder')) {
+    throw new Error(
+      `Invalid introductory Stripe Price ID: "${introStripePriceId}". ` +
+      `Check STRIPE_PRICE_* env vars for plan "${planDuration}" tier "${pricingTier}".`
+    );
+  }
+  if (recurringStripePriceId.includes('placeholder')) {
+    throw new Error(
+      `Invalid recurring Stripe Price ID: "${recurringStripePriceId}". ` +
+      `Check STRIPE_PRICE_MONTHLY_995 / STRIPE_PRICE_QUARTERLY_2395 env vars.`
+    );
+  }
+
+  // 3. Create subscription schedule with two phases
   const phaseInterval = getPhaseInterval(planDuration);
+
+  console.log('[SubscriptionSchedule] Creating schedule:', {
+    customer: stripeCustomer.id,
+    introPrice: introStripePriceId,
+    recurringPrice: recurringStripePriceId,
+    phaseInterval,
+    pricingTier,
+    planDuration,
+  });
 
   const schedule = await stripe.subscriptionSchedules.create({
     customer: stripeCustomer.id,
     start_date: 'now',
     end_behavior: 'release',
+    default_settings: {
+      collection_method: 'charge_automatically',
+    },
     phases: [
       // Phase 1: Introductory price (1 billing cycle)
       {
@@ -232,21 +270,40 @@ export async function createSubscription(
     },
   });
 
-  // 3. Retrieve the subscription created by the schedule to get the client secret
+  // 4. Retrieve the subscription created by the schedule to get the client secret
   const stripeSubscriptionId = schedule.subscription as string;
+
+  console.log('[SubscriptionSchedule] Schedule created:', {
+    scheduleId: schedule.id,
+    subscriptionId: stripeSubscriptionId,
+    status: schedule.status,
+  });
+
   const stripeSubscription = await stripe.subscriptions.retrieve(
     stripeSubscriptionId,
     { expand: ['latest_invoice.payment_intent'] }
   );
 
+  console.log('[SubscriptionSchedule] Subscription status:', stripeSubscription.status);
+
   const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
   const paymentIntent = (invoice as any).payment_intent as Stripe.PaymentIntent;
 
   if (!paymentIntent?.client_secret) {
-    throw new Error('Failed to get payment intent client secret');
+    console.error('[SubscriptionSchedule] No client_secret found:', {
+      invoiceId: invoice?.id,
+      invoiceStatus: invoice?.status,
+      paymentIntentId: paymentIntent?.id,
+      paymentIntentStatus: paymentIntent?.status,
+    });
+    throw new Error(
+      `Failed to get payment intent client secret. ` +
+      `Invoice: ${invoice?.id} (${invoice?.status}), ` +
+      `PI: ${paymentIntent?.id} (${paymentIntent?.status})`
+    );
   }
 
-  // 4. Create subscription record in our database
+  // 5. Create subscription record in our database
   const subscriptionInsertData: SubscriptionInsert = {
     customer_id: customer.id,
     stripe_subscription_id: stripeSubscription.id,
@@ -269,7 +326,7 @@ export async function createSubscription(
     throw new Error(`Failed to create subscription record: ${subscriptionError?.message || 'No data returned'}`);
   }
 
-  // 5. Create initial order record linked to subscription
+  // 6. Create initial order record linked to subscription
   const orderNumber = await generateOrderNumber();
   const orderInsertData: OrderInsert = {
     session_id: sessionId || '',

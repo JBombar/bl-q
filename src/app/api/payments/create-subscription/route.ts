@@ -32,7 +32,7 @@ export const dynamic = 'force-dynamic';
 const createSubscriptionSchema = z.object({
   planId: z.string().min(1, 'planId is required'),
   pricingTier: z.enum(['FIRST_DISCOUNT', 'MAX_DISCOUNT', 'FULL_PRICE']),
-  email: z.string().email('Valid email is required'),
+  email: z.string().email('Valid email is required').optional().or(z.literal('')),
 });
 
 export async function POST(request: NextRequest) {
@@ -42,6 +42,11 @@ export async function POST(request: NextRequest) {
 
     // 2. Validate request body
     const body = await request.json().catch(() => ({}));
+    console.log('[CreateSubscription] Request body:', {
+      planId: body.planId,
+      pricingTier: body.pricingTier,
+      email: body.email ? `${body.email.substring(0, 3)}...` : 'MISSING',
+    });
     const validationResult = createSubscriptionSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -54,9 +59,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { planId, pricingTier, email } = validationResult.data;
+    const { planId, pricingTier, email: bodyEmail } = validationResult.data;
 
-    // 3. Look up plan details from config
+    // 3. Resolve email: prefer request body, fall back to session email
+    const email = bodyEmail || session?.email;
+    if (!email) {
+      return NextResponse.json(
+        { error: 'Email is required. Please provide your email address.' },
+        { status: 400 }
+      );
+    }
+
+    // 4. Look up plan details from config
     const plan = getPlanById(planId);
     if (!plan) {
       return NextResponse.json(
@@ -143,7 +157,12 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error('Create subscription error:', error);
+    console.error('[CreateSubscription] Error:', {
+      type: error.type || 'unknown',
+      message: error.message,
+      code: error.code,
+      param: error.param,
+    });
 
     // Handle specific Stripe errors
     if (error.type === 'StripeCardError') {
@@ -155,7 +174,15 @@ export async function POST(request: NextRequest) {
 
     if (error.type === 'StripeInvalidRequestError') {
       return NextResponse.json(
-        { error: 'Invalid subscription configuration' },
+        { error: `Stripe configuration error: ${error.message}` },
+        { status: 400 }
+      );
+    }
+
+    // Handle price ID validation errors (thrown by our code)
+    if (error.message?.includes('placeholder')) {
+      return NextResponse.json(
+        { error: error.message },
         { status: 400 }
       );
     }

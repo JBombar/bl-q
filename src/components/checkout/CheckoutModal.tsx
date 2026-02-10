@@ -37,33 +37,43 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
     onCancel();
   }, [onCancel]);
 
-  // Create subscription on mount
+  // Create subscription on mount (with StrictMode double-fire guard)
   useEffect(() => {
+    let cancelled = false;
+
     async function createSubscription() {
       try {
         setIsLoading(true);
         setError(null);
 
+        const requestBody = {
+          planId: plan.id,
+          pricingTier,
+          email,
+        };
+        console.log('[CheckoutModal] Creating subscription:', requestBody);
+
         const response = await fetch('/api/payments/create-subscription', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            planId: plan.id,
-            pricingTier,
-            email,
-          }),
+          body: JSON.stringify(requestBody),
         });
+
+        if (cancelled) return;
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || 'Failed to create subscription');
+          console.error('[CheckoutModal] API error:', response.status, errorData);
+          throw new Error(errorData.error || `Failed to create subscription (${response.status})`);
         }
 
         const data = await response.json();
+        if (cancelled) return;
         setClientSecret(data.clientSecret);
         setSubscriptionId(data.subscriptionId);
         setIsLoading(false);
       } catch (err: any) {
+        if (cancelled) return;
         console.error('Subscription creation error:', err);
         setError(err.message || 'Failed to initialize payment. Please try again.');
         setIsLoading(false);
@@ -71,6 +81,7 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
     }
 
     createSubscription();
+    return () => { cancelled = true; };
   }, [plan.id, pricingTier, email]);
 
   // Close modal on ESC key

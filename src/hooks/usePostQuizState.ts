@@ -191,7 +191,7 @@ export const usePostQuizState = create<PostQuizState>()(
       const data = await response.json();
 
       set(state => ({
-        funnelData: { ...state.funnelData, ...data.funnelState },
+        funnelData: { ...state.funnelData, ...data.funnelState, email },
         isSaving: false,
       }));
 
