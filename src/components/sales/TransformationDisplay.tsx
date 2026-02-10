@@ -206,7 +206,7 @@ export function TransformationDisplay({
                 src={beforeImageUrl}
                 alt="Current stress level"
                 fill
-                className="object-cover"
+                className="object-contain"
                 sizes="(max-width: 500px) 45vw, 225px"
               />
             </div>
@@ -248,7 +248,7 @@ export function TransformationDisplay({
                 src={afterImageUrl}
                 alt="Goal stress level"
                 fill
-                className="object-cover"
+                className="object-contain"
                 sizes="(max-width: 500px) 45vw, 225px"
               />
             </div>
