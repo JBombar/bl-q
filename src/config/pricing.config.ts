@@ -23,7 +23,7 @@ export interface PlanPricing {
   originalPriceCents: number | null; // Crossed-out price (null = no discount shown)
   perDayPriceCents: number;         // Per-day price for display
   recurringPriceCents: number;      // Full recurring price after first period
-  discountAmountCents: number;      // Discount applied to first invoice
+  introStripePriceId: string;       // Stripe Price ID for Phase 1 (introductory)
 }
 
 export interface SubscriptionPlan {
@@ -32,7 +32,7 @@ export interface SubscriptionPlan {
   name: string;                     // Display name
   durationDays: number;             // Duration in days (for calculations)
   billingInterval: BillingInterval;
-  stripePriceId: string;            // Stripe recurring price ID
+  recurringStripePriceId: string;   // Stripe recurring price ID (Phase 2)
   isRecommended: boolean;
   badge?: string;
   features: string[];
@@ -52,8 +52,28 @@ export type PlanWithPricing = SubscriptionPlan & PlanPricing;
 // ============================================================================
 
 export const STRIPE_PRICES = {
-  MONTHLY: process.env.STRIPE_PRICE_MONTHLY_995 || 'price_monthly_placeholder',
-  QUARTERLY: process.env.STRIPE_PRICE_QUARTERLY_2395 || 'price_quarterly_placeholder',
+  // Phase 2: Standard recurring prices
+  RECURRING_MONTHLY: process.env.STRIPE_PRICE_MONTHLY_995 || 'price_monthly_placeholder',
+  RECURRING_QUARTERLY: process.env.STRIPE_PRICE_QUARTERLY_2395 || 'price_quarterly_placeholder',
+
+  // Phase 1: Introductory prices (per plan x tier)
+  INTRO: {
+    '7_days': {
+      FIRST_DISCOUNT: process.env.STRIPE_PRICE_7D_FIRST || 'price_7d_first_placeholder',
+      MAX_DISCOUNT:   process.env.STRIPE_PRICE_7D_MAX   || 'price_7d_max_placeholder',
+      FULL_PRICE:     process.env.STRIPE_PRICE_7D_FULL  || 'price_7d_full_placeholder',
+    },
+    '1_month': {
+      FIRST_DISCOUNT: process.env.STRIPE_PRICE_1M_FIRST || 'price_1m_first_placeholder',
+      MAX_DISCOUNT:   process.env.STRIPE_PRICE_1M_MAX   || 'price_1m_max_placeholder',
+      FULL_PRICE:     process.env.STRIPE_PRICE_1M_FULL  || 'price_1m_full_placeholder',
+    },
+    '3_months': {
+      FIRST_DISCOUNT: process.env.STRIPE_PRICE_3M_FIRST || 'price_3m_first_placeholder',
+      MAX_DISCOUNT:   process.env.STRIPE_PRICE_3M_MAX   || 'price_3m_max_placeholder',
+      FULL_PRICE:     process.env.STRIPE_PRICE_3M_FULL  || 'price_3m_full_placeholder',
+    },
+  },
 } as const;
 
 // ============================================================================
@@ -67,7 +87,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     name: '7 dni',
     durationDays: 7,
     billingInterval: 'month',
-    stripePriceId: STRIPE_PRICES.MONTHLY,
+    recurringStripePriceId: STRIPE_PRICES.RECURRING_MONTHLY,
     isRecommended: false,
     features: [
       'Plny pristup k programu',
@@ -81,7 +101,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     name: '1 mesic',
     durationDays: 30,
     billingInterval: 'month',
-    stripePriceId: STRIPE_PRICES.MONTHLY,
+    recurringStripePriceId: STRIPE_PRICES.RECURRING_MONTHLY,
     isRecommended: true,
     badge: 'Nejoblibenejsi volba',
     features: [
@@ -97,7 +117,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     name: '3 mesice',
     durationDays: 90,
     billingInterval: 'quarter',
-    stripePriceId: STRIPE_PRICES.QUARTERLY,
+    recurringStripePriceId: STRIPE_PRICES.RECURRING_QUARTERLY,
     isRecommended: false,
     features: [
       'Vse z mesicniho planu',
@@ -120,21 +140,21 @@ export const TIERED_PRICING: Record<PlanDuration, TieredPricing> = {
       originalPriceCents: 49500,     // 495 Kc (crossed out)
       perDayPriceCents: 4900,        // 49 Kc/day
       recurringPriceCents: 99500,    // 995 Kc/month recurring
-      discountAmountCents: 65000,    // 995 - 345 = 650 Kc discount
+      introStripePriceId: STRIPE_PRICES.INTRO['7_days'].FIRST_DISCOUNT,
     },
     MAX_DISCOUNT: {
       initialPriceCents: 32500,      // 325 Kc
       originalPriceCents: 49500,     // 495 Kc (crossed out)
       perDayPriceCents: 4600,        // 46 Kc/day
       recurringPriceCents: 99500,    // 995 Kc/month recurring
-      discountAmountCents: 67000,    // 995 - 325 = 670 Kc discount
+      introStripePriceId: STRIPE_PRICES.INTRO['7_days'].MAX_DISCOUNT,
     },
     FULL_PRICE: {
       initialPriceCents: 49500,      // 495 Kc
       originalPriceCents: null,      // No crossed-out price
       perDayPriceCents: 7000,        // 70 Kc/day
       recurringPriceCents: 99500,    // 995 Kc/month recurring
-      discountAmountCents: 50000,    // 995 - 495 = 500 Kc discount
+      introStripePriceId: STRIPE_PRICES.INTRO['7_days'].FULL_PRICE,
     },
   },
   '1_month': {
@@ -143,21 +163,21 @@ export const TIERED_PRICING: Record<PlanDuration, TieredPricing> = {
       originalPriceCents: 99500,     // 995 Kc (crossed out)
       perDayPriceCents: 2300,        // 23 Kc/day
       recurringPriceCents: 99500,    // 995 Kc/month recurring
-      discountAmountCents: 30000,    // 995 - 695 = 300 Kc discount
+      introStripePriceId: STRIPE_PRICES.INTRO['1_month'].FIRST_DISCOUNT,
     },
     MAX_DISCOUNT: {
       initialPriceCents: 64500,      // 645 Kc
       originalPriceCents: 99500,     // 995 Kc (crossed out)
       perDayPriceCents: 2100,        // 21 Kc/day
       recurringPriceCents: 99500,    // 995 Kc/month recurring
-      discountAmountCents: 35000,    // 995 - 645 = 350 Kc discount
+      introStripePriceId: STRIPE_PRICES.INTRO['1_month'].MAX_DISCOUNT,
     },
     FULL_PRICE: {
       initialPriceCents: 99500,      // 995 Kc
       originalPriceCents: null,      // No crossed-out price
       perDayPriceCents: 3300,        // 33 Kc/day
       recurringPriceCents: 99500,    // 995 Kc/month recurring
-      discountAmountCents: 0,        // No discount
+      introStripePriceId: STRIPE_PRICES.INTRO['1_month'].FULL_PRICE,
     },
   },
   '3_months': {
@@ -166,21 +186,21 @@ export const TIERED_PRICING: Record<PlanDuration, TieredPricing> = {
       originalPriceCents: 239500,    // 2,395 Kc (crossed out)
       perDayPriceCents: 1800,        // 18 Kc/day
       recurringPriceCents: 239500,   // 2,395 Kc/3 months recurring
-      discountAmountCents: 70000,    // 2395 - 1695 = 700 Kc discount
+      introStripePriceId: STRIPE_PRICES.INTRO['3_months'].FIRST_DISCOUNT,
     },
     MAX_DISCOUNT: {
       initialPriceCents: 159500,     // 1,595 Kc
       originalPriceCents: 239500,    // 2,395 Kc (crossed out)
       perDayPriceCents: 1700,        // 17 Kc/day
       recurringPriceCents: 239500,   // 2,395 Kc/3 months recurring
-      discountAmountCents: 80000,    // 2395 - 1595 = 800 Kc discount
+      introStripePriceId: STRIPE_PRICES.INTRO['3_months'].MAX_DISCOUNT,
     },
     FULL_PRICE: {
       initialPriceCents: 239500,     // 2,395 Kc
       originalPriceCents: null,      // No crossed-out price
       perDayPriceCents: 2600,        // 26 Kc/day
       recurringPriceCents: 239500,   // 2,395 Kc/3 months recurring
-      discountAmountCents: 0,        // No discount
+      introStripePriceId: STRIPE_PRICES.INTRO['3_months'].FULL_PRICE,
     },
   },
 };
@@ -229,6 +249,16 @@ export function getAllPlansWithPricing(tier: PricingTier): PlanWithPricing[] {
     ...plan,
     ...TIERED_PRICING[plan.duration][tier],
   }));
+}
+
+/**
+ * Get introductory Stripe Price ID for a given plan duration and pricing tier
+ */
+export function getIntroStripePriceId(
+  duration: PlanDuration,
+  tier: PricingTier
+): string {
+  return STRIPE_PRICES.INTRO[duration][tier];
 }
 
 /**

@@ -15,7 +15,7 @@ import type {
   SubscriptionUpdate,
   OrderInsert,
 } from '@/types';
-import type { PricingTier, BillingInterval } from '@/config/pricing.config';
+import type { PricingTier, BillingInterval, PlanDuration } from '@/config/pricing.config';
 
 // ============================================================================
 // TYPES
@@ -24,14 +24,15 @@ import type { PricingTier, BillingInterval } from '@/config/pricing.config';
 export interface CreateSubscriptionParams {
   email: string;
   sessionId?: string;
-  stripePriceId: string;
+  introStripePriceId: string;        // Phase 1: introductory price
+  recurringStripePriceId: string;    // Phase 2: standard recurring price
   billingInterval: BillingInterval;
-  discountAmountCents: number;       // One-time discount for first invoice
   initialAmountCents: number;        // What customer pays on first invoice
   recurringAmountCents: number;      // Full recurring price
   productName: string;
   pricingTier: PricingTier;          // For metadata tracking
   resultId?: string;
+  planDuration: PlanDuration;        // Needed for phase interval mapping
 }
 
 export interface CreateSubscriptionResult {
@@ -155,7 +156,21 @@ export async function findOrCreateCustomer(data: {
 // ============================================================================
 
 /**
- * Create a new subscription with tier-specific introductory discount
+ * Map plan duration to the Stripe phase duration object.
+ * Each phase lasts exactly one billing cycle for that plan.
+ */
+function getPhaseInterval(planDuration: PlanDuration): { interval: 'month'; interval_count: number } {
+  switch (planDuration) {
+    case '7_days':   return { interval: 'month', interval_count: 1 };
+    case '1_month':  return { interval: 'month', interval_count: 1 };
+    case '3_months': return { interval: 'month', interval_count: 3 };
+  }
+}
+
+/**
+ * Create a new subscription using Stripe Subscription Schedules.
+ * Phase 1: Introductory price (1 iteration)
+ * Phase 2: Standard recurring price (1 iteration, then released as standalone sub)
  */
 export async function createSubscription(
   params: CreateSubscriptionParams
@@ -163,14 +178,15 @@ export async function createSubscription(
   const {
     email,
     sessionId,
-    stripePriceId,
+    introStripePriceId,
+    recurringStripePriceId,
     billingInterval,
-    discountAmountCents,
     initialAmountCents,
     recurringAmountCents,
     productName,
     pricingTier,
     resultId,
+    planDuration,
   } = params;
 
   // 1. Find or create customer
@@ -179,15 +195,32 @@ export async function createSubscription(
     sessionId,
   });
 
-  // 2. Create subscription in Stripe
-  const subscriptionParams: Stripe.SubscriptionCreateParams = {
+  // 2. Create subscription schedule with two phases
+  const phaseInterval = getPhaseInterval(planDuration);
+
+  const schedule = await stripe.subscriptionSchedules.create({
     customer: stripeCustomer.id,
-    items: [{ price: stripePriceId }],
-    payment_behavior: 'default_incomplete',
-    payment_settings: {
-      save_default_payment_method: 'on_subscription',
-    },
-    expand: ['latest_invoice.payment_intent'],
+    start_date: 'now',
+    end_behavior: 'release',
+    phases: [
+      // Phase 1: Introductory price (1 billing cycle)
+      {
+        items: [{ price: introStripePriceId, quantity: 1 }],
+        duration: phaseInterval,
+        metadata: {
+          phase: 'introductory',
+          pricing_tier: pricingTier,
+        },
+      },
+      // Phase 2: Standard recurring price (1 cycle, then released as standalone)
+      {
+        items: [{ price: recurringStripePriceId, quantity: 1 }],
+        duration: phaseInterval,
+        metadata: {
+          phase: 'recurring',
+        },
+      },
+    ],
     metadata: {
       customer_id: customer.id,
       session_id: sessionId || '',
@@ -197,28 +230,15 @@ export async function createSubscription(
       initial_amount_cents: String(initialAmountCents),
       recurring_amount_cents: String(recurringAmountCents),
     },
-  };
+  });
 
-  // Apply introductory discount as invoice item if specified
-  if (discountAmountCents && discountAmountCents > 0) {
-    // Add a negative invoice item to apply the discount to the first invoice
-    subscriptionParams.add_invoice_items = [
-      {
-        price_data: {
-          currency: 'czk',
-          // @ts-expect-error: product_data is supported by API but missing in types
-          product_data: {
-            name: 'Uvodni sleva',
-          },
-          unit_amount: -discountAmountCents, // Negative amount for discount
-        },
-      },
-    ];
-  }
+  // 3. Retrieve the subscription created by the schedule to get the client secret
+  const stripeSubscriptionId = schedule.subscription as string;
+  const stripeSubscription = await stripe.subscriptions.retrieve(
+    stripeSubscriptionId,
+    { expand: ['latest_invoice.payment_intent'] }
+  );
 
-  const stripeSubscription = await stripe.subscriptions.create(subscriptionParams);
-
-  // 3. Extract client secret from the payment intent
   const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
   const paymentIntent = (invoice as any).payment_intent as Stripe.PaymentIntent;
 
@@ -231,7 +251,7 @@ export async function createSubscription(
     customer_id: customer.id,
     stripe_subscription_id: stripeSubscription.id,
     status: stripeSubscription.status,
-    stripe_price_id: stripePriceId,
+    stripe_price_id: introStripePriceId,
     billing_interval: billingInterval,
     current_period_start: new Date((stripeSubscription as any).current_period_start * 1000).toISOString(),
     current_period_end: new Date((stripeSubscription as any).current_period_end * 1000).toISOString(),
@@ -245,7 +265,6 @@ export async function createSubscription(
     .single();
 
   if (subscriptionError || !subscription) {
-    // Log error but don't fail - subscription exists in Stripe
     console.error('Failed to create subscription record:', subscriptionError);
     throw new Error(`Failed to create subscription record: ${subscriptionError?.message || 'No data returned'}`);
   }
@@ -253,12 +272,12 @@ export async function createSubscription(
   // 5. Create initial order record linked to subscription
   const orderNumber = await generateOrderNumber();
   const orderInsertData: OrderInsert = {
-    session_id: sessionId || '', // Required field - use empty string if no session
+    session_id: sessionId || '',
     result_id: resultId || null,
     subscription_id: subscription.id,
     order_number: orderNumber,
     status: 'pending',
-    product_id: stripePriceId,
+    product_id: introStripePriceId,
     product_name: productName,
     amount_cents: invoice.amount_due,
     currency: 'czk',

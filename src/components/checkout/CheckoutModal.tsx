@@ -93,8 +93,10 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
     };
   }, []);
 
-  // Calculate savings
-  const savingsAmount = plan.discountAmountCents;
+  // Calculate savings from original vs initial price
+  const savingsAmount = plan.originalPriceCents
+    ? plan.originalPriceCents - plan.initialPriceCents
+    : 0;
   const savingsPercent = plan.originalPriceCents
     ? Math.round((savingsAmount / plan.originalPriceCents) * 100)
     : 0;

@@ -17,6 +17,7 @@ import { createSubscription } from '@/lib/stripe/subscription.service';
 import {
   getPlanById,
   getPlanPricing,
+  getIntroStripePriceId,
   isValidPlanId,
   type PricingTier,
 } from '@/config/pricing.config';
@@ -85,18 +86,19 @@ export async function POST(request: NextRequest) {
       resultId = result?.id;
     }
 
-    // 6. Create subscription with tier-specific discount
+    // 6. Create subscription schedule with two-phase pricing
     const subscriptionResult = await createSubscription({
       email,
       sessionId: session?.id,
-      stripePriceId: plan.stripePriceId,
+      introStripePriceId: pricing.introStripePriceId,
+      recurringStripePriceId: plan.recurringStripePriceId,
       billingInterval: plan.billingInterval,
-      discountAmountCents: pricing.discountAmountCents,
       initialAmountCents: pricing.initialPriceCents,
       recurringAmountCents: pricing.recurringPriceCents,
       productName: plan.name,
       pricingTier: pricingTier as PricingTier,
       resultId,
+      planDuration: plan.duration,
     });
 
     // 7. Update session email if provided and session exists
@@ -117,9 +119,9 @@ export async function POST(request: NextRequest) {
         planName: plan.name,
         pricingTier,
         billingInterval: plan.billingInterval,
+        planDuration: plan.duration,
         initialPriceCents: pricing.initialPriceCents,
         recurringPriceCents: pricing.recurringPriceCents,
-        discountCents: pricing.discountAmountCents,
         stripeSubscriptionId: subscriptionResult.stripeSubscriptionId,
         customerId: subscriptionResult.customerId,
       },

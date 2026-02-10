@@ -72,6 +72,15 @@ export async function POST(request: NextRequest) {
         await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
 
+      // Subscription Schedule lifecycle events
+      case 'subscription_schedule.completed':
+        console.log('Subscription schedule completed:', (event.data.object as any).id);
+        break;
+
+      case 'subscription_schedule.canceled':
+        console.log('Subscription schedule canceled:', (event.data.object as any).id);
+        break;
+
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
