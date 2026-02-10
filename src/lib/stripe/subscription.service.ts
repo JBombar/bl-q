@@ -169,9 +169,9 @@ export async function findOrCreateCustomer(data: {
 
 /**
  * Map plan duration to the Stripe phase duration object.
- * Each phase lasts exactly one billing cycle for that plan.
+ * Used when migrating a subscription to a schedule after first payment.
  */
-function getPhaseInterval(planDuration: PlanDuration): { interval: 'month'; interval_count: number } {
+export function getPhaseInterval(planDuration: PlanDuration): { interval: 'month'; interval_count: number } {
   switch (planDuration) {
     case '7_days':   return { interval: 'month', interval_count: 1 };
     case '1_month':  return { interval: 'month', interval_count: 1 };
@@ -180,9 +180,25 @@ function getPhaseInterval(planDuration: PlanDuration): { interval: 'month'; inte
 }
 
 /**
- * Create a new subscription using Stripe Subscription Schedules.
- * Phase 1: Introductory price (1 iteration)
- * Phase 2: Standard recurring price (1 iteration, then released as standalone sub)
+ * Extract PaymentIntent ID from an invoice's payments list (new Stripe SDK structure).
+ */
+export function getPaymentIntentIdFromInvoice(invoice: Stripe.Invoice): string | null {
+  const payments = invoice.payments as Stripe.ApiList<Stripe.InvoicePayment> | undefined;
+  const payment = payments?.data?.[0]?.payment;
+  if (payment?.type !== 'payment_intent' || !payment.payment_intent) return null;
+  return typeof payment.payment_intent === 'string' ? payment.payment_intent : payment.payment_intent.id;
+}
+
+/**
+ * Create a new subscription using stripe.subscriptions.create() with
+ * payment_behavior: 'default_incomplete'.
+ *
+ * This creates the subscription in 'incomplete' status and returns a
+ * confirmation_secret.client_secret for the frontend Payment Element.
+ *
+ * After the first invoice is paid, a webhook handler migrates the subscription
+ * to a Subscription Schedule to transition from the intro price to the
+ * recurring price.
  */
 export async function createSubscription(
   params: CreateSubscriptionParams
@@ -221,97 +237,84 @@ export async function createSubscription(
     );
   }
 
-  // 3. Create subscription schedule with two phases
-  const phaseInterval = getPhaseInterval(planDuration);
-
-  console.log('[SubscriptionSchedule] Creating schedule:', {
+  // 3. Create subscription with payment_behavior: 'default_incomplete'
+  //    This creates an incomplete subscription with a confirmation_secret
+  //    that the frontend uses for the Payment Element.
+  console.log('[Subscription] Creating subscription:', {
     customer: stripeCustomer.id,
     introPrice: introStripePriceId,
     recurringPrice: recurringStripePriceId,
-    phaseInterval,
     pricingTier,
     planDuration,
   });
 
-  const schedule = await stripe.subscriptionSchedules.create({
+  const stripeSubscription = await stripe.subscriptions.create({
     customer: stripeCustomer.id,
-    start_date: 'now',
-    end_behavior: 'release',
-    default_settings: {
-      collection_method: 'charge_automatically',
-    },
-    phases: [
-      // Phase 1: Introductory price (1 billing cycle)
-      {
-        items: [{ price: introStripePriceId, quantity: 1 }],
-        duration: phaseInterval,
-        metadata: {
-          phase: 'introductory',
-          pricing_tier: pricingTier,
-        },
-      },
-      // Phase 2: Standard recurring price (1 cycle, then released as standalone)
-      {
-        items: [{ price: recurringStripePriceId, quantity: 1 }],
-        duration: phaseInterval,
-        metadata: {
-          phase: 'recurring',
-        },
-      },
-    ],
+    items: [{ price: introStripePriceId }],
+    payment_behavior: 'default_incomplete',
+    payment_settings: { save_default_payment_method: 'on_subscription' },
+    expand: ['latest_invoice.confirmation_secret', 'latest_invoice.payments'],
     metadata: {
       customer_id: customer.id,
       session_id: sessionId || '',
       result_id: resultId || '',
       product_name: productName,
       pricing_tier: pricingTier,
+      plan_duration: planDuration,
+      recurring_stripe_price_id: recurringStripePriceId,
       initial_amount_cents: String(initialAmountCents),
       recurring_amount_cents: String(recurringAmountCents),
     },
   });
 
-  // 4. Retrieve the subscription created by the schedule to get the client secret
-  const stripeSubscriptionId = schedule.subscription as string;
-
-  console.log('[SubscriptionSchedule] Schedule created:', {
-    scheduleId: schedule.id,
-    subscriptionId: stripeSubscriptionId,
-    status: schedule.status,
+  console.log('[Subscription] Created:', {
+    subscriptionId: stripeSubscription.id,
+    status: stripeSubscription.status,
   });
 
-  const stripeSubscription = await stripe.subscriptions.retrieve(
-    stripeSubscriptionId,
-    { expand: ['latest_invoice.payment_intent'] }
-  );
-
-  console.log('[SubscriptionSchedule] Subscription status:', stripeSubscription.status);
-
+  // 4. Extract client_secret from the invoice's confirmation_secret
   const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
-  const paymentIntent = (invoice as any).payment_intent as Stripe.PaymentIntent;
 
-  if (!paymentIntent?.client_secret) {
-    console.error('[SubscriptionSchedule] No client_secret found:', {
+  console.log('[Subscription] Invoice:', {
+    invoiceId: invoice?.id,
+    status: invoice?.status,
+    hasConfirmationSecret: !!invoice?.confirmation_secret,
+  });
+
+  const clientSecret = invoice?.confirmation_secret?.client_secret;
+
+  if (!clientSecret) {
+    console.error('[Subscription] No client_secret on invoice:', {
       invoiceId: invoice?.id,
       invoiceStatus: invoice?.status,
-      paymentIntentId: paymentIntent?.id,
-      paymentIntentStatus: paymentIntent?.status,
+      confirmationSecret: invoice?.confirmation_secret,
     });
     throw new Error(
-      `Failed to get payment intent client secret. ` +
-      `Invoice: ${invoice?.id} (${invoice?.status}), ` +
-      `PI: ${paymentIntent?.id} (${paymentIntent?.status})`
+      `Failed to get client_secret. Invoice: ${invoice?.id} (${invoice?.status})`
     );
   }
 
-  // 5. Create subscription record in our database
+  // Extract PaymentIntent ID from invoice payments for order tracking
+  const paymentIntentId = invoice ? getPaymentIntentIdFromInvoice(invoice) : null;
+
+  // 5. Get current period from subscription items (new SDK: period is on items, not subscription)
+  const firstItem = stripeSubscription.items.data[0];
+  const periodStart = firstItem?.current_period_start
+    ? new Date(firstItem.current_period_start * 1000).toISOString()
+    : new Date().toISOString();
+  const periodEnd = firstItem?.current_period_end
+    ? new Date(firstItem.current_period_end * 1000).toISOString()
+    : new Date().toISOString();
+
+  // 6. Create subscription record in our database
   const subscriptionInsertData: SubscriptionInsert = {
     customer_id: customer.id,
     stripe_subscription_id: stripeSubscription.id,
     status: stripeSubscription.status,
     stripe_price_id: introStripePriceId,
     billing_interval: billingInterval,
-    current_period_start: new Date((stripeSubscription as any).current_period_start * 1000).toISOString(),
-    current_period_end: new Date((stripeSubscription as any).current_period_end * 1000).toISOString(),
+    current_period_start: periodStart,
+    current_period_end: periodEnd,
     cancel_at_period_end: stripeSubscription.cancel_at_period_end,
   };
 
@@ -326,7 +329,7 @@ export async function createSubscription(
     throw new Error(`Failed to create subscription record: ${subscriptionError?.message || 'No data returned'}`);
   }
 
-  // 6. Create initial order record linked to subscription
+  // 7. Create initial order record linked to subscription
   const orderNumber = await generateOrderNumber();
   const orderInsertData: OrderInsert = {
     session_id: sessionId || '',
@@ -338,7 +341,7 @@ export async function createSubscription(
     product_name: productName,
     amount_cents: invoice.amount_due,
     currency: 'czk',
-    stripe_payment_intent_id: paymentIntent.id,
+    stripe_payment_intent_id: paymentIntentId || null,
     stripe_customer_id: stripeCustomer.id,
     customer_email: email,
   };
@@ -347,7 +350,7 @@ export async function createSubscription(
   return {
     subscriptionId: subscription.id,
     stripeSubscriptionId: stripeSubscription.id,
-    clientSecret: paymentIntent.client_secret,
+    clientSecret,
     customerId: customer.id,
     status: stripeSubscription.status,
   };
@@ -373,10 +376,19 @@ export async function getSubscriptionByStripeId(stripeSubscriptionId: string): P
 export async function updateSubscriptionFromWebhook(
   stripeSubscription: Stripe.Subscription
 ): Promise<void> {
+  // Get current period from subscription items (new SDK: period is on items, not subscription)
+  const firstItem = stripeSubscription.items?.data?.[0];
+  const periodStart = firstItem?.current_period_start
+    ? new Date(firstItem.current_period_start * 1000).toISOString()
+    : undefined;
+  const periodEnd = firstItem?.current_period_end
+    ? new Date(firstItem.current_period_end * 1000).toISOString()
+    : undefined;
+
   const updates: SubscriptionUpdate = {
     status: stripeSubscription.status,
-    current_period_start: new Date((stripeSubscription as any).current_period_start * 1000).toISOString(),
-    current_period_end: new Date((stripeSubscription as any).current_period_end * 1000).toISOString(),
+    ...(periodStart && { current_period_start: periodStart }),
+    ...(periodEnd && { current_period_end: periodEnd }),
     cancel_at_period_end: stripeSubscription.cancel_at_period_end,
     updated_at: new Date().toISOString(),
   };
@@ -404,8 +416,15 @@ export async function createOrderForSubscriptionInvoice(
   subscription: Subscription
 ): Promise<void> {
   const orderNumber = await generateOrderNumber();
-  const paymentIntent = (invoice as any).payment_intent as string | Stripe.PaymentIntent | null;
-  const paymentIntentId = typeof paymentIntent === 'string' ? paymentIntent : paymentIntent?.id;
+
+  // Extract payment intent ID from invoice payments (new Stripe SDK structure)
+  const invoicePayments = invoice.payments as Stripe.ApiList<Stripe.InvoicePayment> | undefined;
+  const paymentDetail = invoicePayments?.data?.[0]?.payment;
+  const paymentIntentId = paymentDetail?.type === 'payment_intent'
+    ? (typeof paymentDetail.payment_intent === 'string'
+        ? paymentDetail.payment_intent
+        : paymentDetail.payment_intent?.id)
+    : undefined;
 
   // Get customer email
   const { data: customer } = await supabase
