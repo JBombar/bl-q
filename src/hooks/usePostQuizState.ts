@@ -32,6 +32,10 @@ interface PostQuizState {
   checkoutCanceled: boolean;
   selectedPlanId: string | null;
 
+  // Subscription IDs (persisted after checkout)
+  stripeSubscriptionId: string | null;
+  stripeCustomerId: string | null;
+
   // Actions
   initialize: (data: QuizCompleteResponse) => void;
   setScreen: (screen: FunnelScreen) => void;
@@ -49,6 +53,7 @@ interface PostQuizState {
   handleTimerExpired: () => void;
   handleCheckoutCanceled: () => void;
   setSelectedPlanId: (planId: string) => void;
+  setSubscriptionIds: (stripeSubscriptionId: string, stripeCustomerId: string) => void;
 }
 
 export const usePostQuizState = create<PostQuizState>()(
@@ -66,6 +71,10 @@ export const usePostQuizState = create<PostQuizState>()(
       timerExpired: false,
       checkoutCanceled: false,
       selectedPlanId: null,
+
+      // Subscription IDs
+      stripeSubscriptionId: null,
+      stripeCustomerId: null,
 
   /**
    * Initialize with data from /api/quiz/complete
@@ -297,6 +306,8 @@ export const usePostQuizState = create<PostQuizState>()(
           timerExpired: false,
           checkoutCanceled: false,
           selectedPlanId: null,
+          stripeSubscriptionId: null,
+          stripeCustomerId: null,
         });
       },
 
@@ -331,6 +342,13 @@ export const usePostQuizState = create<PostQuizState>()(
       setSelectedPlanId: (planId: string) => {
         set({ selectedPlanId: planId });
       },
+
+      /**
+       * Set Stripe subscription and customer IDs after checkout
+       */
+      setSubscriptionIds: (stripeSubscriptionId: string, stripeCustomerId: string) => {
+        set({ stripeSubscriptionId, stripeCustomerId });
+      },
     }),
     {
       name: 'post-quiz-storage', // localStorage key
@@ -342,6 +360,8 @@ export const usePostQuizState = create<PostQuizState>()(
         timerExpired: state.timerExpired,
         checkoutCanceled: state.checkoutCanceled,
         selectedPlanId: state.selectedPlanId,
+        stripeSubscriptionId: state.stripeSubscriptionId,
+        stripeCustomerId: state.stripeCustomerId,
       }),
     }
   )

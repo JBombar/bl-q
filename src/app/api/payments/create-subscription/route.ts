@@ -147,6 +147,7 @@ export async function POST(request: NextRequest) {
       subscriptionId: subscriptionResult.subscriptionId,
       stripeSubscriptionId: subscriptionResult.stripeSubscriptionId,
       status: subscriptionResult.status,
+      stripeCustomerId: subscriptionResult.stripeCustomerId,
       plan: {
         id: plan.id,
         name: plan.name,

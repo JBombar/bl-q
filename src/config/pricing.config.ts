@@ -77,6 +77,20 @@ export const STRIPE_PRICES = {
 } as const;
 
 // ============================================================================
+// UPSELL CONFIGURATION (Mentoring Add-on)
+// ============================================================================
+
+export const UPSELL_MENTORING = {
+  productName: 'Osobní mentoring',
+  introStripePriceId: process.env.STRIPE_PRICE_UPSELL_MENTORING_INTRO || 'price_upsell_intro_placeholder',
+  recurringStripePriceId: process.env.STRIPE_PRICE_UPSELL_MENTORING_RECURRING || 'price_upsell_recurring_placeholder',
+  initialAmountCents: 89500,       // 895 Kč
+  recurringAmountCents: 139500,    // 1,395 Kč
+  billingInterval: 'month' as BillingInterval,
+  planDuration: '1_month' as PlanDuration,
+} as const;
+
+// ============================================================================
 // PLAN DEFINITIONS
 // ============================================================================
 

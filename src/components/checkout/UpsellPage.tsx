@@ -11,8 +11,10 @@ import { GuaranteeBox } from '@/components/sales/GuaranteeBox';
 // ---------------------------------------------------------------------------
 
 interface UpsellPageProps {
-  onAddToPlan: () => void;
+  onAddToPlan: () => void | Promise<void>;
   onSkip: () => void;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -178,9 +180,13 @@ function BenefitRow({
 function PricingCard({
   onAddToPlan,
   onSkip,
+  isLoading,
+  error,
 }: {
-  onAddToPlan: () => void;
+  onAddToPlan: () => void | Promise<void>;
   onSkip: () => void;
+  isLoading?: boolean;
+  error?: string | null;
 }) {
   return (
     <div className="w-full bg-[#e6eeeb] rounded-[16px] overflow-hidden mt-8">
@@ -248,18 +254,32 @@ function PricingCard({
           podpora@betterlady.cz.
         </p>
 
+        {/* Error message */}
+        {error && (
+          <p className="text-[13px] text-[#e60000] text-center mt-3">{error}</p>
+        )}
+
         {/* Primary CTA */}
         <button
           onClick={onAddToPlan}
-          className="w-full h-14 bg-[#f9a201] hover:bg-[#e09201] active:scale-[0.98] text-white text-[16px] font-extrabold rounded-[10px] transition-all uppercase tracking-wide mt-4"
+          disabled={isLoading}
+          className="w-full h-14 bg-[#f9a201] hover:bg-[#e09201] active:scale-[0.98] text-white text-[16px] font-extrabold rounded-[10px] transition-all uppercase tracking-wide mt-4 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          PŘIDAT DO MÉHO PLÁNU
+          {isLoading ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ZPRACOVÁVÁM...
+            </>
+          ) : (
+            'PŘIDAT DO MÉHO PLÁNU'
+          )}
         </button>
 
         {/* Secondary CTA */}
         <button
           onClick={onSkip}
-          className="w-full text-center text-[16px] font-normal text-[#919191] underline mt-3 cursor-pointer hover:text-[#292424] transition-colors"
+          disabled={isLoading}
+          className="w-full text-center text-[16px] font-normal text-[#919191] underline mt-3 cursor-pointer hover:text-[#292424] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Pokračovat bez osobní podpory
         </button>
@@ -537,7 +557,7 @@ function FaqItem({
 // Main Component
 // ---------------------------------------------------------------------------
 
-export function UpsellPage({ onAddToPlan, onSkip }: UpsellPageProps) {
+export function UpsellPage({ onAddToPlan, onSkip, isLoading, error }: UpsellPageProps) {
   const [selectedMentor, setSelectedMentor] = useState<string | null>(null);
   const [activeMentorCard, setActiveMentorCard] = useState(0);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
@@ -565,7 +585,8 @@ export function UpsellPage({ onAddToPlan, onSkip }: UpsellPageProps) {
           {/* Skip link */}
           <button
             onClick={onSkip}
-            className="text-[16px] font-normal text-[#919191] hover:text-[#292424] transition-colors"
+            disabled={isLoading}
+            className="text-[16px] font-normal text-[#919191] hover:text-[#292424] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Přeskočit
           </button>
@@ -652,7 +673,7 @@ export function UpsellPage({ onAddToPlan, onSkip }: UpsellPageProps) {
         {/* ----------------------------------------------------------------- */}
         {/* 6. Pricing Card */}
         {/* ----------------------------------------------------------------- */}
-        <PricingCard onAddToPlan={onAddToPlan} onSkip={onSkip} />
+        <PricingCard onAddToPlan={onAddToPlan} onSkip={onSkip} isLoading={isLoading} error={error} />
 
         {/* ----------------------------------------------------------------- */}
         {/* 7. Mentor Selection Heading */}

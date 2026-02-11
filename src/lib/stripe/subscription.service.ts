@@ -15,7 +15,7 @@ import type {
   SubscriptionUpdate,
   OrderInsert,
 } from '@/types';
-import type { PricingTier, BillingInterval, PlanDuration } from '@/config/pricing.config';
+import { UPSELL_MENTORING, type PricingTier, type BillingInterval, type PlanDuration } from '@/config/pricing.config';
 
 // ============================================================================
 // TYPES
@@ -40,7 +40,20 @@ export interface CreateSubscriptionResult {
   stripeSubscriptionId: string;
   clientSecret: string;
   customerId: string;
+  stripeCustomerId: string;
   status: string;
+}
+
+export interface AddUpsellParams {
+  baseStripeSubscriptionId: string;
+  sessionId?: string;
+}
+
+export interface AddUpsellResult {
+  upsellSubscriptionId: string;
+  stripeSubscriptionId: string;
+  status: string;
+  amountCharged: number;
 }
 
 // ============================================================================
@@ -352,6 +365,7 @@ export async function createSubscription(
     stripeSubscriptionId: stripeSubscription.id,
     clientSecret,
     customerId: customer.id,
+    stripeCustomerId: stripeCustomer.id,
     status: stripeSubscription.status,
   };
 }
@@ -475,4 +489,218 @@ export async function getCustomerActiveSubscriptions(customerId: string): Promis
   }
 
   return data;
+}
+
+// ============================================================================
+// UPSELL MANAGEMENT
+// ============================================================================
+
+/**
+ * Add the mentoring upsell as a separate subscription.
+ *
+ * Reuses the customer's saved payment method from the base subscription
+ * so no second Payment Element is required — single-click charge.
+ *
+ * The existing migrateToSchedule() webhook handler will automatically
+ * create a schedule for the upsell subscription (intro → recurring phases)
+ * when its first invoice is paid.
+ */
+export async function addUpsellToSubscription(
+  params: AddUpsellParams
+): Promise<AddUpsellResult> {
+  const { baseStripeSubscriptionId, sessionId } = params;
+
+  // 1. Look up the base subscription in our DB
+  const baseSubscription = await getSubscriptionByStripeId(baseStripeSubscriptionId);
+  if (!baseSubscription) {
+    throw new Error('Base subscription not found');
+  }
+
+  // 2. Get customer record
+  const { data: customer, error: customerError } = await supabase
+    .from('customers')
+    .select('*')
+    .eq('id', baseSubscription.customer_id)
+    .single();
+
+  if (customerError || !customer) {
+    throw new Error('Customer not found');
+  }
+
+  // 3. Authorization: verify session owns this subscription
+  if (sessionId) {
+    const { data: sessionOrders } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('subscription_id', baseSubscription.id)
+      .eq('session_id', sessionId)
+      .limit(1);
+
+    if (!sessionOrders || sessionOrders.length === 0) {
+      console.error('[Upsell] Session does not own this subscription:', {
+        sessionId,
+        subscriptionId: baseSubscription.id,
+        customerId: customer.id,
+      });
+      throw new Error('Unauthorized: subscription does not belong to this session');
+    }
+  }
+
+  // 4. Null safety: verify customer has a Stripe ID
+  if (!customer.stripe_customer_id) {
+    throw new Error('Customer has no Stripe ID. Cannot create upsell.');
+  }
+
+  // 5. Check for existing active upsell subscription (idempotency)
+  const { data: existingUpsells } = await supabase
+    .from('subscriptions')
+    .select('id, stripe_subscription_id, status')
+    .eq('customer_id', customer.id)
+    .eq('stripe_price_id', UPSELL_MENTORING.introStripePriceId)
+    .in('status', ['active', 'trialing', 'incomplete']);
+
+  if (existingUpsells && existingUpsells.length > 0) {
+    const existing = existingUpsells[0]!;
+    console.log('[Upsell] Customer already has upsell subscription:', existing.stripe_subscription_id);
+    return {
+      upsellSubscriptionId: existing.id,
+      stripeSubscriptionId: existing.stripe_subscription_id,
+      status: existing.status,
+      amountCharged: UPSELL_MENTORING.initialAmountCents,
+    };
+  }
+
+  // 6. Validate upsell price IDs
+  if (!UPSELL_MENTORING.introStripePriceId.startsWith('price_')) {
+    throw new Error('Upsell intro price ID not configured. Check STRIPE_PRICE_UPSELL_MENTORING_INTRO env var.');
+  }
+  if (!UPSELL_MENTORING.recurringStripePriceId.startsWith('price_')) {
+    throw new Error('Upsell recurring price ID not configured. Check STRIPE_PRICE_UPSELL_MENTORING_RECURRING env var.');
+  }
+
+  // 7. Get saved payment method from the base Stripe subscription
+  const baseSub = await stripe.subscriptions.retrieve(baseStripeSubscriptionId);
+  const baseDefaultPm = baseSub.default_payment_method;
+  let paymentMethodId = typeof baseDefaultPm === 'string' ? baseDefaultPm : baseDefaultPm?.id || null;
+
+  if (!paymentMethodId) {
+    // Fallback: get from customer's attached payment methods
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: customer.stripe_customer_id,
+      type: 'card',
+      limit: 1,
+    });
+    paymentMethodId = paymentMethods.data[0]?.id || null;
+  }
+
+  if (!paymentMethodId) {
+    throw new Error('No payment method found. Customer must complete base subscription payment first.');
+  }
+
+  // 8. Create the upsell subscription (auto-charge, no Payment Element)
+  console.log('[Upsell] Creating upsell subscription:', {
+    customer: customer.stripe_customer_id,
+    introPrice: UPSELL_MENTORING.introStripePriceId,
+    paymentMethod: paymentMethodId,
+  });
+
+  const upsellStripeSubscription = await stripe.subscriptions.create({
+    customer: customer.stripe_customer_id,
+    items: [{ price: UPSELL_MENTORING.introStripePriceId }],
+    default_payment_method: paymentMethodId,
+    payment_settings: { save_default_payment_method: 'on_subscription' },
+    expand: ['latest_invoice.payments'],
+    metadata: {
+      type: 'upsell',
+      customer_id: customer.id,
+      parent_subscription_id: baseStripeSubscriptionId,
+      session_id: sessionId || '',
+      product_name: UPSELL_MENTORING.productName,
+      plan_duration: UPSELL_MENTORING.planDuration,
+      recurring_stripe_price_id: UPSELL_MENTORING.recurringStripePriceId,
+      initial_amount_cents: String(UPSELL_MENTORING.initialAmountCents),
+      recurring_amount_cents: String(UPSELL_MENTORING.recurringAmountCents),
+    },
+  });
+
+  console.log('[Upsell] Created:', {
+    subscriptionId: upsellStripeSubscription.id,
+    status: upsellStripeSubscription.status,
+  });
+
+  // Check if charge succeeded
+  if (upsellStripeSubscription.status === 'incomplete') {
+    await stripe.subscriptions.cancel(upsellStripeSubscription.id);
+    throw new Error('Payment failed for upsell. Please check your payment method.');
+  }
+
+  // 9. Get period info from subscription items
+  const firstItem = upsellStripeSubscription.items.data[0];
+  const periodStart = firstItem?.current_period_start
+    ? new Date(firstItem.current_period_start * 1000).toISOString()
+    : new Date().toISOString();
+  const periodEnd = firstItem?.current_period_end
+    ? new Date(firstItem.current_period_end * 1000).toISOString()
+    : new Date().toISOString();
+
+  // 10. Save upsell subscription record (rollback Stripe sub if DB fails)
+  const upsellInsertData: SubscriptionInsert = {
+    customer_id: customer.id,
+    stripe_subscription_id: upsellStripeSubscription.id,
+    status: upsellStripeSubscription.status,
+    stripe_price_id: UPSELL_MENTORING.introStripePriceId,
+    billing_interval: UPSELL_MENTORING.billingInterval,
+    current_period_start: periodStart,
+    current_period_end: periodEnd,
+    cancel_at_period_end: upsellStripeSubscription.cancel_at_period_end,
+  };
+
+  const { data: upsellSubscription, error: upsellSubError } = await supabase
+    .from('subscriptions')
+    .insert(upsellInsertData)
+    .select()
+    .single();
+
+  if (upsellSubError || !upsellSubscription) {
+    console.error('[Upsell] DB insert failed, canceling Stripe subscription:', upsellSubError);
+    await stripe.subscriptions.cancel(upsellStripeSubscription.id).catch(e =>
+      console.error('[Upsell] Failed to cancel orphaned Stripe subscription:', e.message)
+    );
+    throw new Error('Failed to create upsell record. Payment has been reversed.');
+  }
+
+  // 11. Create initial order for the upsell
+  const invoice = upsellStripeSubscription.latest_invoice as Stripe.Invoice;
+  const upsellPaymentIntentId = invoice ? getPaymentIntentIdFromInvoice(invoice) : null;
+  const orderNumber = await generateOrderNumber();
+
+  const upsellOrderData: OrderInsert = {
+    session_id: sessionId || '',
+    subscription_id: upsellSubscription.id,
+    order_number: orderNumber,
+    status: upsellStripeSubscription.status === 'active' ? 'paid' : 'pending',
+    product_id: UPSELL_MENTORING.introStripePriceId,
+    product_name: UPSELL_MENTORING.productName,
+    amount_cents: UPSELL_MENTORING.initialAmountCents,
+    currency: 'czk',
+    stripe_payment_intent_id: upsellPaymentIntentId || null,
+    stripe_customer_id: customer.stripe_customer_id,
+    customer_email: customer.email,
+    paid_at: upsellStripeSubscription.status === 'active' ? new Date().toISOString() : null,
+  };
+
+  const { error: orderError } = await supabase.from('orders').insert(upsellOrderData);
+  if (orderError) {
+    console.error('[Upsell] Failed to create order record (subscription is active):', orderError);
+    // Don't throw — the subscription and charge succeeded. Order will be reconciled via webhook.
+  }
+
+  console.log(`[Upsell] Complete: ${upsellStripeSubscription.id} (${upsellStripeSubscription.status})`);
+
+  return {
+    upsellSubscriptionId: upsellSubscription.id,
+    stripeSubscriptionId: upsellStripeSubscription.id,
+    status: upsellStripeSubscription.status,
+    amountCharged: UPSELL_MENTORING.initialAmountCents,
+  };
 }

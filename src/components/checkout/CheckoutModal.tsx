@@ -71,6 +71,13 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
         if (cancelled) return;
         setClientSecret(data.clientSecret);
         setSubscriptionId(data.subscriptionId);
+
+        // Persist Stripe IDs to Zustand for use in upsell flow
+        usePostQuizState.getState().setSubscriptionIds(
+          data.stripeSubscriptionId,
+          data.stripeCustomerId || ''
+        );
+
         setIsLoading(false);
       } catch (err: any) {
         if (cancelled) return;

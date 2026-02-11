@@ -184,6 +184,8 @@ async function migrateToSchedule(stripeSubscriptionId: string): Promise<void> {
         {
           items: [{ price: recurringPriceId, quantity: 1 }],
           duration: phaseInterval,
+          billing_cycle_anchor: 'phase_start',
+          proration_behavior: 'none',
           metadata: {
             phase: 'recurring',
           },

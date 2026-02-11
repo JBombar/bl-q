@@ -21,6 +21,9 @@ export const EVENT_TYPES = {
   SUBSCRIPTION_UPDATED: 'subscription_updated',
   INVOICE_PAID: 'invoice_paid',
   INVOICE_PAYMENT_FAILED: 'invoice_payment_failed',
+  // Upsell events
+  UPSELL_ACCEPTED: 'upsell_accepted',
+  UPSELL_SKIPPED: 'upsell_skipped',
 } as const;
 
 export async function trackEvent(
