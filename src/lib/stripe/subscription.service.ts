@@ -578,13 +578,22 @@ export async function addUpsellToSubscription(
     throw new Error('Upsell recurring price ID not configured. Check STRIPE_PRICE_UPSELL_MENTORING_RECURRING env var.');
   }
 
-  // 7. Get saved payment method from the base Stripe subscription
-  const baseSub = await stripe.subscriptions.retrieve(baseStripeSubscriptionId);
-  const baseDefaultPm = baseSub.default_payment_method;
-  let paymentMethodId = typeof baseDefaultPm === 'string' ? baseDefaultPm : baseDefaultPm?.id || null;
+  // 7. Retrieve the customer's saved default payment method from Stripe
+  const stripeCustomer = await stripe.customers.retrieve(customer.stripe_customer_id);
+  if (stripeCustomer.deleted) {
+    throw new Error('Stripe customer has been deleted.');
+  }
 
+  let paymentMethodId: string | null = null;
+
+  // Primary: customer's invoice_settings.default_payment_method (always attached)
+  const customerDefaultPm = (stripeCustomer as Stripe.Customer).invoice_settings?.default_payment_method;
+  if (customerDefaultPm) {
+    paymentMethodId = typeof customerDefaultPm === 'string' ? customerDefaultPm : customerDefaultPm.id;
+  }
+
+  // Fallback: list payment methods attached to the customer
   if (!paymentMethodId) {
-    // Fallback: get from customer's attached payment methods
     const paymentMethods = await stripe.paymentMethods.list({
       customer: customer.stripe_customer_id,
       type: 'card',
@@ -594,8 +603,10 @@ export async function addUpsellToSubscription(
   }
 
   if (!paymentMethodId) {
-    throw new Error('No payment method found. Customer must complete base subscription payment first.');
+    throw new Error('No default payment method found for this customer.');
   }
+
+  console.log('[Upsell] Using payment method:', paymentMethodId);
 
   // 8. Create the upsell subscription (auto-charge, no Payment Element)
   console.log('[Upsell] Creating upsell subscription:', {

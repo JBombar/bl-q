@@ -32,7 +32,7 @@ export default function Offer2Page() {
         throw new Error(data.error || 'Nepodařilo se přidat mentoring.');
       }
 
-      router.push('/dashboard');
+      router.push('/thank-you');
     } catch (err: any) {
       setError(err.message || 'Něco se pokazilo. Zkuste to prosím znovu.');
     } finally {
@@ -41,7 +41,7 @@ export default function Offer2Page() {
   };
 
   const handleSkip = () => {
-    router.push('/dashboard');
+    router.push('/thank-you');
   };
 
   return (
