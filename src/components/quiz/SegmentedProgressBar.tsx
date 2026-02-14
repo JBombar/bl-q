@@ -54,10 +54,26 @@ export const SegmentedProgressBar = memo(function SegmentedProgressBar({
   }
 
   const fillPercent = Math.min((completedSegments / totalSegments) * 100, 100);
+  
+  // Calculate fill percentage for each of the 5 segments
+  const segmentFillPercentages = Array.from({ length: FIXED_SEGMENT_COUNT }, (_, index) => {
+    const segmentStartPercent = (index / FIXED_SEGMENT_COUNT) * 100;
+    const segmentEndPercent = ((index + 1) / FIXED_SEGMENT_COUNT) * 100;
+    
+    if (fillPercent <= segmentStartPercent) {
+      return { fillPercent: 0, isActive: false }; // Not reached yet
+    } else if (fillPercent >= segmentEndPercent) {
+      return { fillPercent: 100, isActive: false }; // Fully filled (no transition needed)
+    } else {
+      // Partially filled - this is the active segment
+      const segmentFill = ((fillPercent - segmentStartPercent) / (segmentEndPercent - segmentStartPercent)) * 100;
+      return { fillPercent: segmentFill, isActive: true };
+    }
+  });
 
   return (
     <div
-      className={cn('relative flex w-full', className)}
+      className={cn('flex w-full', className)}
       style={{ gap: `${gapSize}px` }}
       role="progressbar"
       aria-valuenow={Math.round(fillPercent)}
@@ -65,30 +81,29 @@ export const SegmentedProgressBar = memo(function SegmentedProgressBar({
       aria-valuemax={100}
       aria-label={`Progress: ${completedSegments} of ${totalSegments} questions`}
     >
-      {/* Background: 5 fixed gray segments */}
-      {Array.from({ length: FIXED_SEGMENT_COUNT }, (_, index) => (
-        <div
-          key={`bg-${index}`}
-          className="h-1 md:h-1.5 rounded-full flex-1"
-          style={{ backgroundColor: inactiveColor }}
-          aria-hidden="true"
-        />
-      ))}
-
-      {/* Overlay: single seamless fill bar clipped to fillPercent width */}
-      <div
-        className="absolute inset-0 overflow-hidden"
-        style={{
-          width: `${fillPercent}%`,
-          transition: 'width 300ms ease-out',
-        }}
-        aria-hidden="true"
-      >
-        <div
-          className="h-1 md:h-1.5 rounded-full w-full"
-          style={{ backgroundColor: activeColor }}
-        />
-      </div>
+      {/* Render 5 segments, each with its own fill */}
+      {Array.from({ length: FIXED_SEGMENT_COUNT }, (_, index) => {
+        const { fillPercent: segmentFill, isActive } = segmentFillPercentages[index];
+        
+        return (
+          <div
+            key={`segment-${index}`}
+            className="relative h-1 md:h-1.5 rounded-full flex-1 overflow-hidden"
+            style={{ backgroundColor: inactiveColor }}
+          >
+            {/* Fill overlay for this segment - only animate the active one */}
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                backgroundColor: activeColor,
+                width: `${segmentFill}%`,
+                transition: isActive ? 'width 300ms ease-out' : 'none',
+              }}
+              aria-hidden="true"
+            />
+          </div>
+        );
+      })}
     </div>
   );
 });
