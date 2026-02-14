@@ -75,7 +75,7 @@ function FiveStars() {
 // ─── Progress Circle (172×172, green #327455, gray #ebebeb) ────────
 function ProgressCircle({ progress }: { progress: number }) {
   const size = 172;
-  const strokeWidth = 6;
+  const strokeWidth = 10;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (progress / 100) * circumference;
@@ -205,7 +205,7 @@ export function MicroCommitmentScreen({
         }
         return prev + 1;
       });
-    }, 40);
+    }, 160);
 
     return () => clearInterval(interval);
   }, [phase]);
@@ -250,8 +250,8 @@ export function MicroCommitmentScreen({
       <div className="flex flex-col items-center mt-[43px]">
         <ProgressCircle progress={count} />
 
-        {/* Status text — 14px/15.4px regular, #292424, 2px below circle */}
-        <p className="mt-[2px] text-[14px] leading-[15.4px] font-normal text-[#292424] font-figtree text-center">
+        {/* Status text — 14px/15.4px regular, #292424, 8px below circle */}
+        <p className="mt-[8px] text-[14px] leading-[15.4px] font-normal text-[#292424] font-figtree text-center">
           {statusText}
         </p>
       </div>
@@ -263,11 +263,12 @@ export function MicroCommitmentScreen({
 
       {/* Testimonials carousel — horizontal scroll, 339×179 cards */}
       <div className="mt-[16px] w-full overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-        <div className="flex gap-[10px] px-[12px] w-max">
-          {TESTIMONIALS.map((t) => (
+        <div className="flex gap-[10px] pl-[12px] pr-[12px] w-max">
+          {TESTIMONIALS.map((t, index) => (
             <div
               key={t.name}
               className="w-[339px] h-[179px] bg-[#f5f5f5] rounded-[10px] p-[12px] shrink-0"
+              style={{ marginRight: index === TESTIMONIALS.length - 1 ? '12px' : '0' }}
             >
               <div className="flex items-center gap-[4px]">
                 <FiveStars />

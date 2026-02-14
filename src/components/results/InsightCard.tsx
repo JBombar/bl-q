@@ -47,7 +47,7 @@ export function InsightCard({ card, index }: InsightCardProps) {
           {card.label}
         </span>
         <span className="text-[14px] leading-[16px] font-bold text-[#292424] font-figtree mt-[2px]">
-          {card.value}
+          {card.value.replace(/\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu, '').trim()}
         </span>
       </div>
     </motion.div>
