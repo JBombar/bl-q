@@ -9,7 +9,8 @@ import { MicroCommitmentScreen } from './MicroCommitmentScreen';
 import { EmailCaptureScreen } from './EmailCaptureScreen';
 import { NameCaptureScreen } from './NameCaptureScreen';
 import { ProjectionScreen } from './ProjectionScreen';
-import type { QuizCompleteResponse } from '@/types/funnel.types';
+import type { QuizCompleteResponse, StressStage } from '@/types/funnel.types';
+import { STRESS_STAGE_CONFIG } from '@/config/result-screens.config';
 
 // Stable key for the micro-commitment flow so it doesn't remount between C1/C2/C3
 const getAnimationKey = (screen: string) =>
@@ -60,7 +61,20 @@ export function PostQuizFlow({ initialData, onComplete }: PostQuizFlowProps) {
     );
   }
 
-  const { insights } = completeData;
+  const { insights: rawInsights } = completeData;
+
+  // Clamp minimum display to Stage 3 (Střední) — frontend only, backend data unchanged
+  const insights = rawInsights.stressStage < 3
+    ? {
+        ...rawInsights,
+        stressStage: 3 as StressStage,
+        normalizedScore: Math.max(rawInsights.normalizedScore, 51),
+        displayScore: Math.max(rawInsights.displayScore, Math.round((51 / 100) * 60)),
+        stageImagePath: STRESS_STAGE_CONFIG.images[3],
+        stageTitle: STRESS_STAGE_CONFIG.titles[3],
+        stageDescription: STRESS_STAGE_CONFIG.descriptions[3],
+      }
+    : rawInsights;
 
   // Handle Screen E submit (save name + trigger email + advance)
   const handleNameSubmit = async (firstName: string) => {
