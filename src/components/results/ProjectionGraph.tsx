@@ -60,10 +60,12 @@ export function ProjectionGraph({ currentScore, targetScore }: ProjectionGraphPr
   );
 
   // Interpolate 4 scores along a curve: current → target
+  // Using ease-out quadratic for more pronounced curve (steeper drop, then flattens)
+  const easeOut = (t: number) => 1 - Math.pow(1 - t, 2);
   const scores = [
     currentScore,
-    currentScore - (currentScore - targetScore) * 0.35,
-    currentScore - (currentScore - targetScore) * 0.7,
+    currentScore - (currentScore - targetScore) * easeOut(0.33),  // ~55% reduction at 1/3
+    currentScore - (currentScore - targetScore) * easeOut(0.66),  // ~88% reduction at 2/3
     targetScore,
   ];
 
