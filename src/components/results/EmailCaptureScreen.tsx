@@ -64,7 +64,7 @@ export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenPro
 
       {/* Avatar group — 291px × 34px, 22px below heading */}
       <motion.div
-        className="flex items-center mt-[22px] max-w-[351px] mx-auto"
+        className="flex items-center justify-center mt-[22px] max-w-[351px] mx-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}

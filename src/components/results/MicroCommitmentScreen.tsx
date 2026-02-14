@@ -263,12 +263,12 @@ export function MicroCommitmentScreen({
 
       {/* Testimonials carousel — horizontal scroll, 339×179 cards */}
       <div className="mt-[16px] w-full overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-        <div className="flex gap-[10px] pl-[12px] pr-[12px] w-max">
-          {TESTIMONIALS.map((t, index) => (
+        <div className="flex gap-[10px] w-max">
+          <div className="w-[12px] shrink-0" />
+          {TESTIMONIALS.map((t) => (
             <div
               key={t.name}
               className="w-[339px] h-[179px] bg-[#f5f5f5] rounded-[10px] p-[12px] shrink-0"
-              style={{ marginRight: index === TESTIMONIALS.length - 1 ? '12px' : '0' }}
             >
               <div className="flex items-center gap-[4px]">
                 <FiveStars />
@@ -281,6 +281,7 @@ export function MicroCommitmentScreen({
               </p>
             </div>
           ))}
+          <div className="w-[12px] shrink-0" />
         </div>
       </div>
 
