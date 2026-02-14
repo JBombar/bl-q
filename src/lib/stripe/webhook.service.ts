@@ -235,6 +235,7 @@ async function migrateToSchedule(stripeSubscriptionId: string): Promise<void> {
           proration_behavior: 'none' as const,
           metadata: {
             phase: 'recurring',
+            pricing_tier: 'standard',
           },
         },
       ],
