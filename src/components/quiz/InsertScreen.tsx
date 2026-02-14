@@ -100,7 +100,7 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
           className="flex flex-col items-center justify-start h-full text-center px-4 pt-7 pb-2 md:pt-10 md:pb-3"
         >
           {/* Title - highlighting "vědeckých postupů" in green */}
-          <h1 className="text-sm md:text-base font-bold text-gray-900 mb-1.5 md:mb-2 max-w-md px-2" style={{ fontFamily: 'Figtree', lineHeight: '115%' }}>
+          <h1 className="text-[22px] leading-[26px] font-bold text-gray-900 mb-1.5 md:mb-2 max-w-md px-2 font-figtree">
             {question.question_text.split('vědeckých postupů').map((part, idx, arr) => (
               idx < arr.length - 1 ? (
                 <span key={idx}>
@@ -167,7 +167,7 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
         )}
 
         {/* Heading */}
-        <h2 className={`mt-[16px] font-bold text-[#327455] font-figtree ${showExpertBadge ? 'text-[22px] leading-[28px] text-center' : 'text-[18px] leading-[25.2px] text-left'}`}>
+        <h2 className={`mt-[16px] font-bold font-figtree ${showExpertBadge ? 'text-[22px] leading-[28px] text-center text-[#292424]' : 'text-[18px] leading-[25.2px] text-left text-[#327455]'}`}>
           {question.question_text}
         </h2>
 

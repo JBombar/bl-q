@@ -83,6 +83,9 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
 
   // Use segmented progress for regular questions, not for special screens
   const showSegmentedProgress = !categoryProgress.isSpecialScreen;
+  
+  // Show header logo for special screens (questions without section_label)
+  const showHeaderLogo = categoryProgress.isSpecialScreen;
 
   return (
     <StageLayout
@@ -92,6 +95,7 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
       categoryLabel={categoryProgress.categoryName || undefined}
       showBackButton={canGoBack}
       onBackClick={handleBack}
+      showHeaderLogo={showHeaderLogo}
       overlayImage={question.image_url ? {
         src: question.image_url,
         alt: '',
