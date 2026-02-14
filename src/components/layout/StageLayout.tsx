@@ -205,14 +205,19 @@ export function StageLayout({
             )}
           >
             {/* Left: Back Button */}
-            <div className="w-10 shrink-0 flex items-center justify-start">
+            <div className="w-10 shrink-0 flex items-center justify-center">
               {showBackButton && (
                 <button
                   onClick={handleBackClick}
-                  className="text-2xl text-gray-600 hover:text-gray-900 transition-colors p-1 -ml-1"
+                  className="p-2 hover:opacity-70 transition-opacity"
                   aria-label="Zpět"
                 >
-                  &lt;
+                  <Image
+                    src="/icons/arrow_back.svg"
+                    alt="Back"
+                    width={16}
+                    height={16}
+                  />
                 </button>
               )}
             </div>

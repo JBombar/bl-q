@@ -93,8 +93,28 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
           ))}
         </div>
 
-        <p className="text-[10px] md:text-xs text-gray-500 max-w-md mx-auto">
-          Výběrem věku a pokračováním souhlasíš s našimi Obchodními podmínkami | Ochrannou osobních údajů.
+        <p className="text-[12px] text-[#292424] max-w-md mx-auto">
+            <span className="font-bold">
+             Výběrem věku a pokračováním souhlasíš s našimi
+           </span>{' '}
+          <a 
+            href="https://betterlady.cz/obchodni-podminky/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="underline hover:text-gray-700"
+          >
+            Obchodními podmínkami
+          </a>
+          {' | '}
+          <a 
+            href="https://betterlady.cz/ochrana-osobnich-udaju/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="underline hover:text-gray-700"
+          >
+            Ochrannou osobních údajů
+          </a>
+          .
         </p>
       </motion.div>
     </StageLayout>
