@@ -41,8 +41,7 @@ export function StressStateScreen({ insights, onContinue }: StressStateScreenPro
       showCTA
       ctaLabel="Pokračovat"
       onCtaClick={onContinue}
-      showBackButton={true}
-      onBackClick={handleBack}
+      showBackButton={false}
       showHeaderLogo={true}
     >
       {/* Main heading — 22px/24.2px bold, #292424, centered */}

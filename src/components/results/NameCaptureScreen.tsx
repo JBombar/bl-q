@@ -49,8 +49,7 @@ export function NameCaptureScreen({ onSubmit, isSaving }: NameCaptureScreenProps
       ctaLabel={isSaving ? 'Ukládám...' : 'Pokračovat'}
       ctaDisabled={isSaving || !isValid}
       onCtaClick={handleSubmit}
-      showBackButton={true}
-      onBackClick={() => {}}
+      showBackButton={false}
       showHeaderLogo={true}
     >
       {/* Main heading — 22px/24.2px bold, #292424, centered */}

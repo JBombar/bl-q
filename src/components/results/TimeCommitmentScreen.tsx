@@ -35,8 +35,7 @@ export function TimeCommitmentScreen({ onSelect, isSaving }: TimeCommitmentScree
     <StageLayout
       variant="question"
       bgClass="bg-white"
-      showBackButton={true}
-      onBackClick={() => {}}
+      showBackButton={false}
       showHeaderLogo={true}
       overlayImage={{
         src: '/images/time-commitment-bg.png',

@@ -49,8 +49,7 @@ export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenPro
       ctaLabel={isSaving ? 'Ukládám...' : 'Zobrazit mé výsledky'}
       ctaDisabled={isSaving || !isValid}
       onCtaClick={handleSubmit}
-      showBackButton={true}
-      onBackClick={() => {}}
+      showBackButton={false}
       showHeaderLogo={true}
     >
       {/* Main heading — 22px/24.2px bold, #292424, centered, max-w 338px */}

@@ -243,8 +243,7 @@ export function MicroCommitmentScreen({
     <StageLayout
       variant="result"
       bgClass="bg-white"
-      showBackButton={true}
-      onBackClick={() => {}}
+      showBackButton={false}
       showHeaderLogo={true}
     >
       {/* Progress circle — 172×172, centered */}
