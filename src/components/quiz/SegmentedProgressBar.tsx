@@ -83,7 +83,7 @@ export const SegmentedProgressBar = memo(function SegmentedProgressBar({
     >
       {/* Render 5 segments, each with its own fill */}
       {Array.from({ length: FIXED_SEGMENT_COUNT }, (_, index) => {
-        const { fillPercent: segmentFill, isActive } = segmentFillPercentages[index];
+        const { fillPercent: segmentFill = 0, isActive = false } = segmentFillPercentages[index] || {};
         
         return (
           <div

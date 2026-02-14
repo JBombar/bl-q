@@ -185,19 +185,6 @@ export function StageLayout({
             </div>
           )}
 
-          {/* NEW: Segmented progress bar */}
-          {showSegmentedProgress && totalSegments > 0 && (
-            <div className="px-4 pt-3 md:pt-4">
-              <SegmentedProgressBar
-                totalSegments={totalSegments}
-                completedSegments={completedSegments}
-                activeColor="#327455"
-                inactiveColor="#E5E7EB"
-                gapSize={4}
-              />
-            </div>
-          )}
-
           <div
             className={cn(
               'px-4 flex items-center min-h-[44px]',
@@ -235,8 +222,8 @@ export function StageLayout({
               ) : headerLabel ? (
                 <p
                   className={cn(
-                    'text-xs md:text-sm font-medium',
-                    categoryLabel ? 'text-gray-700 font-semibold' : 'text-gray-600'
+                    'text-[18px] leading-[26px] font-bold',
+                    categoryLabel ? 'text-gray-700' : 'text-gray-600'
                   )}
                 >
                   {headerLabel}
@@ -247,6 +234,19 @@ export function StageLayout({
             {/* Right: Spacer for centering */}
             <div className="w-10 shrink-0" />
           </div>
+
+          {/* NEW: Segmented progress bar - moved below category label */}
+          {showSegmentedProgress && totalSegments > 0 && (
+            <div className="px-4 pb-3 md:pb-4">
+              <SegmentedProgressBar
+                totalSegments={totalSegments}
+                completedSegments={completedSegments}
+                activeColor="#327455"
+                inactiveColor="#E5E7EB"
+                gapSize={4}
+              />
+            </div>
+          )}
         </header>
       )}
 

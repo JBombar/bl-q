@@ -71,6 +71,7 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
         maxHeightMobile: '50vh',
       } : undefined}
       variant="question"
+      bgClass="bg-white"
     >
       <motion.div
         key={question.id}
@@ -80,7 +81,7 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
         transition={{ duration: 0.08 }}
         className="w-full text-center"
       >
-        <h2 className="text-sm md:text-base lg:text-lg font-bold text-gray-900 mb-2 md:mb-3" style={{ fontFamily: 'Figtree', lineHeight: '110%' }}>
+        <h2 className="text-[22px] leading-[26px] font-bold text-[#292424] font-figtree text-center mb-2 md:mb-3">
           {question.question_text}
         </h2>
 

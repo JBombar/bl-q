@@ -111,8 +111,8 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
           transition={{ duration: 0.08 }}
           className="w-full flex flex-col items-center"
         >
-          {/* Question — 18px/19.8px bold, #292424, max-w 244px, centered */}
-          <h2 className="text-[18px] leading-[19.8px] font-bold text-[#292424] font-figtree max-w-[244px] text-center">
+          {/* Question — 22px/26px bold, #292424, max-w 280px, centered */}
+          <h2 className="text-[22px] leading-[26px] font-bold text-[#292424] font-figtree max-w-[280px] text-center">
             {question.question_text}
           </h2>
 
@@ -122,7 +122,7 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
             </p>
           )}
 
-          {/* Option buttons — 351px × 48px, bg #f5f5f5, rounded 10px, 10px gap */}
+          {/* Option buttons — 351px × 56px, bg #f5f5f5, rounded 10px, 10px gap */}
           <div className="mt-[24px] flex flex-col gap-[10px] max-w-[351px] w-full">
             {question.options.map((option) => (
               <motion.button
@@ -130,7 +130,7 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSelect(option.id)}
                 className={`
-                  w-full h-[48px] rounded-[10px] flex items-center px-[12px] gap-[8px] transition-all
+                  w-full h-[56px] rounded-[12px] flex items-center px-[12px] gap-[8px] transition-all
                   ${selectedIds.includes(option.id)
                     ? 'bg-white border-2 border-[#327455]'
                     : 'bg-[#f5f5f5] border-2 border-transparent'
@@ -141,12 +141,12 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
                   <Image
                     src={option.image_url}
                     alt=""
-                    width={24}
-                    height={24}
-                    className="w-[24px] h-[24px] shrink-0"
+                    width={28}
+                    height={28}
+                    className="w-[28px] h-[28px] shrink-0"
                   />
                 )}
-                <span className="text-[15px] leading-[15px] font-normal text-[#292424] font-figtree">
+                <span className="text-[17px] leading-[17px] font-normal text-[#292424] font-figtree">
                   {option.option_text}
                 </span>
               </motion.button>
