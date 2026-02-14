@@ -48,7 +48,7 @@ export function ProjectionScreen({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        {firstName}, tvůj plán vnitřního klidu je připraven!
+        <span className="text-[#327455]">{firstName}</span>, tvůj plán vnitřního klidu je připraven!
       </motion.h1>
 
       {/* Current stress status — 15px/16.5px, #292424, centered */}

@@ -204,8 +204,8 @@ export function calculateProjection(
 
   return {
     targetScore: Math.round(targetScore),
-    displayCurrentScore: toDisplayScore(normalizedScore),
-    displayTargetScore: toDisplayScore(targetScore),
+    displayCurrentScore: Math.round((normalizedScore / 100) * 50),
+    displayTargetScore: Math.round((targetScore / 100) * 50),
     reductionPercent,
     targetDate,
   };

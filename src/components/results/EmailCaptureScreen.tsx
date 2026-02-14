@@ -45,10 +45,6 @@ export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenPro
     <StageLayout
       variant="result"
       bgClass="bg-white"
-      showCTA
-      ctaLabel={isSaving ? 'Ukládám...' : 'Zobrazit mé výsledky'}
-      ctaDisabled={isSaving || !isValid}
-      onCtaClick={handleSubmit}
       showBackButton={false}
       showHeaderLogo={true}
     >
@@ -150,6 +146,30 @@ export function EmailCaptureScreen({ onSubmit, isSaving }: EmailCaptureScreenPro
         <p className="text-[12px] leading-[14.4px] font-normal text-[#919191] font-figtree max-w-[316px]">
           Vážíme si tvého soukromí a chráníme tvé osobní údaje. Odkaz k tvému osobnímu plánu ti zašleme e-mailem, aby ses k němu mohla kdykoliv vrátit.
         </p>
+      </motion.div>
+
+      {/* CTA Button — moved up, 22px below privacy notice */}
+      <motion.div
+        className="mt-[22px] max-w-[351px] mx-auto w-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <button
+          onClick={handleSubmit}
+          disabled={isSaving || !isValid}
+          className={`
+            w-full h-[48px] rounded-[10px]
+            text-[15px] leading-[15px] font-bold font-figtree
+            transition-all
+            ${isSaving || !isValid
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-[#F9A201] text-white active:opacity-80'
+            }
+          `}
+        >
+          {isSaving ? 'Ukládám...' : 'Zobrazit mé výsledky'}
+        </button>
       </motion.div>
     </StageLayout>
   );
