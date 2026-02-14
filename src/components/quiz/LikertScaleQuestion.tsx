@@ -67,8 +67,8 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
         src: question.image_url,
         alt: '',
         anchor: 'bottom-right',
-        maxHeightDesktop: '70vh',
-        maxHeightMobile: '50vh',
+        maxHeightDesktop: '550px',
+        maxHeightMobile: '450px',
       } : undefined}
       variant="question"
       bgClass="bg-white"
@@ -86,7 +86,7 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
         </h2>
 
         {question.question_subtext && (
-          <p className="text-gray-700 mb-3 md:mb-4 text-xs md:text-sm lg:text-base italic">{question.question_subtext}</p>
+          <p className="text-[14px] leading-[21px] text-[#292424] font-figtree mb-3 md:mb-4 italic">{question.question_subtext}</p>
         )}
 
         <div className={`grid ${question.options.length === 5 ? 'grid-cols-5 gap-1.5 md:gap-2' : 'grid-cols-4 gap-2 md:gap-2.5'} mb-3 md:mb-4 max-w-md mx-auto`}>

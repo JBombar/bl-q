@@ -24,13 +24,13 @@ interface OverlayImageProps {
 function getAnchorClasses(anchor: string) {
   switch (anchor) {
     case 'bottom-right':
-      return 'bottom-0 right-0 translate-x-[8%] md:translate-x-[10%]';
+      return 'bottom-0 right-0 translate-x-[2%]';
     case 'bottom-left':
-      return 'bottom-0 left-0 -translate-x-[8%] md:-translate-x-[10%]';
+      return 'bottom-0 left-0 -translate-x-[2%]';
     case 'center-right':
-      return 'top-1/2 right-0 -translate-y-1/2 translate-x-[8%] md:translate-x-[10%]';
+      return 'top-1/2 right-0 -translate-y-1/2 translate-x-[2%]';
     default:
-      return 'bottom-0 right-0 translate-x-[8%] md:translate-x-[10%]';
+      return 'bottom-0 right-0 translate-x-[2%]';
   }
 }
 
@@ -38,8 +38,8 @@ export function OverlayImage({
   src,
   alt,
   anchor = 'bottom-right',
-  maxHeightDesktop = '70vh',
-  maxHeightMobile = '50vh',
+  maxHeightDesktop = '550px',
+  maxHeightMobile = '450px',
 }: OverlayImageProps) {
   return (
     <div
@@ -53,7 +53,7 @@ export function OverlayImage({
     >
       <div
         className={cn(
-          'absolute',
+          'absolute h-[450px] md:h-[550px]',
           getAnchorClasses(anchor)
         )}
       >
@@ -62,12 +62,7 @@ export function OverlayImage({
           alt={alt}
           width={600}
           height={800}
-          className={cn(
-            'object-contain',
-            'h-auto w-auto',
-            // Responsive max-height classes
-            'max-h-[50vh] md:max-h-[70vh]'
-          )}
+          className="object-contain w-auto h-full"
           priority={false}
           quality={85}
         />

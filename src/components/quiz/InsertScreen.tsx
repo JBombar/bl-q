@@ -12,6 +12,33 @@ interface InsertScreenProps {
   onComplete?: () => void;
 }
 
+/**
+ * Lightweight parser for formatted text
+ * Supports: **bold**, *italic*, and paragraph breaks (\n\n)
+ */
+function parseFormattedText(text: string) {
+  return text.split('\n\n').map((paragraph, pIdx) => {
+    // Split by both **bold** and *italic* markers
+    const parts = paragraph.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+    
+    return (
+      <p key={pIdx} className={pIdx > 0 ? 'mt-[12px]' : ''}>
+        {parts.map((part, idx) => {
+          // Bold text
+          if (part.startsWith('**') && part.endsWith('**')) {
+            return <strong key={idx} className="font-bold">{part.slice(2, -2)}</strong>;
+          }
+          // Italic text
+          if (part.startsWith('*') && part.endsWith('*') && !part.startsWith('**')) {
+            return <em key={idx} className="italic">{part.slice(1, -1)}</em>;
+          }
+          return <span key={idx}>{part}</span>;
+        })}
+      </p>
+    );
+  });
+}
+
 export function InsertScreen({ question, questionIndex, onComplete }: InsertScreenProps) {
   const { nextQuestion, previousQuestion, currentQuestionIndex, quiz } = useQuizState();
 
@@ -147,11 +174,7 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
         {/* Body text */}
         {question.question_subtext && (
           <div className={`mt-[12px] text-[15px] leading-[21px] text-[#292424] font-figtree ${showExpertBadge ? 'italic text-center' : 'font-normal text-left'}`}>
-            {question.question_subtext.split('\n\n').map((paragraph, idx) => (
-              <p key={idx} className={idx > 0 ? 'mt-[12px]' : ''}>
-                {paragraph}
-              </p>
-            ))}
+            {parseFormattedText(question.question_subtext)}
           </div>
         )}
 

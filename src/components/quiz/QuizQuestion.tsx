@@ -96,8 +96,8 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
         src: question.image_url,
         alt: '',
         anchor: 'bottom-right',
-        maxHeightDesktop: '70vh',
-        maxHeightMobile: '50vh',
+        maxHeightDesktop: '550px',
+        maxHeightMobile: '450px',
       } : undefined}
       variant="question"
       bgClass="bg-white"
