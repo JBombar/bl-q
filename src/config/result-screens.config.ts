@@ -22,18 +22,18 @@ export const STRESS_STAGE_CONFIG = {
 
   // Stage titles
   titles: {
-    1: 'Nízká úroveň stresu',
-    2: 'Mírná úroveň stresu',
-    3: 'Střední úroveň stresu',
-    4: 'Vysoká úroveň stresu',
+    1: 'Nízká úroveň',
+    2: 'Mírná úroveň',
+    3: 'Střední úroveň',
+    4: 'Vysoká úroveň',
   } as Record<StressStage, string>,
 
   // Stage descriptions
   descriptions: {
-    1: 'Tvoje úroveň stresu je velmi nízká. Máš dobré základy pro udržení vnitřního klidu.',
-    2: 'Tvoje úroveň stresu je mírná. S pravidelnou praxí můžeš dosáhnout ještě většího klidu.',
-    3: 'Tvoje úroveň stresu je střední. Je čas začít aktivně pracovat na svém vnitřním klidu.',
-    4: 'Tvoje úroveň stresu je vysoká. Doporučujeme začít co nejdříve s programem pro snížení stresu.',
+    1: 'V praxi to znamená, že se můžeš častěji cítit pod tlakem a mít větší starosti, které ti berou energii a narušují tvůj klidný spánek.',
+    2: 'V praxi to znamená, že se můžeš častěji cítit pod tlakem a mít větší starosti, které ti berou energii a narušují tvůj klidný spánek.',
+    3: 'V praxi to znamená, že se můžeš častěji cítit pod tlakem a mít větší starosti, které ti berou energii a narušují tvůj klidný spánek.',
+    4: 'V praxi to znamená, že se můžeš častěji cítit pod tlakem a mít větší starosti, které ti berou energii a narušují tvůj klidný spánek.',
   } as Record<StressStage, string>,
 
   // Segment labels (for display like "Vysoká")
