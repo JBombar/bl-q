@@ -4,7 +4,7 @@ import { useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { usePostQuizState } from '@/hooks/usePostQuizState';
-import { useCountdownTimer } from '@/hooks/useCountdownTimer';
+import { useSharedTimer } from '@/hooks/useSharedTimer';
 import { COUNTDOWN_TIMER } from '@/config/sales-page-content';
 import { BONUS_MODULES } from '@/config/checkout-content';
 import { formatPrice } from '@/config/pricing.config';
@@ -28,11 +28,7 @@ export function BonusModulesModal({
   const { funnelData } = usePostQuizState();
   const firstName = funnelData?.firstName || '';
 
-  const { formattedTime, isExpired } = useCountdownTimer({
-    durationSeconds: COUNTDOWN_TIMER.durationSeconds,
-    storageKey: 'checkout-modal-timer',
-    autoStart: true,
-  });
+  const { formattedTime, isExpired } = useSharedTimer(COUNTDOWN_TIMER.durationSeconds);
 
   // ESC key handler
   const handleEscape = useCallback(

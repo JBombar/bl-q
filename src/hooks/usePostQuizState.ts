@@ -36,6 +36,10 @@ interface PostQuizState {
   stripeSubscriptionId: string | null;
   stripeCustomerId: string | null;
 
+  // Shared countdown timer state
+  timerStartedAt: number | null;
+  timerDurationSeconds: number;
+
   // Actions
   initialize: (data: QuizCompleteResponse) => void;
   setScreen: (screen: FunnelScreen) => void;
@@ -54,6 +58,10 @@ interface PostQuizState {
   handleCheckoutCanceled: () => void;
   setSelectedPlanId: (planId: string) => void;
   setSubscriptionIds: (stripeSubscriptionId: string, stripeCustomerId: string) => void;
+
+  // Timer actions
+  initializeTimer: (durationSeconds: number) => void;
+  getTimeRemaining: () => number;
 }
 
 export const usePostQuizState = create<PostQuizState>()(
@@ -75,6 +83,10 @@ export const usePostQuizState = create<PostQuizState>()(
       // Subscription IDs
       stripeSubscriptionId: null,
       stripeCustomerId: null,
+
+      // Timer state
+      timerStartedAt: null,
+      timerDurationSeconds: 600, // 10 minutes default
 
   /**
    * Initialize with data from /api/quiz/complete
@@ -349,6 +361,37 @@ export const usePostQuizState = create<PostQuizState>()(
       setSubscriptionIds: (stripeSubscriptionId: string, stripeCustomerId: string) => {
         set({ stripeSubscriptionId, stripeCustomerId });
       },
+
+      /**
+       * Initialize timer if not already started
+       */
+      initializeTimer: (durationSeconds: number) => {
+        const { timerStartedAt } = get();
+        if (!timerStartedAt) {
+          set({ 
+            timerStartedAt: Date.now(),
+            timerDurationSeconds: durationSeconds,
+          });
+        }
+      },
+
+      /**
+       * Get remaining time in seconds
+       */
+      getTimeRemaining: () => {
+        const { timerStartedAt, timerDurationSeconds } = get();
+        if (!timerStartedAt) return timerDurationSeconds;
+        
+        const elapsed = Math.floor((Date.now() - timerStartedAt) / 1000);
+        const remaining = Math.max(0, timerDurationSeconds - elapsed);
+        
+        // Auto-expire if time's up
+        if (remaining === 0 && !get().timerExpired) {
+          get().handleTimerExpired();
+        }
+        
+        return remaining;
+      },
     }),
     {
       name: 'post-quiz-storage', // localStorage key
@@ -362,6 +405,8 @@ export const usePostQuizState = create<PostQuizState>()(
         selectedPlanId: state.selectedPlanId,
         stripeSubscriptionId: state.stripeSubscriptionId,
         stripeCustomerId: state.stripeCustomerId,
+        timerStartedAt: state.timerStartedAt,
+        timerDurationSeconds: state.timerDurationSeconds,
       }),
     }
   )

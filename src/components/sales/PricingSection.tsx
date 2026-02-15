@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { PricingOption } from './PricingOption';
-import { useCountdownTimer } from '@/hooks/useCountdownTimer';
+import { useSharedTimer } from '@/hooks/useSharedTimer';
 import { usePostQuizState } from '@/hooks/usePostQuizState';
 import type { PlanWithPricing } from '@/config/pricing.config';
 import { getDynamicDisclaimerText } from '@/config/pricing.config';
@@ -73,20 +73,14 @@ export function PricingSection({
   const {
     selectedPlanId,
     setSelectedPlanId,
-    handleTimerExpired,
     pricingTier,
   } = usePostQuizState();
 
-  // Use the countdown timer hook with persistence
+  // Use the shared countdown timer
   const {
     formattedTime,
     isExpired,
-  } = useCountdownTimer({
-    durationSeconds: COUNTDOWN_TIMER.durationSeconds,
-    onExpire: handleTimerExpired,
-    autoStart: true,
-    storageKey: 'discount-timer',
-  });
+  } = useSharedTimer(COUNTDOWN_TIMER.durationSeconds);
 
   // Find recommended plan or default to first
   const recommendedPlan = plans.find(p => p.isRecommended);

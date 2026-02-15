@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useSharedTimer } from '@/hooks/useSharedTimer';
 import { COUNTDOWN_TIMER, CTA_BUTTON_TEXT } from '@/config/sales-page-content';
 
 /**
@@ -12,29 +12,7 @@ interface StickyHeaderProps {
 }
 
 export function StickyHeader({ onCtaClick }: StickyHeaderProps) {
-  const [timeLeft, setTimeLeft] = useState(COUNTDOWN_TIMER.durationSeconds);
-  const [isExpired, setIsExpired] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          setIsExpired(true);
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+  const { formattedTime, isExpired } = useSharedTimer(COUNTDOWN_TIMER.durationSeconds);
 
   return (
     <div className="sticky top-0 z-50 bg-white border-b border-[#E4E4E4]">
@@ -48,7 +26,7 @@ export function StickyHeader({ onCtaClick }: StickyHeaderProps) {
                   {COUNTDOWN_TIMER.discountText}
                 </span>
                 <span className="text-[#292424] text-[16px] font-medium leading-[1.1em]">
-                  {formatTime(timeLeft)}
+                  {formattedTime.minutes}:{formattedTime.seconds}
                 </span>
               </>
             ) : (
