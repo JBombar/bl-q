@@ -109,7 +109,7 @@ export function PricingOption({
 
             {/* Plan info — name + pricing */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-[18px] text-[#292424] leading-[19.8px] uppercase">
+              <h3 className="font-bold text-[15px] text-[#292424] leading-[16.5px] uppercase">
                 {plan.name}
               </h3>
               <div className="flex items-baseline gap-[8px] mt-[4px]">

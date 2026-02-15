@@ -98,7 +98,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: 'plan_7_days',
     duration: '7_days',
-    name: '7 dni',
+    name: '7-DENNÍ PLÁN',
     durationDays: 7,
     billingInterval: 'month',
     recurringStripePriceId: STRIPE_PRICES.RECURRING_MONTHLY,
@@ -112,7 +112,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: 'plan_1_month',
     duration: '1_month',
-    name: '1 mesic',
+    name: '4-TÝDENNÍ PLÁN',
     durationDays: 30,
     billingInterval: 'month',
     recurringStripePriceId: STRIPE_PRICES.RECURRING_MONTHLY,
@@ -128,7 +128,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: 'plan_3_months',
     duration: '3_months',
-    name: '3 mesice',
+    name: '12-TÝDENNÍ PLÁN',
     durationDays: 90,
     billingInterval: 'quarter',
     recurringStripePriceId: STRIPE_PRICES.RECURRING_QUARTERLY,
