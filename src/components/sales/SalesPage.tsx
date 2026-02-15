@@ -106,10 +106,10 @@ export function SalesPage() {
     setModalStep('socialproof');
   };
 
-  // Handle social proof "Pokračovat" - apply max discount and return to checkout
+  // Handle social proof "Pokračovat" - apply max discount and close modal
   const handleSocialProofContinue = () => {
     handleCheckoutCanceled();
-    setModalStep('checkout');
+    setModalStep('none');
   };
 
   // Handle social proof close - close everything

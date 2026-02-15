@@ -128,7 +128,7 @@ export function SocialProofModal({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center sm:p-4">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center sm:p-4">
       {/* Backdrop */}
       <motion.div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -140,7 +140,7 @@ export function SocialProofModal({
 
       {/* Modal Card — slower entrance so user notices the change */}
       <motion.div
-        className="relative bg-white rounded-t-[16px] sm:rounded-[10px] shadow-2xl w-full max-w-[500px] max-h-[90vh] sm:max-h-[95vh] overflow-y-auto p-4 sm:p-6 font-figtree"
+        className="relative bg-white rounded-[10px] shadow-2xl w-full max-w-[500px] max-h-[90vh] sm:max-h-[95vh] overflow-y-auto p-4 sm:p-6 font-figtree"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
