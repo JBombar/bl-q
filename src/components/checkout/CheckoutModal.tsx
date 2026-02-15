@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, type Stripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { StripeCheckoutForm } from './StripeCheckoutForm';
 import { usePostQuizState } from '@/hooks/usePostQuizState';
@@ -11,7 +11,14 @@ import type { PlanWithPricing } from '@/config/pricing.config';
 import { formatPrice } from '@/config/pricing.config';
 import { BONUS_MODULES } from '@/config/checkout-content';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+// Lazy-load Stripe only when first needed (avoids global badge on non-checkout pages)
+let stripePromise: Promise<Stripe | null> | null = null;
+function getStripe() {
+  if (!stripePromise) {
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  }
+  return stripePromise;
+}
 
 export interface CheckoutModalProps {
   plan: PlanWithPricing;
@@ -271,7 +278,7 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
 
         {clientSecret && !isLoading && !error && (
           <Elements
-            stripe={stripePromise}
+            stripe={getStripe()}
             options={{
               clientSecret,
               locale: 'cs',

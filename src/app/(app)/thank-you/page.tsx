@@ -12,28 +12,24 @@ const STEPS = [
 
 function ProgressIndicator() {
   return (
-    <div className="flex items-start justify-center gap-0 w-full max-w-[440px] mx-auto">
-      {STEPS.map((step, i) => (
-        <div key={step.label} className="flex items-start flex-1">
-          <div className="flex flex-col items-center gap-2 flex-1">
-            <div className="relative w-8 h-8 flex items-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-[#327455] flex items-center justify-center">
-                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
+    <div className="relative w-full max-w-[440px] mx-auto">
+      {/* Continuous line from center of first circle to center of last circle */}
+      <div className="absolute top-4 left-4 right-4 h-px bg-[#327455]" />
+      {/* Circles + labels */}
+      <div className="relative flex items-start justify-between">
+        {STEPS.map((step) => (
+          <div key={step.label} className="flex flex-col items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-[#327455] flex items-center justify-center z-10">
+              <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </div>
             <span className="text-[12px] leading-[12px] text-center whitespace-nowrap font-normal text-[#919191]">
               {step.label}
             </span>
           </div>
-          {i < STEPS.length - 1 && (
-            <div className="flex items-center h-8 -mx-1">
-              <div className="w-12 sm:w-16 h-px bg-[#327455]" />
-            </div>
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

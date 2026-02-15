@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Hide the global "Powered by Stripe" badge injected by stripe-js */
+iframe[name^="__privateStripeFrame"],
+a[href*="stripe.com"][target="_blank"][rel*="noopener"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+}
+
 /* Custom mask utility for ticket stub shape */
 .mask-ticket {
   -webkit-mask-image: url('/masks/ticket-mask.svg');

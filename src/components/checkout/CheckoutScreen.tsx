@@ -1,13 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, type Stripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { StripeCheckoutForm } from './StripeCheckoutForm';
 import { OrderSummary } from './OrderSummary';
 import type { ProductOffer } from '@/types';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+// Lazy-load Stripe only when first needed
+let stripePromise: Promise<Stripe | null> | null = null;
+function getStripe() {
+  if (!stripePromise) {
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  }
+  return stripePromise;
+}
 
 interface CheckoutScreenProps {
   offer: ProductOffer;
@@ -111,7 +118,7 @@ export function CheckoutScreen({ offer, onSuccess, onCancel }: CheckoutScreenPro
           {/* Payment Form */}
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Payment Details</h2>
-            <Elements stripe={stripePromise} options={options}>
+            <Elements stripe={getStripe()} options={options}>
               <StripeCheckoutForm
                 orderId={orderId}
                 onSuccess={onSuccess}
