@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { StripeCheckoutForm } from './StripeCheckoutForm';
@@ -120,7 +121,7 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
     : 0;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4">
       {/* Backdrop */}
       <motion.div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -132,7 +133,7 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
 
       {/* Modal Card */}
       <motion.div
-        className="relative bg-white rounded-t-[16px] sm:rounded-[10px] shadow-2xl w-full max-w-[500px] max-h-[90vh] sm:max-h-[95vh] overflow-y-auto p-4 sm:p-6 font-figtree"
+        className="relative bg-white rounded-[10px] shadow-2xl w-full max-w-[500px] max-h-[90vh] sm:max-h-[95vh] overflow-y-auto p-4 sm:p-6 font-figtree"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
@@ -156,13 +157,25 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
 
         {/* 2. Payment Method Tabs */}
         <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-5">
-          {/* Bank Transfer (unselected placeholder) */}
-          <div className="flex-1 border border-[#e4e4e4] rounded-[10px] h-[80px] sm:h-[100px] flex flex-col items-center justify-center gap-1.5 sm:gap-2 cursor-not-allowed opacity-50">
-            <span className="text-[12px] sm:text-[14px] font-bold text-[#292424]">Bankovní převod</span>
-            <div className="flex gap-1.5 sm:gap-2">
-              <div className="w-[50px] sm:w-[62px] h-[20px] sm:h-[24px] bg-[#f6f6f6] rounded-[4px]" />
-              <div className="w-[50px] sm:w-[62px] h-[20px] sm:h-[24px] bg-[#f6f6f6] rounded-[4px]" />
-            </div>
+          {/* Digital Wallets (Apple Pay & Google Pay) */}
+          <div className="flex-1 border border-[#e4e4e4] rounded-[10px] h-[80px] sm:h-[100px] flex flex-col items-center justify-center gap-2">
+            {/* Google Pay Logo */}
+            <img
+              src="/icons/google_pay.svg"
+              alt="Google Pay"
+              width={52}
+              height={20}
+              className="w-[52px] h-[20px]"
+            />
+            
+            {/* Apple Pay Logo */}
+            <img
+              src="/icons/apple_pay.svg"
+              alt="Apple Pay"
+              width={52}
+              height={20}
+              className="w-[52px] h-[20px]"
+            />
           </div>
 
           {/* Card Payment (selected) */}
@@ -177,9 +190,6 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
                   <div className="w-3.5 sm:w-4 h-3.5 sm:h-4 rounded-full bg-[#EB001B]" />
                   <div className="w-3.5 sm:w-4 h-3.5 sm:h-4 rounded-full bg-[#F79E1B] -ml-1.5 sm:-ml-2" />
                 </div>
-              </div>
-              <div className="w-[40px] sm:w-[48px] h-[27px] sm:h-[33px] border border-[#e4e4e4] rounded-[4px] flex items-center justify-center">
-                <span className="text-[7px] sm:text-[8px] font-bold text-[#006FCF]">AMEX</span>
               </div>
             </div>
           </div>
