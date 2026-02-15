@@ -168,17 +168,9 @@ export function StripeCheckoutForm({ subscriptionId, amount, orderId, onSuccess,
     <form onSubmit={handleSubmit}>
       <PaymentElement 
         options={{
-          fields: {
-            billingDetails: {
-              address: 'never',
-            },
-          },
           wallets: {
             applePay: 'auto',
             googlePay: 'auto',
-          },
-          terms: {
-            card: 'never',
           },
         }}
       />

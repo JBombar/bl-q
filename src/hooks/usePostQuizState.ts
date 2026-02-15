@@ -331,21 +331,22 @@ export const usePostQuizState = create<PostQuizState>()(
       },
 
       /**
-       * Handle timer expiration - upgrades to FULL_PRICE unless MAX_DISCOUNT is active
+       * Handle timer expiration - always locks in FULL_PRICE permanently
        */
       handleTimerExpired: () => {
-        const { checkoutCanceled } = get();
-        // MAX_DISCOUNT (from checkout cancel) takes precedence over timer expiration
-        if (!checkoutCanceled) {
-          set({ timerExpired: true, pricingTier: 'FULL_PRICE' });
-        }
+        set({ timerExpired: true, pricingTier: 'FULL_PRICE' });
       },
 
       /**
-       * Handle checkout cancellation - applies MAX_DISCOUNT (best offer)
+       * Handle checkout cancellation - applies MAX_DISCOUNT only if timer is still running
        */
       handleCheckoutCanceled: () => {
-        set({ checkoutCanceled: true, pricingTier: 'MAX_DISCOUNT' });
+        const { timerExpired } = get();
+        if (!timerExpired) {
+          set({ checkoutCanceled: true, pricingTier: 'MAX_DISCOUNT' });
+        } else {
+          set({ checkoutCanceled: true });
+        }
       },
 
       /**
@@ -385,9 +386,12 @@ export const usePostQuizState = create<PostQuizState>()(
         const elapsed = Math.floor((Date.now() - timerStartedAt) / 1000);
         const remaining = Math.max(0, timerDurationSeconds - elapsed);
         
-        // Auto-expire if time's up
-        if (remaining === 0 && !get().timerExpired) {
-          get().handleTimerExpired();
+        // Auto-expire if time's up (also fixes inconsistent state where timerExpired=true but pricingTier!=FULL_PRICE)
+        if (remaining === 0) {
+          const s = get();
+          if (!s.timerExpired || s.pricingTier !== 'FULL_PRICE') {
+            get().handleTimerExpired();
+          }
         }
         
         return remaining;
@@ -408,6 +412,18 @@ export const usePostQuizState = create<PostQuizState>()(
         timerStartedAt: state.timerStartedAt,
         timerDurationSeconds: state.timerDurationSeconds,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        // If timer was started and has since expired, force FULL_PRICE
+        // This runs synchronously during rehydration, before any component renders
+        if (state.timerStartedAt && state.timerDurationSeconds) {
+          const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 1000);
+          if (elapsed >= state.timerDurationSeconds) {
+            state.timerExpired = true;
+            state.pricingTier = 'FULL_PRICE';
+          }
+        }
+      },
     }
   )
 );

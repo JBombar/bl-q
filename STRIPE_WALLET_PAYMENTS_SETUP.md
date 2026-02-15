@@ -43,6 +43,21 @@ This guide will walk you through enabling Apple Pay and Google Pay for your Bett
 
 **Screenshot tip**: Both Apple Pay and Google Pay should now show as enabled with blue toggle switches.
 
+### Step 5: Disable Link (Optional but Recommended)
+
+Link is Stripe's "pay with email" feature that can add friction to checkout. We recommend disabling it.
+
+1. On the same **Payment methods** page, find **Link** in the list
+2. Click the toggle switch to turn it **OFF** (it will turn gray)
+3. Click **Save changes** if prompted
+
+**Why disable Link?**
+- Reduces confusion at checkout
+- Keeps the payment flow simple and focused
+- Some customers find it intrusive
+
+**Note**: You can always re-enable it later if you want to test it.
+
 ---
 
 ## Part 2: Domain Verification for Apple Pay (PRODUCTION ONLY)
@@ -186,6 +201,15 @@ Your code already uses Stripe's **Payment Element** which automatically:
 ### Q: Can I test without verifying the domain?
 **A**: Yes! In Stripe test mode, you can test both Apple Pay and Google Pay without domain verification.
 
+### Q: What is Link and should I disable it?
+**A**: Link is Stripe's "pay with email" feature that lets customers save payment info across websites. We recommend disabling it because:
+- It adds an extra step that can confuse customers
+- It's designed for US customers primarily
+- Your checkout is already optimized with card payments, Apple Pay, and Google Pay
+- You can always re-enable it later if needed
+
+To disable: Go to Settings → Payment methods → Find "Link" → Toggle OFF
+
 ---
 
 ## Checklist
@@ -196,6 +220,7 @@ Use this to track your progress:
 - [ ] Go to Settings → Payment methods
 - [ ] Enable Google Pay
 - [ ] Enable Apple Pay
+- [ ] Disable Link (optional but recommended)
 - [ ] (Production only) Add domain betterlady.cz
 - [ ] (Production only) Verify domain
 - [ ] Test in Chrome (Google Pay)

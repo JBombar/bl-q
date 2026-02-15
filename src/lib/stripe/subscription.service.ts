@@ -131,7 +131,21 @@ export async function findOrCreateCustomer(data: {
     // Customer exists, retrieve Stripe customer
     const stripeCustomer = await stripe.customers.retrieve(customer.stripe_customer_id);
     if (stripeCustomer.deleted) {
-      throw new Error('Stripe customer has been deleted');
+      // Stripe customer was deleted externally — create a fresh one and update DB
+      const newStripeCustomer = await stripe.customers.create({
+        email,
+        metadata: {
+          session_id: data.sessionId || '',
+          source: 'quiz_funnel',
+          recreated: 'true',
+        },
+      });
+      await supabase
+        .from('customers')
+        .update({ stripe_customer_id: newStripeCustomer.id })
+        .eq('id', customer.id);
+      customer.stripe_customer_id = newStripeCustomer.id;
+      return { customer, stripeCustomer: newStripeCustomer };
     }
     return { customer, stripeCustomer: stripeCustomer as Stripe.Customer };
   }
@@ -250,7 +264,87 @@ export async function createSubscription(
     );
   }
 
-  // 3. Create subscription with payment_behavior: 'default_incomplete'
+  // 3. Idempotency guard: reuse existing incomplete subscription with same price
+  //    Prevents duplicates from race conditions, network retries, or StrictMode double-fire
+  const existingIncomplete = await stripe.subscriptions.list({
+    customer: stripeCustomer.id,
+    status: 'incomplete',
+    expand: ['data.latest_invoice.confirmation_secret', 'data.latest_invoice.payments'],
+    limit: 5,
+  });
+
+  // Cancel stale incomplete subscriptions from other sessions
+  const staleSubs = existingIncomplete.data.filter(
+    sub => sub.items.data[0]?.price?.id === introStripePriceId
+      && sub.metadata?.session_id !== (sessionId || '')
+  );
+  for (const stale of staleSubs) {
+    console.log('[Subscription] Canceling stale subscription from different session:', stale.id);
+    await stripe.subscriptions.cancel(stale.id);
+  }
+
+  const matchingSub = existingIncomplete.data.find(
+    sub => sub.items.data[0]?.price?.id === introStripePriceId
+      && sub.metadata?.session_id === (sessionId || '')
+  );
+
+  if (matchingSub) {
+    console.log('[Subscription] Found existing incomplete subscription:', matchingSub.id);
+
+    const existingInvoice = matchingSub.latest_invoice as Stripe.Invoice;
+    const existingClientSecret = existingInvoice?.confirmation_secret?.client_secret;
+
+    if (existingClientSecret) {
+      // Check if we already have a DB record for this subscription
+      let existingDbSub = await getSubscriptionByStripeId(matchingSub.id);
+
+      if (!existingDbSub) {
+        // Create DB records if missing
+        const firstItem = matchingSub.items.data[0];
+        const periodStart = firstItem?.current_period_start
+          ? new Date(firstItem.current_period_start * 1000).toISOString()
+          : new Date().toISOString();
+        const periodEnd = firstItem?.current_period_end
+          ? new Date(firstItem.current_period_end * 1000).toISOString()
+          : new Date().toISOString();
+
+        const { data: newDbSub } = await supabase
+          .from('subscriptions')
+          .insert({
+            customer_id: customer.id,
+            stripe_subscription_id: matchingSub.id,
+            status: matchingSub.status,
+            stripe_price_id: introStripePriceId,
+            billing_interval: billingInterval,
+            current_period_start: periodStart,
+            current_period_end: periodEnd,
+            cancel_at_period_end: matchingSub.cancel_at_period_end,
+          } as SubscriptionInsert)
+          .select()
+          .single();
+
+        existingDbSub = newDbSub;
+      }
+
+      if (existingDbSub) {
+        console.log('[Subscription] Reusing incomplete subscription:', matchingSub.id);
+        return {
+          subscriptionId: existingDbSub.id,
+          stripeSubscriptionId: matchingSub.id,
+          clientSecret: existingClientSecret,
+          customerId: customer.id,
+          stripeCustomerId: stripeCustomer.id,
+          status: matchingSub.status,
+        };
+      }
+    }
+
+    // If clientSecret is missing, cancel the stale subscription and create fresh
+    console.log('[Subscription] Stale incomplete subscription, canceling:', matchingSub.id);
+    await stripe.subscriptions.cancel(matchingSub.id);
+  }
+
+  // 4. Create subscription with payment_behavior: 'default_incomplete'
   //    This creates an incomplete subscription with a confirmation_secret
   //    that the frontend uses for the Payment Element.
   console.log('[Subscription] Creating subscription:', {
@@ -579,9 +673,23 @@ export async function addUpsellToSubscription(
   }
 
   // 7. Retrieve the customer's saved default payment method from Stripe
-  const stripeCustomer = await stripe.customers.retrieve(customer.stripe_customer_id);
+  let stripeCustomer = await stripe.customers.retrieve(customer.stripe_customer_id);
   if (stripeCustomer.deleted) {
-    throw new Error('Stripe customer has been deleted.');
+    // Stripe customer was deleted externally — create a fresh one and update DB
+    const newStripeCustomer = await stripe.customers.create({
+      email: customer.email,
+      metadata: {
+        session_id: sessionId || '',
+        source: 'quiz_funnel',
+        recreated: 'true',
+      },
+    });
+    await supabase
+      .from('customers')
+      .update({ stripe_customer_id: newStripeCustomer.id })
+      .eq('id', customer.id);
+    customer.stripe_customer_id = newStripeCustomer.id;
+    stripeCustomer = newStripeCustomer;
   }
 
   let paymentMethodId: string | null = null;

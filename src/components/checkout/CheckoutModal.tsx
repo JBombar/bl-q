@@ -38,9 +38,10 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
     onCancel();
   }, [onCancel]);
 
-  // Create subscription on mount (with StrictMode double-fire guard)
+  // Create subscription on mount (AbortController cancels the HTTP request on unmount,
+  // preventing duplicate Stripe subscriptions from React StrictMode double-fire)
   useEffect(() => {
-    let cancelled = false;
+    const abortController = new AbortController();
 
     async function createSubscription() {
       try {
@@ -58,9 +59,8 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(requestBody),
+          signal: abortController.signal,
         });
-
-        if (cancelled) return;
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -69,7 +69,6 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
         }
 
         const data = await response.json();
-        if (cancelled) return;
         setClientSecret(data.clientSecret);
         setSubscriptionId(data.subscriptionId);
 
@@ -81,7 +80,7 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
 
         setIsLoading(false);
       } catch (err: any) {
-        if (cancelled) return;
+        if (err.name === 'AbortError') return;
         console.error('Subscription creation error:', err);
         setError(err.message || 'Failed to initialize payment. Please try again.');
         setIsLoading(false);
@@ -89,7 +88,7 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
     }
 
     createSubscription();
-    return () => { cancelled = true; };
+    return () => { abortController.abort(); };
   }, [plan.id, pricingTier, email]);
 
   // Close modal on ESC key

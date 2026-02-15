@@ -23,7 +23,8 @@ export interface UseSharedTimerResult {
 export function useSharedTimer(durationSeconds: number): UseSharedTimerResult {
   const { initializeTimer, getTimeRemaining } = usePostQuizState();
   const [timeLeft, setTimeLeft] = useState(() => {
-    initializeTimer(durationSeconds);
+    // Only read time here — initialization happens in useEffect to avoid
+    // setState-during-render warnings when multiple components share the timer
     return getTimeRemaining();
   });
 
