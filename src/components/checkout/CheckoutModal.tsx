@@ -275,6 +275,7 @@ export function CheckoutModal({ plan, email, onSuccess, onCancel }: CheckoutModa
             stripe={stripePromise}
             options={{
               clientSecret,
+              locale: 'cs',
               appearance: {
                 theme: 'stripe',
                 variables: {
