@@ -56,7 +56,7 @@ const VARIANT_CONFIGS = {
     contentAlignment: 'flex flex-col items-center justify-start',
     contentMaxWidth: 'max-w-2xl',
     bgClass: 'bg-gray-50',
-    contentPadding: 'px-6 pt-4 pb-4 md:px-6 md:pt-18 md:pb-6',
+    contentPadding: 'px-6 pt-4 pb-32 md:px-6 md:pt-18 md:pb-6',
     hasSafePadding: true, // Add right padding when overlay present
     allowScroll: true,
   },
@@ -110,6 +110,18 @@ export function QuizStageLayout({
         config.bgClass
       )}
     >
+      {/* OVERLAY IMAGE LAYER - Global positioning, behind content/footer */}
+      {overlayImage && (
+        <OverlayImage
+          src={overlayImage.src}
+          alt={overlayImage.alt}
+          anchor={overlayImage.anchor || 'bottom-right'}
+          maxHeightDesktop={overlayImage.maxHeightDesktop}
+          maxHeightMobile={overlayImage.maxHeightMobile}
+          className="z-0" // Sit behind content
+        />
+      )}
+
       {/* BACK BUTTON - Absolute positioned at top left */}
       {showBackButton && onBackClick && (
         <button
@@ -143,7 +155,7 @@ export function QuizStageLayout({
       {/* CONTENT ZONE - Scrollable only for question variant */}
       <main
         className={cn(
-          'relative',
+          'relative z-10', // Ensure content sits above overlay
           'min-h-0', // Critical: allows overflow scrolling in grid children
           config.allowScroll ? 'overflow-y-auto' : 'overflow-hidden', // Insert/gate variants: NO scroll
           config.contentAlignment
@@ -162,17 +174,6 @@ export function QuizStageLayout({
         >
           {children}
         </div>
-
-        {/* OVERLAY IMAGE LAYER - Absolute positioned, non-interactive */}
-        {overlayImage && (
-          <OverlayImage
-            src={overlayImage.src}
-            alt={overlayImage.alt}
-            anchor={overlayImage.anchor || 'bottom-right'}
-            maxHeightDesktop={overlayImage.maxHeightDesktop}
-            maxHeightMobile={overlayImage.maxHeightMobile}
-          />
-        )}
       </main>
 
       {/* CTA ZONE - Fixed at bottom */}

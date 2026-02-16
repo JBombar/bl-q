@@ -54,8 +54,8 @@ export function OverlayImage({
           // Desktop positioning (default)
           anchorClasses[anchor],
           // Mobile adjustments:
-          // On very small screens, we might want to scale it down further or adjust position
-          'max-w-[45%] md:max-w-none', // Limit width on mobile to avoid covering too much
+          // Slightly larger as requested (was 140px/40%)
+          'w-[220px] md:w-auto max-w-[55%] md:max-w-none',
           className
         )}
         initial={{ opacity: 0, y: 20 }}
@@ -63,7 +63,7 @@ export function OverlayImage({
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <div
-          className="relative"
+          className="relative flex flex-col justify-end" // Fix: Align image to bottom of container to prevent gap
           style={{
             height: maxHeightDesktop || '600px', // Default fallback
             maxHeight: '80vh' // Never exceed 80% viewport height
@@ -73,9 +73,8 @@ export function OverlayImage({
             src={src}
             alt={alt}
             className={cn(
+              // Object-bottom ensures it aligns to the bottom of the container
               "h-full w-auto object-contain object-bottom",
-              // Mobile specific height overrides via style or class?
-              // We use the prop for specific control
             )}
             style={{
               maxHeight: maxHeightMobile ? maxHeightMobile : undefined
