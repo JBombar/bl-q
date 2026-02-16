@@ -47,8 +47,8 @@ const MENTORS = [
     id: 'dominik',
     name: 'Dominik Fujtík',
     title: 'Expert na hubnutí',
-    bio: 'Pomáhá ženám pochopit, jak jejich tělo funguje, proč se jim nedaří hubnout i když se snaží, a co s tím dělat.',
-    image: null,
+    bio: 'Pomáhá ženám pochopit, jak jejich tělo funguje, proč se jim nedaří hubnout i když se snaží, a co s tím dělat. Není žádný zastánce drastických diet – spíš učí, jak vyrovnat hormony, nastavit stravu a pohyb tak, aby tělo začalo spalovat tuk přirozeně a bez stresu. A hlavně – všechno vysvětluje lidsky a jednoduše.',
+    image: '/images/upsell-page/mentor_dominik.png',
   },
 ];
 
@@ -101,11 +101,10 @@ function ProgressIndicator() {
           <div key={step.label} className="flex flex-col items-center gap-2 z-10">
             {/* Label */}
             <span
-              className={`text-[12px] leading-[12px] text-center whitespace-nowrap ${
-                step.state === 'active'
-                  ? 'font-bold text-[#292424]'
-                  : 'font-normal text-[#919191]'
-              }`}
+              className={`text-[12px] leading-[12px] text-center whitespace-nowrap ${step.state === 'active'
+                ? 'font-bold text-[#292424]'
+                : 'font-normal text-[#919191]'
+                }`}
             >
               {step.label}
             </span>
@@ -314,13 +313,13 @@ function MentorCard({
       className="w-full rounded-[16px] overflow-hidden cursor-pointer transition-all"
     >
       {/* Hero image area */}
-      <div className="w-full h-[280px] sm:h-[338px] bg-[#f5f5f5] relative flex items-center justify-center text-[#919191] rounded-[16px] overflow-hidden">
+      <div className="w-full h-[280px] sm:h-[338px] relative flex items-center justify-center text-[#919191] rounded-[16px] overflow-hidden">
         {mentor.image ? (
           <Image
             src={mentor.image}
             alt={mentor.name}
             fill
-            className="object-cover"
+            className="object-contain object-bottom"
           />
         ) : (
           'Mentor Photo'
@@ -503,9 +502,9 @@ function FaqItem({
         {/* Question Mark Icon */}
         <div className="shrink-0">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke={iconColor} strokeWidth="2"/>
-            <path d="M9.5 9.5C9.5 8.12 10.62 7 12 7C13.38 7 14.5 8.12 14.5 9.5C14.5 10.88 13.38 12 12 12V13.5" stroke={iconColor} strokeWidth="2" strokeLinecap="round"/>
-            <circle cx="12" cy="16.5" r="1" fill={iconColor}/>
+            <circle cx="12" cy="12" r="10" stroke={iconColor} strokeWidth="2" />
+            <path d="M9.5 9.5C9.5 8.12 10.62 7 12 7C13.38 7 14.5 8.12 14.5 9.5C14.5 10.88 13.38 12 12 12V13.5" stroke={iconColor} strokeWidth="2" strokeLinecap="round" />
+            <circle cx="12" cy="16.5" r="1" fill={iconColor} />
           </svg>
         </div>
 
@@ -521,12 +520,12 @@ function FaqItem({
         <div className="shrink-0">
           {isExpanded ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5 12H19" stroke={iconColor} strokeWidth="2" strokeLinecap="round"/>
+              <path d="M5 12H19" stroke={iconColor} strokeWidth="2" strokeLinecap="round" />
             </svg>
           ) : (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 5V19" stroke={iconColor} strokeWidth="2" strokeLinecap="round"/>
-              <path d="M5 12H19" stroke={iconColor} strokeWidth="2" strokeLinecap="round"/>
+              <path d="M12 5V19" stroke={iconColor} strokeWidth="2" strokeLinecap="round" />
+              <path d="M5 12H19" stroke={iconColor} strokeWidth="2" strokeLinecap="round" />
             </svg>
           )}
         </div>
@@ -689,7 +688,7 @@ export function UpsellPage({ onAddToPlan, onSkip, isLoading, error }: UpsellPage
         {/* ----------------------------------------------------------------- */}
         {/* 8. Mentor Cards */}
         {/* ----------------------------------------------------------------- */}
-        <div className="flex flex-col gap-4 mt-6">
+        <div className="flex flex-col gap-8 mt-6">
           {MENTORS.map((mentor, i) => (
             <MentorCard
               key={mentor.id}
