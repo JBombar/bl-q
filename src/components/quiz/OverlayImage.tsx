@@ -54,8 +54,8 @@ export function OverlayImage({
           // Desktop positioning (default)
           anchorClasses[anchor],
           // Mobile adjustments:
-          // Smaller size (160px/40%) to prevent covering Likert scale options
-          'w-[160px] md:w-auto max-w-[40%] md:max-w-none',
+          // Smaller size (140px/35%) to prevent covering Likert scale options
+          'w-[140px] md:w-auto max-w-[35%] md:max-w-none',
           className
         )}
         initial={{ opacity: 0, y: 20 }}
