@@ -56,7 +56,7 @@ const VARIANT_CONFIGS = {
     contentAlignment: 'flex flex-col items-center justify-start',
     contentMaxWidth: 'max-w-2xl',
     bgClass: 'bg-gray-50',
-    contentPadding: 'px-4 pt-6 pb-4 md:px-6 md:pt-18 md:pb-6',
+    contentPadding: 'px-6 pt-4 pb-4 md:px-6 md:pt-18 md:pb-6',
     hasSafePadding: true, // Add right padding when overlay present
     allowScroll: true,
   },
@@ -156,7 +156,8 @@ export function QuizStageLayout({
             'mx-auto',
             config.contentPadding,
             // Add safe padding on right when overlay image is present
-            overlayImage && config.hasSafePadding && 'pr-8 md:pr-24 lg:pr-32'
+            // Mobile: Reduce padding (pr-4) so we don't squash text. We'll handle image intersection via logic or Image component max-width
+            overlayImage && config.hasSafePadding && 'pr-4 md:pr-24 lg:pr-32'
           )}
         >
           {children}

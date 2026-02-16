@@ -54,14 +54,14 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
           transition={{ delay: 0.1 }}
           className="flex flex-col items-center text-center w-full"
         >
-          {/* Map image — 308px × 150px, object-contain */}
+          {/* Map image — Responsive */}
           {question.image_url && (
-            <div className="relative mt-[24px] w-[308px] h-[150px]">
+            <div className="relative mt-6 w-full max-w-xs aspect-308/150">
               <Image
                 src={question.image_url}
                 alt={question.question_text}
                 fill
-                sizes="308px"
+                sizes="(max-width: 768px) 100vw, 320px"
                 className="object-contain"
                 quality={95}
                 priority
@@ -69,14 +69,14 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
             </div>
           )}
 
-          {/* Heading — 22px/24.2px bold, #292424 */}
-          <h1 className="mt-[40px] text-[22px] leading-[24.2px] font-bold text-[#292424] font-figtree">
+          {/* Heading */}
+          <h1 className="mt-8 text-xl md:text-2xl leading-snug font-bold text-[#292424] font-figtree px-4">
             {question.question_text}
           </h1>
 
-          {/* Subtitle — 15px/18px regular, #292424, max-w 296px */}
+          {/* Subtitle */}
           {question.question_subtext && (
-            <p className="mt-[16px] text-[15px] leading-[18px] font-normal text-[#292424] font-figtree max-w-[296px]">
+            <p className="mt-4 text-base leading-snug font-normal text-[#292424] font-figtree max-w-xs mx-auto px-4">
               {question.question_subtext}
             </p>
           )}
@@ -103,26 +103,26 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
         transition={{ delay: 0.1 }}
         className="flex flex-col items-center text-center w-full"
       >
-        {/* Primary heading — 28px/30.8px bold, #327455 */}
-        <h1 className="pt-[3px] text-[28px] leading-[30.8px] font-bold text-[#327455] font-figtree">
+        {/* Primary heading */}
+        <h1 className="pt-1 text-2xl md:text-3xl leading-tight font-bold text-[#327455] font-figtree px-4">
           {question.question_text}
         </h1>
 
-        {/* Secondary heading — 20px/22px semibold, #292424 */}
+        {/* Secondary heading */}
         {question.question_subtext && (
-          <p className="mt-[7px] text-[20px] leading-[22px] font-semibold text-[#292424] font-figtree">
+          <p className="mt-2 text-lg md:text-xl leading-snug font-semibold text-[#292424] font-figtree px-4">
             {question.question_subtext}
           </p>
         )}
 
-        {/* Trust image — 308px × 375px, object-cover */}
+        {/* Trust image — Responsive */}
         {question.image_url && (
-          <div className="relative mt-[73px] w-[308px] h-[375px]">
+          <div className="relative mt-12 w-full max-w-xs aspect-308/375 shadow-xl rounded-lg overflow-hidden">
             <Image
               src={question.image_url}
               alt={question.question_text}
               fill
-              sizes="308px"
+              sizes="(max-width: 768px) 100vw, 320px"
               className="object-cover"
               quality={95}
               priority

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-/* Hide the global "Powered by Stripe" badge injected by stripe-js */
-iframe[name^="__privateStripeFrame"],
+/* Hide the floating "Powered by Stripe" badge (but NOT the payment form iframes) */
+body > iframe[name^="__privateStripeMetrics"],
 a[href*="stripe.com"][target="_blank"][rel*="noopener"] {
   display: none !important;
   visibility: hidden !important;

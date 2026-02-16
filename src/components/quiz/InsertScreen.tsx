@@ -20,7 +20,7 @@ function parseFormattedText(text: string) {
   return text.split('\n\n').map((paragraph, pIdx) => {
     // Split by both **bold** and *italic* markers
     const parts = paragraph.split(/(\*\*.*?\*\*|\*.*?\*)/g);
-    
+
     return (
       <p key={pIdx} className={pIdx > 0 ? 'mt-[12px]' : ''}>
         {parts.map((part, idx) => {
@@ -151,64 +151,64 @@ export function InsertScreen({ question, questionIndex, onComplete }: InsertScre
         transition={{ delay: 0.1 }}
         className="flex flex-col items-center justify-center h-full w-full"
       >
-        <div className="flex flex-col w-full max-w-[351px]">
-        {/* Featured image — 351px × 222px, rounded 10px */}
-        {insertImageUrl && (
-          <div className="relative w-full h-[222px] rounded-[10px] overflow-hidden">
-            <Image
-              src={insertImageUrl}
-              alt={question.question_text}
-              fill
-              sizes="351px"
-              className="object-cover"
-              priority
-            />
-          </div>
-        )}
-
-        {/* Heading */}
-        <h2 className={`mt-[16px] font-bold font-figtree ${showExpertBadge ? 'text-[22px] leading-[28px] text-center text-[#292424]' : 'text-[18px] leading-[25.2px] text-left text-[#327455]'}`}>
-          {question.question_text}
-        </h2>
-
-        {/* Body text */}
-        {question.question_subtext && (
-          <div className={`mt-[12px] text-[15px] leading-[21px] text-[#292424] font-figtree ${showExpertBadge ? 'italic text-center' : 'font-normal text-left'}`}>
-            {parseFormattedText(question.question_subtext)}
-          </div>
-        )}
-
-        {/* Expert Badge — only on e07 */}
-        {showExpertBadge && (
-          <div className="mt-[16px] w-full h-[110px] rounded-[10px] border border-[#e6e6e6] bg-white overflow-hidden">
-            {/* Badge header */}
-            <div className="h-[31px] bg-[#327455]/[0.12] flex items-center justify-center">
-              <span className="text-[14px] leading-[14px] font-normal text-[#327455] font-figtree">
-                Obsah kontrolovaný odborníkem
-              </span>
-            </div>
-            {/* Expert info */}
-            <div className="flex items-center h-[79px] px-[12px] gap-[8px]">
-              {/* Expert badge icon */}
+        <div className="flex flex-col w-full max-w-md mx-auto px-4">
+          {/* Featured image — Responsive aspect ratio */}
+          {insertImageUrl && (
+            <div className="relative w-full aspect-351/222 rounded-[10px] overflow-hidden shadow-sm">
               <Image
-                src="/icons/expert-badge.svg"
-                alt=""
-                width={47}
-                height={47}
-                className="w-[47px] h-[47px] shrink-0"
+                src={insertImageUrl}
+                alt={question.question_text}
+                fill
+                sizes="(max-width: 768px) 100vw, 450px"
+                className="object-cover"
+                priority
               />
-              {/* Text block */}
-              <div className="flex flex-col">
-                <span className="text-[16px] leading-[20px] font-bold text-[#292424] font-figtree">
-                  Miroslav Macháček
-                </span>
-                <span className="text-[15px] leading-[18px] italic text-[#292424] font-figtree">
-                  Expert na stres a mentální zdraví
+            </div>
+          )}
+
+          {/* Heading */}
+          <h2 className={`mt-4 font-bold font-figtree ${showExpertBadge ? 'text-xl md:text-2xl leading-tight text-center text-[#292424]' : 'text-lg md:text-xl leading-snug text-left text-[#327455]'}`}>
+            {question.question_text}
+          </h2>
+
+          {/* Body text */}
+          {question.question_subtext && (
+            <div className={`mt-3 text-sm md:text-base leading-relaxed text-[#292424] font-figtree ${showExpertBadge ? 'italic text-center' : 'font-normal text-left'}`}>
+              {parseFormattedText(question.question_subtext)}
+            </div>
+          )}
+
+          {/* Expert Badge — only on e07 */}
+          {showExpertBadge && (
+            <div className="mt-[16px] w-full h-[110px] rounded-[10px] border border-[#e6e6e6] bg-white overflow-hidden">
+              {/* Badge header */}
+              <div className="h-[31px] bg-[#327455]/12 flex items-center justify-center">
+                <span className="text-[14px] leading-[14px] font-normal text-[#327455] font-figtree">
+                  Obsah kontrolovaný odborníkem
                 </span>
               </div>
+              {/* Expert info */}
+              <div className="flex items-center h-[79px] px-[12px] gap-[8px]">
+                {/* Expert badge icon */}
+                <Image
+                  src="/icons/expert-badge.svg"
+                  alt=""
+                  width={47}
+                  height={47}
+                  className="w-[47px] h-[47px] shrink-0"
+                />
+                {/* Text block */}
+                <div className="flex flex-col">
+                  <span className="text-[16px] leading-[20px] font-bold text-[#292424] font-figtree">
+                    Miroslav Macháček
+                  </span>
+                  <span className="text-[15px] leading-[18px] italic text-[#292424] font-figtree">
+                    Expert na stres a mentální zdraví
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
       </motion.div>
     </StageLayout>

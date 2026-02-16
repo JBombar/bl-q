@@ -75,12 +75,25 @@ const FAQ_ITEMS = [
 // ---------------------------------------------------------------------------
 
 function ProgressIndicator() {
+  const activeIndex = STEPS.findIndex(s => s.state === 'active');
+  const greenEnd = activeIndex >= 0 ? activeIndex : STEPS.filter(s => s.state === 'completed').length - 1;
+
   return (
     <div className="relative w-full max-w-[440px] mx-auto">
-      {/* Green line: first circle to third circle */}
-      <div className="absolute bottom-[15px] left-0 right-[25%] h-[2px] bg-[#327455]" />
-      {/* Gray line: third circle to last circle */}
-      <div className="absolute bottom-[15px] left-[75%] right-0 h-[2px] bg-[#d6d6d6]" />
+      {/* Green line through completed/active circles (bottom-aligned with circles) */}
+      {greenEnd > 0 && (
+        <div
+          className="absolute bottom-[16px] h-px bg-[#327455]"
+          style={{ left: 16, right: `calc(100% - 100% * ${greenEnd} / ${STEPS.length - 1} - 16px)` }}
+        />
+      )}
+      {/* Gray line from active to last circle */}
+      {greenEnd < STEPS.length - 1 && (
+        <div
+          className="absolute bottom-[16px] h-px bg-[#d6d6d6]"
+          style={{ left: `calc(100% * ${greenEnd} / ${STEPS.length - 1} + 16px)`, right: 16 }}
+        />
+      )}
 
       {/* Steps */}
       <div className="relative flex items-start justify-between">
@@ -100,20 +113,8 @@ function ProgressIndicator() {
             <div className="w-8 h-8 flex items-center justify-center">
               {step.state === 'completed' && (
                 <div className="w-8 h-8 rounded-full bg-[#327455] flex items-center justify-center">
-                  <svg
-                    width="14"
-                    height="10"
-                    viewBox="0 0 14 10"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1 5L5 9L13 1"
-                      stroke="white"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
+                  <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
               )}

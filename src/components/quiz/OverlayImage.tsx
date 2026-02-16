@@ -12,6 +12,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface OverlayImageProps {
   src: string;
@@ -19,20 +20,15 @@ interface OverlayImageProps {
   anchor?: 'bottom-right' | 'bottom-left' | 'center-right';
   maxHeightDesktop?: string;
   maxHeightMobile?: string;
+  className?: string;
 }
 
-function getAnchorClasses(anchor: string) {
-  switch (anchor) {
-    case 'bottom-right':
-      return 'bottom-0 right-0 translate-x-[2%]';
-    case 'bottom-left':
-      return 'bottom-0 left-0 -translate-x-[2%]';
-    case 'center-right':
-      return 'top-1/2 right-0 -translate-y-1/2 translate-x-[2%]';
-    default:
-      return 'bottom-0 right-0 translate-x-[2%]';
-  }
-}
+const anchorClasses = {
+  'bottom-right': 'bottom-0 right-0 translate-x-[2%]',
+  'bottom-left': 'bottom-0 left-0 -translate-x-[2%]',
+  'center-right': 'top-1/2 right-0 -translate-y-1/2 translate-x-[2%]',
+};
+
 
 export function OverlayImage({
   src,
@@ -40,6 +36,7 @@ export function OverlayImage({
   anchor = 'bottom-right',
   maxHeightDesktop = '550px',
   maxHeightMobile = '450px',
+  className,
 }: OverlayImageProps) {
   return (
     <div
@@ -51,22 +48,41 @@ export function OverlayImage({
       )}
       aria-hidden="true"
     >
-      <div
+      <motion.div
         className={cn(
-          'absolute h-[450px] md:h-[550px]',
-          getAnchorClasses(anchor)
+          'pointer-events-none absolute z-0',
+          // Desktop positioning (default)
+          anchorClasses[anchor],
+          // Mobile adjustments:
+          // On very small screens, we might want to scale it down further or adjust position
+          'max-w-[45%] md:max-w-none', // Limit width on mobile to avoid covering too much
+          className
         )}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <Image
-          src={src}
-          alt={alt}
-          width={600}
-          height={800}
-          className="object-contain w-auto h-full"
-          priority={false}
-          quality={85}
-        />
-      </div>
+        <div
+          className="relative"
+          style={{
+            height: maxHeightDesktop || '600px', // Default fallback
+            maxHeight: '80vh' // Never exceed 80% viewport height
+          }}
+        >
+          <img
+            src={src}
+            alt={alt}
+            className={cn(
+              "h-full w-auto object-contain object-bottom",
+              // Mobile specific height overrides via style or class?
+              // We use the prop for specific control
+            )}
+            style={{
+              maxHeight: maxHeightMobile ? maxHeightMobile : undefined
+            }}
+          />
+        </div>
+      </motion.div>
     </div>
   );
 }

@@ -83,7 +83,7 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
 
   // Use segmented progress for regular questions, not for special screens
   const showSegmentedProgress = !categoryProgress.isSpecialScreen;
-  
+
   // Show header logo for special screens (questions without section_label)
   const showHeaderLogo = categoryProgress.isSpecialScreen;
 
@@ -115,29 +115,29 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
           transition={{ duration: 0.08 }}
           className="w-full flex flex-col items-center"
         >
-          {/* Question — 22px/26px bold, #292424, max-w 280px, centered */}
-          <h2 className="text-[22px] leading-[26px] font-bold text-[#292424] font-figtree max-w-[280px] text-center">
+          {/* Question — Responsive text size */}
+          <h2 className="text-xl md:text-2xl leading-tight font-bold text-[#292424] font-figtree max-w-md text-center px-4">
             {question.question_text}
           </h2>
 
           {question.question_subtext && (
-            <p className="mt-[8px] text-[14px] leading-[16.8px] font-normal text-[#292424] font-figtree text-center">
+            <p className="mt-2 text-sm md:text-base leading-snug font-normal text-[#292424] font-figtree text-center px-4">
               {question.question_subtext}
             </p>
           )}
 
-          {/* Option buttons — 351px × 56px, bg #f5f5f5, rounded 10px, 10px gap */}
-          <div className="mt-[24px] flex flex-col gap-[10px] max-w-[351px] w-full">
+          {/* Option buttons — Fluid width, min-height */}
+          <div className="mt-6 flex flex-col gap-3 w-full max-w-md px-4">
             {question.options.map((option) => (
               <motion.button
                 key={option.id}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSelect(option.id)}
                 className={`
-                  w-full h-[56px] rounded-[12px] flex items-center px-[12px] gap-[8px] transition-all
+                  w-full min-h-[56px] py-3 rounded-xl flex items-center px-4 gap-3 transition-all
                   ${selectedIds.includes(option.id)
                     ? 'bg-white border-2 border-[#327455]'
-                    : 'bg-[#f5f5f5] border-2 border-transparent'
+                    : 'bg-[#f5f5f5] border-2 border-transparent hover:bg-gray-200'
                   }
                 `}
               >
@@ -150,7 +150,7 @@ function SingleChoiceQuestion({ question, questionIndex, onComplete }: QuizQuest
                     className="w-[28px] h-[28px] shrink-0"
                   />
                 )}
-                <span className="text-[17px] leading-[17px] font-normal text-[#292424] font-figtree">
+                <span className="text-base md:text-lg font-normal text-[#292424] font-figtree text-left flex-1">
                   {option.option_text}
                 </span>
               </motion.button>

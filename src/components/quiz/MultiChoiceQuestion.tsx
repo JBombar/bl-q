@@ -93,15 +93,15 @@ export function MultiChoiceQuestion({ question, questionIndex, onComplete }: Mul
         transition={{ duration: 0.08 }}
         className="w-full text-center"
       >
-        <h2 className="text-[22px] leading-[26px] font-bold text-[#292424] font-figtree text-center mb-2 md:mb-3">
+        <h2 className="text-xl md:text-2xl leading-tight font-bold text-[#292424] font-figtree text-center mb-2 md:mb-3 px-4">
           {question.question_text}
         </h2>
 
         {question.helper_text && (
-          <p className="text-gray-600 mb-2 md:mb-3 italic text-xs md:text-sm">{question.helper_text}</p>
+          <p className="text-gray-600 mb-2 md:mb-3 italic text-xs md:text-sm px-4">{question.helper_text}</p>
         )}
 
-        <div className="space-y-[10px] max-w-[351px] mx-auto">
+        <div className="space-y-3 w-full max-w-md mx-auto px-4">
           {question.options.map((option) => {
             const isSelected = selectedIds.includes(option.id);
 
@@ -112,7 +112,7 @@ export function MultiChoiceQuestion({ question, questionIndex, onComplete }: Mul
                 whileTap={{ scale: 0.99 }}
                 onClick={() => toggleOption(option.id)}
                 className={`
-                  w-full min-h-[56px] px-[12px] py-[12px] rounded-[16px] text-left transition-all border-2 flex items-center
+                  w-full min-h-[56px] px-4 py-3 rounded-xl text-left transition-all border-2 flex items-center
                   ${isSelected
                     ? 'bg-white border-[#327455] shadow-md'
                     : 'bg-[#f5f5f5] border-transparent hover:bg-gray-200'
@@ -133,7 +133,7 @@ export function MultiChoiceQuestion({ question, questionIndex, onComplete }: Mul
                       </svg>
                     )}
                   </div>
-                  <span className="font-normal text-[#292424] text-[17px] leading-[17px] font-figtree">{option.option_text}</span>
+                  <span className="font-normal text-[#292424] text-base md:text-lg font-figtree flex-1">{option.option_text}</span>
                 </div>
               </motion.button>
             );

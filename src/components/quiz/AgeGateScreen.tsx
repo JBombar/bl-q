@@ -53,18 +53,18 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
         transition={{ duration: 0.2 }}
         className="text-center w-full mx-auto"
       >
-        <h1 className="text-[28px] leading-[110%] font-bold text-center text-dark font-figtree mb-3">
+        <h1 className="text-2xl md:text-3xl leading-tight font-bold text-center text-dark font-figtree mb-3 px-4">
           Je tvůj{' '}
           <span className="text-[#2F6B4F]">
             nervový<br />systém přehlcený
           </span>
           ?
         </h1>
-        <p className="text-base font-normal text-center text-gray leading-[140%] font-figtree mb-6 md:mb-8">
+        <p className="text-base font-normal text-center text-gray leading-snug font-figtree mb-6 md:mb-8 px-4">
           Vyber svůj věk a začni
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8 mb-6 md:mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8 px-4 w-full max-w-4xl">
           {question.options.map((option, index) => (
             <motion.button
               key={option.id}
@@ -93,22 +93,22 @@ export function AgeGateScreen({ question, questionIndex, onComplete }: AgeGateSc
           ))}
         </div>
 
-        <p className="text-[12px] text-[#292424] max-w-md mx-auto">
-            <span className="font-bold">
-             Výběrem věku a pokračováním souhlasíš s našimi
-           </span>{' '}
-          <a 
-            href="https://betterlady.cz/obchodni-podminky/" 
-            target="_blank" 
+        <p className="text-[10px] md:text-xs text-[#292424] max-w-md mx-auto px-4 leading-tight">
+          <span className="font-bold">
+            Výběrem věku a pokračováním souhlasíš s našimi
+          </span>{' '}
+          <a
+            href="https://betterlady.cz/obchodni-podminky/"
+            target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-gray-700"
           >
             Obchodními podmínkami
           </a>
           {' | '}
-          <a 
-            href="https://betterlady.cz/ochrana-osobnich-udaju/" 
-            target="_blank" 
+          <a
+            href="https://betterlady.cz/ochrana-osobnich-udaju/"
+            target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-gray-700"
           >

@@ -81,15 +81,15 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
         transition={{ duration: 0.08 }}
         className="w-full text-center"
       >
-        <h2 className="text-[22px] leading-[26px] font-bold text-[#292424] font-figtree text-center mb-2 md:mb-3">
+        <h2 className="text-xl md:text-2xl leading-tight font-bold text-[#292424] font-figtree text-center mb-2 md:mb-3 px-4">
           {question.question_text}
         </h2>
 
         {question.question_subtext && (
-          <p className="text-[14px] leading-[21px] text-[#292424] font-figtree mb-3 md:mb-4 italic">{question.question_subtext}</p>
+          <p className="text-sm md:text-base leading-snug text-[#292424] font-figtree mb-4 md:mb-6 italic px-4">{question.question_subtext}</p>
         )}
 
-        <div className={`grid ${question.options.length === 5 ? 'grid-cols-5 gap-1.5 md:gap-2' : 'grid-cols-4 gap-2 md:gap-2.5'} mb-3 md:mb-4 max-w-md mx-auto`}>
+        <div className={`grid ${question.options.length === 5 ? 'grid-cols-5 gap-2 md:gap-3' : 'grid-cols-4 gap-3 md:gap-4'} mb-4 md:mb-6 w-full max-w-md mx-auto px-4`}>
           {question.options.map((option, index) => {
             const isSelected = selectedId === option.id;
             const scaleNumber = index + 1;
@@ -117,7 +117,7 @@ export function LikertScaleQuestion({ question, questionIndex, onComplete }: Lik
           })}
         </div>
 
-        <div className="flex justify-between text-[10px] md:text-xs text-gray-600 max-w-md mx-auto">
+        <div className="flex justify-between text-xs md:text-sm text-gray-600 w-full max-w-md mx-auto px-4">
           <span>{question.scale_left_label || ''}</span>
           <span>{question.scale_right_label || ''}</span>
         </div>

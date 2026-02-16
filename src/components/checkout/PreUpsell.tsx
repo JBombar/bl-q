@@ -16,14 +16,31 @@ const STEPS = [
 ];
 
 function ProgressIndicator() {
+  // Find the index of the last completed or active step for line coloring
+  const activeIndex = STEPS.findIndex(s => s.state === 'active');
+  const greenEnd = activeIndex >= 0 ? activeIndex : STEPS.filter(s => s.state === 'completed').length - 1;
+
   return (
-    <div className="flex items-start justify-center gap-0 w-full max-w-[440px] mx-auto">
-      {STEPS.map((step, i) => (
-        <div key={step.label} className="flex items-start flex-1">
-          {/* Step */}
-          <div className="flex flex-col items-center gap-2 flex-1">
-            {/* Circle */}
-            <div className="relative w-8 h-8 flex items-center justify-center">
+    <div className="relative w-full max-w-[440px] mx-auto">
+      {/* Green line: center of first circle to center of active circle */}
+      {greenEnd > 0 && (
+        <div
+          className="absolute top-4 h-px bg-[#327455]"
+          style={{ left: 16, right: `calc(100% - 100% * ${greenEnd} / ${STEPS.length - 1} - 16px)` }}
+        />
+      )}
+      {/* Gray line: center of active circle to center of last circle */}
+      {greenEnd < STEPS.length - 1 && (
+        <div
+          className="absolute top-4 h-px bg-[#d6d6d6]"
+          style={{ left: `calc(100% * ${greenEnd} / ${STEPS.length - 1} + 16px)`, right: 16 }}
+        />
+      )}
+      {/* Circles + labels */}
+      <div className="relative flex items-start justify-between">
+        {STEPS.map((step) => (
+          <div key={step.label} className="flex flex-col items-center gap-2">
+            <div className="w-8 h-8 flex items-center justify-center z-10">
               {step.state === 'completed' && (
                 <div className="w-8 h-8 rounded-full bg-[#327455] flex items-center justify-center">
                   <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,15 +49,14 @@ function ProgressIndicator() {
                 </div>
               )}
               {step.state === 'active' && (
-                <div className="w-8 h-8 rounded-full border border-[#327455] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border border-[#327455] bg-white flex items-center justify-center">
                   <div className="w-[18px] h-[18px] rounded-full bg-[#327455]" />
                 </div>
               )}
               {step.state === 'incomplete' && (
-                <div className="w-8 h-8 rounded-full border border-[#d6d6d6]" />
+                <div className="w-8 h-8 rounded-full border border-[#d6d6d6] bg-white" />
               )}
             </div>
-            {/* Label */}
             <span
               className={`text-[12px] leading-[12px] text-center whitespace-nowrap ${
                 step.state === 'active'
@@ -51,21 +67,8 @@ function ProgressIndicator() {
               {step.label}
             </span>
           </div>
-
-          {/* Connection line (between steps) */}
-          {i < STEPS.length - 1 && (
-            <div className="flex items-center h-8 -mx-1">
-              <div
-                className={`w-12 sm:w-16 h-px ${
-                  STEPS[i + 1]?.state === 'completed' || STEPS[i + 1]?.state === 'active'
-                    ? 'bg-[#327455]'
-                    : 'bg-[#d6d6d6]'
-                }`}
-              />
-            </div>
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
