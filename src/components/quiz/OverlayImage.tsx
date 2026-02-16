@@ -73,8 +73,8 @@ export function OverlayImage({
             src={src}
             alt={alt}
             className={cn(
-              // Object-bottom ensures it aligns to the bottom of the container
-              "h-full w-auto object-contain object-bottom",
+              // Allow height to auto-scale based on width, but align to bottom if container is taller
+              "block w-full h-auto object-contain object-bottom",
             )}
             style={{
               maxHeight: maxHeightMobile ? maxHeightMobile : undefined
