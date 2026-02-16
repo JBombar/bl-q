@@ -117,7 +117,7 @@ export function TrustScreen({ question, questionIndex, onComplete }: TrustScreen
 
         {/* Trust image — Responsive */}
         {question.image_url && (
-          <div className="relative mt-12 w-full max-w-xs aspect-308/375 shadow-xl rounded-lg overflow-hidden">
+          <div className="relative mt-12 w-full max-w-xs aspect-308/375">
             <Image
               src={question.image_url}
               alt={question.question_text}
