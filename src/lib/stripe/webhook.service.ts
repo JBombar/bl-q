@@ -10,6 +10,7 @@ import {
   getPaymentIntentIdFromInvoice,
 } from './subscription.service';
 import { trackEvent, EVENT_TYPES } from '@/lib/services/analytics.service';
+import { addToRegular, removeFromAbandoned } from '@/lib/services/smartemailing.service';
 import { supabase } from '@/lib/supabase/client';
 import type { PlanDuration } from '@/config/pricing.config';
 
@@ -355,6 +356,17 @@ export async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> 
         customerId: customer?.id,
       },
     });
+
+    // Fire-and-forget: add to SmartEmailing "Regular" list
+    if (customer?.email) {
+      addToRegular(customer.email).catch(err =>
+        console.error('[SmartEmailing] Failed to add to Regular:', err)
+      );
+      removeFromAbandoned(customer.email).catch(err =>
+        console.error('[SmartEmailing] Failed to remove from Abandoned:', err)
+      );
+    }
+
     console.log('[handleInvoicePaid] Done processing subscription_create invoice.');
     return;
   }

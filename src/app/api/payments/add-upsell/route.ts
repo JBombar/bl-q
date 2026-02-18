@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { getSessionFromCookie } from '@/lib/services/session.service';
 import { addUpsellToSubscription } from '@/lib/stripe/subscription.service';
 import { trackEvent, EVENT_TYPES } from '@/lib/services/analytics.service';
+import { promoteToPremiun } from '@/lib/services/smartemailing.service';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -65,6 +66,13 @@ export async function POST(request: NextRequest) {
         status: result.status,
       },
     });
+
+    // Fire-and-forget: promote to Premium in SmartEmailing
+    if (session.email) {
+      promoteToPremiun(session.email).catch(err =>
+        console.error('[SmartEmailing] Failed to promote to Premium:', err)
+      );
+    }
 
     // 5. Return success
     return NextResponse.json({

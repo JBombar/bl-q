@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSessionFromCookie } from '@/lib/services/session.service';
 import { trackEvent, EVENT_TYPES } from '@/lib/services/analytics.service';
 import { supabase } from '@/lib/supabase/client';
+import { sendEmail } from '@/lib/services/email.service';
 import type { SendPlanEmailResponse } from '@/types/funnel.types';
 
 export const runtime = 'nodejs';
@@ -62,19 +63,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<SendPlanE
       );
     }
 
-    // =====================================================
-    // MOCKED EMAIL SENDING
-    // TODO: Replace with actual Resend integration
-    // =====================================================
-    console.log('=== MOCKED EMAIL SEND ===');
-    console.log('To:', email);
-    console.log('Name:', firstName);
-    console.log('Session ID:', session.id);
-    console.log('Subject:', `${firstName}, tvuj plan vnitrniho klidu je pripraven!`);
-    console.log('=========================');
-
-    // Simulate email sending delay (optional, remove in production)
-    // await new Promise(resolve => setTimeout(resolve, 100));
+    // Send plan email via email service
+    const subject = `${firstName}, tvuj plan vnitrniho klidu je pripraven!`;
+    const emailResult = await sendEmail({
+      to: email,
+      subject,
+      html: `<p>Ahoj ${firstName},</p><p>Tvuj plan je pripraven.</p>`,
+      tags: ['plan-email', session.id],
+    });
 
     // Track email capture event
     await trackEvent(EVENT_TYPES.EMAIL_CAPTURED, {
@@ -83,14 +79,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<SendPlanE
       eventData: {
         email,
         firstName,
-        mocked: true,
+        emailSent: emailResult.success,
+        messageId: emailResult.messageId,
       },
     });
 
     return NextResponse.json({
       success: true,
-      emailSent: true,
-      mocked: true,
+      emailSent: emailResult.success,
     });
   } catch (error: any) {
     console.error('Send plan email error:', error);

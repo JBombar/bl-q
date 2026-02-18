@@ -24,6 +24,8 @@ export const EVENT_TYPES = {
   // Upsell events
   UPSELL_ACCEPTED: 'upsell_accepted',
   UPSELL_SKIPPED: 'upsell_skipped',
+  // Post-checkout events
+  EMAIL_UPDATED: 'email_updated',
 } as const;
 
 export async function trackEvent(

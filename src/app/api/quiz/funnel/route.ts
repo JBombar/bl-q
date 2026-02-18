@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { getSessionFromCookie, updateSession, mergeSessionMetadata } from '@/lib/services/session.service';
 import { extractFunnelState } from '@/lib/services/insights.service';
 import { trackEvent, EVENT_TYPES } from '@/lib/services/analytics.service';
+import { addToAllContacts } from '@/lib/services/smartemailing.service';
 import type { FunnelMetadata, MicroCommitmentKey } from '@/types/funnel.types';
 
 export const runtime = 'nodejs';
@@ -87,6 +88,18 @@ export async function POST(request: NextRequest) {
     // Update email in dedicated column if provided
     if (data.email) {
       await updateSession(session.id, { email: data.email });
+
+      // Fire-and-forget: add to SmartEmailing "All Contacts"
+      addToAllContacts(data.email).catch(err =>
+        console.error('[SmartEmailing] Failed to add to All Contacts:', err)
+      );
+    }
+
+    // Fire-and-forget: update name in SmartEmailing when captured at step E
+    if (data.firstName && session.email) {
+      addToAllContacts(session.email, data.firstName).catch(err =>
+        console.error('[SmartEmailing] Failed to update contact name:', err)
+      );
     }
 
     // Track funnel step

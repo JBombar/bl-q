@@ -50,6 +50,7 @@ interface PostQuizState {
   saveFirstName: (firstName: string) => Promise<void>;
   sendPlanEmail: () => Promise<boolean>;
   completeFunnel: () => Promise<void>;
+  updateEmail: (email: string) => Promise<boolean>;
   reset: () => void;
 
   // Pricing tier actions
@@ -302,6 +303,35 @@ export const usePostQuizState = create<PostQuizState>()(
       throw error;
     }
   },
+
+      /**
+       * Update email post-checkout (editable on PreUpsell screen)
+       * Updates email across all systems via dedicated API endpoint
+       */
+      updateEmail: async (email: string) => {
+        set({ isSaving: true, error: null });
+        try {
+          const response = await fetch('/api/quiz/update-email', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Failed to update email');
+          }
+
+          set(state => ({
+            funnelData: { ...state.funnelData, email },
+            isSaving: false,
+          }));
+          return true;
+        } catch (error: any) {
+          set({ error: error.message, isSaving: false });
+          return false;
+        }
+      },
 
       /**
        * Reset state

@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { usePostQuizState } from '@/hooks/usePostQuizState';
 
 interface PreUpsellProps {
   email: string;
@@ -74,6 +76,33 @@ function ProgressIndicator() {
 }
 
 export function PreUpsell({ email, onContinue }: PreUpsellProps) {
+  const [editedEmail, setEditedEmail] = useState(email);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const handleSaveEmail = async () => {
+    if (!editedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editedEmail)) {
+      setSaveError('Zadej platny e-mail');
+      return;
+    }
+    setIsSaving(true);
+    setSaveError(null);
+    const success = await usePostQuizState.getState().updateEmail(editedEmail);
+    setIsSaving(false);
+    if (success) {
+      setIsEditing(false);
+    } else {
+      setSaveError('Nepodarilo se ulozit e-mail');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditedEmail(email);
+    setIsEditing(false);
+    setSaveError(null);
+  };
+
   return (
     <div className="min-h-screen bg-white font-figtree flex flex-col items-center px-4">
       {/* Logo */}
@@ -107,12 +136,63 @@ export function PreUpsell({ email, onContinue }: PreUpsellProps) {
           Je tento e-mail správný?
         </h1>
 
-        {/* Email Display Field */}
-        <div className="w-full h-12 bg-[#f5f5f5] rounded-[10px] flex items-center px-3 mt-6">
-          <span className="text-[15px] font-normal text-[#292424] leading-[15px]">
-            {email}
-          </span>
-        </div>
+        {/* Email Display / Edit Field */}
+        {isEditing ? (
+          <div className="mt-6 w-full">
+            <div className="flex items-center gap-2">
+              <input
+                type="email"
+                value={editedEmail}
+                onChange={(e) => { setEditedEmail(e.target.value); setSaveError(null); }}
+                className="flex-1 h-12 bg-[#f5f5f5] rounded-[10px] px-3 text-[15px] font-normal text-[#292424] leading-[15px] outline-none focus:ring-2 focus:ring-[#327455] border-none"
+                autoFocus
+                disabled={isSaving}
+              />
+              <button
+                onClick={handleSaveEmail}
+                disabled={isSaving}
+                className="shrink-0 w-10 h-10 rounded-lg bg-[#327455] text-white flex items-center justify-center hover:bg-[#285e44] transition-colors disabled:opacity-50"
+                aria-label="Ulozit"
+              >
+                {isSaving ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 8L6 12L14 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </button>
+              <button
+                onClick={handleCancelEdit}
+                disabled={isSaving}
+                className="shrink-0 w-10 h-10 rounded-lg bg-[#f5f5f5] text-[#919191] flex items-center justify-center hover:text-[#292424] transition-colors disabled:opacity-50"
+                aria-label="Zrusit"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+            {saveError && (
+              <p className="text-[13px] text-red-500 mt-1.5 px-1">{saveError}</p>
+            )}
+          </div>
+        ) : (
+          <div className="w-full h-12 bg-[#f5f5f5] rounded-[10px] flex items-center justify-between px-3 mt-6">
+            <span className="text-[15px] font-normal text-[#292424] leading-[15px] truncate">
+              {editedEmail}
+            </span>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="ml-2 shrink-0 p-1.5 text-[#919191] hover:text-[#292424] transition-colors"
+              aria-label="Upravit e-mail"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.333 2.00004C11.5081 1.82494 11.7169 1.68605 11.9467 1.59129C12.1765 1.49653 12.4227 1.44775 12.6713 1.44775C12.9199 1.44775 13.1661 1.49653 13.3959 1.59129C13.6257 1.68605 13.8346 1.82494 14.0097 2.00004C14.1848 2.17513 14.3237 2.384 14.4184 2.61378C14.5132 2.84357 14.562 3.08978 14.562 3.33837C14.562 3.58697 14.5132 3.83318 14.4184 4.06296C14.3237 4.29275 14.1848 4.50161 14.0097 4.67671L5.00967 13.6767L1.33301 14.6667L2.32301 10.99L11.333 2.00004Z" stroke="currentColor" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Notice Box */}
         <div className="w-full bg-[#327455]/[0.08] rounded-[12px] p-4 sm:p-5 mt-6">
